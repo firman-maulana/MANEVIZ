@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TIMELESS - Premium T-Shirt Collection</title>
+    <title>MANEVIZ</title>
     <style>
         * {
             margin: 0;
@@ -12,7 +12,7 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Montserrat', sans-serif;
             line-height: 1.6;
             color: #333;
             background-color: #f5f5f5;
@@ -189,23 +189,143 @@
         .nav-icon:hover {
             color: #ff6b6b;
         }
-
-        .cart-count {
-            background: #ff6b6b;
-            color: white;
-            border-radius: 50%;
-            padding: 0.2rem 0.5rem;
-            font-size: 0.8rem;
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            min-width: 18px;
-            text-align: center;
-        }
-
         .cart-icon {
             position: relative;
         }
+
+        /* style back */
+        .styleback {
+            display: flex;
+            flex-direction: column;     
+            align-items: flex-start;        
+            padding-left: 20px;
+            padding-right: 20px;
+
+        }
+        .styleback img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 63px;
+            padding: 0 20px;
+        }
+
+        .styleback h4 {
+            margin-top: 25px;
+            color: black;
+            text-align: left;
+            padding-left: 20px;
+            font-weight: 500;
+        }
+
+        .styleback h3 {
+            color: black;
+            text-align: left;
+            padding-left: 20px;
+            font-weight: 600;
+        }
+
+        .styleback hr {
+            width: 97%;
+            height: 2px;
+            background-color: #B9ACAA;
+            margin: 20px auto;
+        }
+
+        /* timeless */
+        .timeless {
+            display: flex;
+            flex-direction: column;     
+            align-items: flex-start;        
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+        .timeless h2 {
+            color: black;
+            text-align: left;
+            padding-left: 20px;
+            font-weight: 600;
+        } 
+
+        /* Tambahan CSS untuk membuat tampilan lebih sesuai dengan gambar */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px; /* Gap minimal seperti di gambar */
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.product-card {
+    background: white;
+    overflow: hidden;
+    transition: transform 0.2s ease;
+    cursor: pointer;
+    border: none;
+    box-shadow: none;
+}
+
+.product-image {
+    position: relative;
+    width: 100%;
+    height: 400px; /* Tinggi lebih besar seperti di gambar */
+    overflow: hidden;
+    background: #f8f8f8;
+}
+
+.product-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.product-badge.bestseller {
+    background: #ff4444;
+    color: white;
+}
+
+.product-badge.sustainable {
+    background: #ff6600; /* Warna orange seperti di gambar */
+    color: white;
+}
+
+.product-badge.just-in {
+    background: #ff6600;
+    color: white;
+}
+
+.product-info {
+    padding: 15px 10px;
+    background: white;
+}
+
+.product-info h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 2px;
+    line-height: 1.2;
+}
+
+.product-info p {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 2px;
+    line-height: 1.3;
+}
+
+.product-info .price {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #000;
+    margin-top: 5px;
+}
 
         /* Mobile Menu */
         .mobile-menu-toggle {
@@ -223,210 +343,17 @@
 
         /* Hero Section */
         .hero {
-            height: 100vh;
+            height: 90vh;
             background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('storage/image/banner.png');
             background-size: cover;
             background-position: center;
             display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
-            color: white;
             position: relative;
         }
 
-        /* Featured Products Section */
-        .featured-section {
-            padding: 4rem 0;
-            background: white;
-        }
-
-        .featured-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            margin-bottom: 4rem;
-        }
-
-        .featured-item {
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .featured-item:hover {
-            transform: translateY(-5px);
-        }
-
-        .featured-item img {
-            width: 100%;
-            height: 400px;
-            object-fit: cover;
-            background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #999;
-            font-size: 1.1rem;
-        }
-
-        .featured-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(transparent, rgba(0,0,0,0.8));
-            color: white;
-            padding: 2rem;
-            text-align: center;
-        }
-
-        .featured-overlay h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .featured-overlay p {
-            opacity: 0.9;
-        }
-
-        /* Dark Section */
-        .dark-section {
-            background: #1a1a1a;
-            color: white;
-            padding: 4rem 0;
-            text-align: center;
-        }
-
-        .dark-section h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: #ff6b6b;
-        }
-
-        .dark-section p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-        }
-
-        .dark-product {
-            max-width: 400px;
-            margin: 0 auto;
-            background: #2a2a2a;
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .dark-product-image {
-            width: 100%;
-            height: 300px;
-            background: linear-gradient(135deg, #333, #555);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #999;
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-        }
-
-        /* Product Grid */
-        .products-section {
-            padding: 4rem 0;
-            background: #f8f9fa;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 3rem;
-            color: #333;
-        }
-
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-        }
-
-        .product-card {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-        }
-
-        .product-image {
-            width: 100%;
-            height: 250px;
-            background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #999;
-            font-size: 1.1rem;
-            position: relative;
-        }
-
-        .product-badge {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: #ff6b6b;
-            color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        .product-info {
-            padding: 1.5rem;
-            text-align: center;
-        }
-
-        .product-title {
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-            color: #333;
-        }
-
-        .product-price {
-            font-size: 1.3rem;
-            color: #ff6b6b;
-            font-weight: bold;
-            margin-bottom: 1rem;
-        }
-
-        .add-to-cart {
-            width: 100%;
-            background: #333;
-            color: white;
-            border: none;
-            padding: 0.75rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background 0.3s ease;
-        }
-
-        .add-to-cart:hover {
-            background: #ff6b6b;
-        }
-
+    
         /* Responsive Design */
         @media (max-width: 768px) {
             .nav-menu {
@@ -458,31 +385,9 @@
             .search-bar:focus {
                 width: 170px;
             }
-
-            .featured-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .products-grid {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 1rem;
-            }
-
-            .section-title {
-                font-size: 2rem;
-            }
         }
 
         @media (max-width: 480px) {
-            .products-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .featured-grid {
-                grid-template-columns: 1fr;
-            }
-
             .search-bar {
                 width: 120px;
             }
@@ -491,7 +396,6 @@
                 width: 140px;
             }
         }
-
         /* Animations */
         @keyframes fadeInUp {
             from {
@@ -502,10 +406,6 @@
                 opacity: 1;
                 transform: translateY(0);
             }
-        }
-
-        .product-card {
-            animation: fadeInUp 0.6s ease-out;
         }
     </style>
 </head>
@@ -531,7 +431,6 @@
                 <div class="nav-icons">
                     <span class="nav-icon cart-icon" onclick="toggleCart()">
                         ⚏
-                        <span class="cart-count" id="cartCount">0</span>
                     </span>
                     <span class="nav-icon">♡</span>
                     <span class="nav-icon">⚐</span>
@@ -546,113 +445,106 @@
     <section class="hero" id="home">
         <!-- Hero section is now empty, showing only the background image -->
     </section>
+    
+    <!-- styleback -->
+    <section class="styleback">
+        <img src="storage/image/styleback.png">
+        <h4>Fashion</h4>
+        <h3>Built for The Grind, Styled by Chaos</h3>
+        <hr>
+    </section>
 
-    <!-- Featured Products -->
-    <section class="featured-section">
-        <div class="container">
-            <div class="featured-grid">
-                <div class="featured-item">
-                    <div class="featured-overlay">
-                        <h3>Premium White Collection</h3>
-                        <p>Minimalist design with premium quality</p>
-                    </div>
-                    <div style="width: 100%; height: 400px; background: linear-gradient(135deg, #f8f9fa, #e9ecef); display: flex; align-items: center; justify-content: center; color: #6c757d; font-size: 1.1rem;">
-                        White T-Shirt Collection
-                    </div>
+    <!-- Timeless Choice -->
+     <section class="timeless">
+        <h2>Timeless Choice</h2>
+        
+        <!-- Product Grid -->
+        <div class="product-grid">
+            <!-- Product 1 -->
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="storage/image/banner.png" alt="Nike Club">
+                    <div class="product-badge bestseller">Bestseller</div>
                 </div>
-                
-                <div class="featured-item">
-                    <div class="featured-overlay">
-                        <h3>Graphic Design Series</h3>
-                        <p>Unique artwork and creative designs</p>
-                    </div>
-                    <div style="width: 100%; height: 400px; background: linear-gradient(135deg, #f0f0f0, #e0e0e0); display: flex; align-items: center; justify-content: center; color: #999; font-size: 1.1rem;">
-                        Graphic T-Shirt Collection
-                    </div>
+                <div class="product-info">
+                    <h4>Nike Club</h4>
+                    <p>Men's Shorts</p>
+                    <p class="color-info">1 Colour</p>
+                    <p class="price">Rp 529.000</p>
                 </div>
-                
-                <div class="featured-item">
-                    <div class="featured-overlay">
-                        <h3>Classic Black Series</h3>
-                        <p>Timeless black designs for every occasion</p>
-                    </div>
-                    <div style="width: 100%; height: 400px; background: linear-gradient(135deg, #343a40, #495057); display: flex; align-items: center; justify-content: center; color: #adb5bd; font-size: 1.1rem;">
-                        Black T-Shirt Collection
-                    </div>
+            </div>
+
+            <!-- Product 2 -->
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="storage/image/banner.png" alt="Nike Gato">
+                </div>
+                <div class="product-info">
+                    <h4>Nike Gato</h4>
+                    <p>Men's Shoes</p>
+                    <p class="color-info">1 Colour</p>
+                    <p class="price">Rp 1.729.000</p>
+                </div>
+            </div>
+
+            <!-- Product 3 -->
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="storage/image/banner.png" alt="Nike Total 90">
+                </div>
+                <div class="product-info">
+                    <h4>Nike Total 90</h4>
+                    <p>Men's Shoes</p>
+                    <p class="color-info">1 Colour</p>
+                    <p class="price">Rp 1.729.000</p>
+                </div>
+            </div>
+
+            <!-- Product 4 -->
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="storage/image/banner.png" alt="Nike 24-7 PerfectStretch">
+                    <div class="product-badge sustainable">Sustainable Materials</div>
+                </div>
+                <div class="product-info">
+                    <h4>Nike 24-7 PerfectStretch</h4>
+                    <p>Men's Dri-FIT 15cm (approx.) Shorts</p>
+                    <p class="color-info">1 Colour</p>
+                    <p class="price">Rp 1.099.000</p>
+                </div>
+            </div>
+
+            <!-- Product 5 -->
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="storage/image/banner.png" alt="Nike Total 90">
+                    <div class="product-badge just-in">Just In</div>
+                </div>
+                <div class="product-info">
+                    <h4>Nike Total 90</h4>
+                    <p>Men's Dri-FIT Football Shirt</p>
+                    <p class="color-info">1 Colour</p>
+                    <p class="price">Rp 809.000</p>
+                </div>
+            </div>
+
+            <!-- Product 6 -->
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="storage/image/banner.png" alt="Nike Sportswear">
+                    <div class="product-badge sustainable">Sustainable Materials</div>
+                </div>
+                <div class="product-info">
+                    <h4>Nike Sportswear</h4>
+                    <p>Women's V-Neck Jersey Top</p>
+                    <p class="color-info">1 Colour</p>
+                    <p class="price">Rp 599.000</p>
                 </div>
             </div>
         </div>
-    </section>
-
-    <!-- Dark Section -->
-    <section class="dark-section">
-        <div class="container">
-            <h2>demonlord</h2>
-            <p>Built For The Grind. Styled By Chaos</p>
-            <div class="dark-product">
-                <div class="dark-product-image">
-                    Demonlord T-Shirt Design
-                </div>
-                <div class="add-to-cart" onclick="addToCart(999)" style="background: #ff6b6b; margin-top: 1rem;">
-                    Add to Cart
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Products Section -->
-    <section class="products-section" id="products">
-        <div class="container">
-            <h2 class="section-title">Timeless Choice</h2>
-            <div class="products-grid" id="productsGrid">
-                <!-- Products will be loaded here -->
-            </div>
-        </div>
-    </section>
+     </section>
 
     <script>
-        // Sample products data
-        const products = [
-            {
-                id: 1,
-                name: "Basic White",
-                price: "Rp 199.000",
-                badge: "Popular"
-            },
-            {
-                id: 2,
-                name: "Basic Grey",
-                price: "Rp 199.000",
-                badge: "New"
-            },
-            {
-                id: 3,
-                name: "Basic Black",
-                price: "Rp 199.000",
-                badge: "Best Seller"
-            },
-            {
-                id: 4,
-                name: "Graphic White",
-                price: "Rp 249.000",
-                badge: "Limited"
-            },
-            {
-                id: 5,
-                name: "Graphic Grey",
-                price: "Rp 249.000",
-                badge: "Trending"
-            },
-            {
-                id: 6,
-                name: "Graphic Black",
-                price: "Rp 249.000",
-                badge: "Hot"
-            }
-        ];
-
-        let cart = [];
-
         // Navbar scroll effect
         window.addEventListener('scroll', function() {
             const navbar = document.getElementById('navbar');
@@ -662,71 +554,6 @@
                 navbar.classList.remove('scrolled');
             }
         });
-
-        // Load products on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            displayProducts();
-        });
-
-        function displayProducts() {
-            const productsGrid = document.getElementById('productsGrid');
-            productsGrid.innerHTML = '';
-
-            products.forEach(product => {
-                const productCard = document.createElement('div');
-                productCard.className = 'product-card';
-                productCard.innerHTML = `
-                    <div class="product-image">
-                        <div class="product-badge">${product.badge}</div>
-                        ${product.name} Design
-                    </div>
-                    <div class="product-info">
-                        <div class="product-title">${product.name}</div>
-                        <div class="product-price">${product.price}</div>
-                        <button class="add-to-cart" onclick="addToCart(${product.id})">
-                            Add to Cart
-                        </button>
-                    </div>
-                `;
-                productsGrid.appendChild(productCard);
-            });
-        }
-
-        function addToCart(productId) {
-            const product = products.find(p => p.id === productId) || { id: 999, name: "Demonlord T-Shirt", price: "Rp 299.000" };
-            
-            cart.push(product);
-            updateCartCount();
-            
-            // Show success message
-            const button = event.target;
-            const originalText = button.textContent;
-            button.textContent = 'Added!';
-            button.style.background = '#4CAF50';
-            
-            setTimeout(() => {
-                button.textContent = originalText;
-                button.style.background = button.classList.contains('add-to-cart') ? '#333' : '#ff6b6b';
-            }, 2000);
-        }
-
-        function updateCartCount() {
-            document.getElementById('cartCount').textContent = cart.length;
-        }
-
-        function toggleCart() {
-            if (cart.length === 0) {
-                alert('Your cart is empty!');
-                return;
-            }
-            
-            let cartItems = 'Shopping Cart:\n\n';
-            cart.forEach((item, index) => {
-                cartItems += `${index + 1}. ${item.name} - ${item.price}\n`;
-            });
-            
-            alert(cartItems);
-        }
 
         // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -739,30 +566,6 @@
                     });
                 }
             });
-        });
-
-        // Add intersection observer for animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-
-        // Observe all product cards
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                document.querySelectorAll('.product-card, .featured-item').forEach(card => {
-                    observer.observe(card);
-                });
-            }, 100);
         });
     </script>
 </body>
