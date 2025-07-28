@@ -6,13 +6,13 @@ use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 
-Route::get('/beranda', function () {
+Route::get('/', function () {
     return view('beranda');
 });
 
 
 Route::get('/allProduct', function () {
-    return view('allProduct');
+    return view('allProduk');
 });
 
 Route::get('/about', function () {

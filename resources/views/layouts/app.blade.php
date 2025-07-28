@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css">
     <title>MANEVIZ</title>
     <style>
         * {
@@ -195,91 +196,284 @@
             position: relative;
         }
 
-        /* footer */
-        .footer-container {
-            display: flex;
-            justify-content: space-between;
-            padding: 40px 80px;
-            background-color: #0a0707;
+        /* Footer Styles */
+        /* Footer Styles */
+        .footer {
+            background: #000;
             color: white;
-            font-family: 'Arial', sans-serif;
-            flex-wrap: wrap;
+            position: relative;
+            border-top: 1px solid #333;
         }
 
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 25px 20px;
+            /* Reduced from 40px */
+            position: relative;
+        }
+
+        .footer-main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            /* Reduced from 60px */
+            align-items: start;
+        }
+
+        /* Left Section - Brand and Social */
         .footer-left {
-            max-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            /* Reduced from 30px */
         }
 
-        .logo img {
-            width: 150px;
-            margin-bottom: 20px;
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            margin-left: -8px;
+            gap: 10px;
+            margin-bottom: 1px;
+            /* Reduced from 20px */
         }
 
-        .find-us {
-            margin-bottom: 10px;
-            font-weight: bold;
+
+        .footer-logo h2 {
+            font-size: 1.6rem;
+            /* Reduced from 1.8rem */
+            font-weight: 700;
+            color: white;
+            letter-spacing: 2px;
+        }
+
+        .footer-social-section h4 {
+            font-size: 0.85rem;
+            /* Reduced from 0.9rem */
+            font-weight: 600;
+            margin-bottom: 12px;
+            /* Reduced from 15px */
+            color: rgba(255, 255, 255, 0.8);
+            text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        .social-icons img {
-            width: 28px;
-            margin-right: 12px;
-            margin-bottom: 15px;
-            vertical-align: middle;
+        .footer-social {
+            display: flex;
+            gap: 10px;
+            /* Reduced from 12px */
+            flex-wrap: wrap;
+        }
+
+        .social-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            /* Reduced from 40px */
+            height: 36px;
+            /* Reduced from 40px */
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            /* Reduced from 1.1rem */
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .social-icon:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
         }
 
         .auth-buttons {
-            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            /* Reduced from 10px */
+            max-width: 200px;
         }
 
-        .auth-buttons button {
-            margin-top: 10px;
-            display: block;
-            width: 160px;
-            height: 36px;
-            border-radius: 20px;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        .btn-outline {
+        .auth-btn {
+            padding: 10px 20px;
+            /* Reduced from 12px 24px */
+            border: 2px solid white;
+            border-radius: 25px;
             background: transparent;
-            border: 1px solid white;
+            color: white;
+            font-size: 0.85rem;
+            /* Reduced from 0.9rem */
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .auth-btn.sign-in {
+            background: transparent;
             color: white;
         }
 
-        .btn-filled {
+        .auth-btn.sign-up {
             background: white;
             color: black;
-            border: none;
+        }
+
+        .auth-btn.sign-in:hover {
+            background: white;
+            color: black;
+        }
+
+        .auth-btn.sign-up:hover {
+            background: transparent;
+            color: white;
+        }
+
+        /* Right Section - Links */
+        .footer-right {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            /* Reduced from 20px */
+            align-items: flex-end;
+            text-align: right;
+        }
+
+        .footer-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            /* Reduced from 30px */
+        }
+
+        .footer-links li a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 0.95rem;
+            /* Reduced from 1rem */
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 6px 0;
+            /* Reduced from 8px */
+            border-bottom: 1px solid transparent;
+        }
+
+        .footer-links li a:hover {
+            color: white;
+            border-bottom-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Footer Bottom */
+        .footer-bottom {
+            margin-top: 25px;
+            /* Reduced from 40px */
+            padding-top: 15px;
+            /* Reduced from 20px */
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: right;
+        }
+
+        .footer-copyright {
+            font-size: 0.8rem;
+            /* Reduced from 0.85rem */
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 400;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .footer-main {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                /* Reduced from 40px */
+                text-align: center;
+            }
+
+            .footer-right {
+                align-items: center;
+                text-align: center;
+            }
+
+            .footer-bottom {
+                text-align: center;
+            }
+
+            .footer-social {
+                justify-content: center;
+            }
+
+            .auth-buttons {
+                max-width: 100%;
+                align-self: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .footer-content {
+                padding: 20px 15px;
+                /* Reduced from 30px */
+            }
+
+            .footer-logo h2 {
+                font-size: 1.4rem;
+                /* Reduced from 1.5rem */
+            }
+
+            .social-icon {
+                width: 32px;
+                /* Reduced from 35px */
+                height: 32px;
+                /* Reduced from 35px */
+                font-size: 0.9rem;
+                /* Reduced from 1rem */
+            }
+
+            .auth-btn {
+                padding: 8px 18px;
+                /* Reduced from 10px 20px */
+                font-size: 0.8rem;
+                /* Reduced from 0.85rem */
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .footer-main>* {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .footer-left {
+            animation-delay: 0.1s;
         }
 
         .footer-right {
-            flex-grow: 1;
-            padding-left: 40px;
+            animation-delay: 0.2s;
         }
 
-        .footer-right ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+        hr {
+            width: 580px;
         }
-
-        .footer-right li {
-            padding: 10px 0;
-            border-bottom: 1px solid white;
-        }
-
-        .footer-right li a {
-            color: white;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .footer-right li.copyright {
-            border: none;
-            padding-top: 15px;
-            font-size: 13px;
+        .footer-logo img{
+            height: 80px;
+            width: auto;
         }
     </style>
 </head>
@@ -291,9 +485,9 @@
         <div class="nav-content">
             <ul class="nav-menu">
                 @auth
-                <li><a class="nav-link" href="{{ url('/beranda') }}">Home</a></li>
+                <li><a class="nav-link" href="{{ url('/') }}">Home</a></li>
                 @else
-                <li><a class="nav-link" href="{{ url('/beranda') }}">Home</a></li>
+                <li><a class="nav-link" href="{{ url('/') }}">Home</a></li>
                 @endauth
                 <li><a class="nav-link" href="{{ url('/allProduct') }}">Products</a></li>
                 <li><a class="nav-link" href="{{ url('/about') }}">About</a></li>
@@ -311,15 +505,18 @@
                 @auth
                 <div class="nav-icons">
                     <span class="nav-icon cart-icon" onclick="toggleCart()">
-                        ⚏
+                        <i class="bi bi-cart3"></i>
                     </span>
-                    <span class="nav-icon">♡</span>
-                    <span class="nav-icon">⚐</span>
+                    <span class="nav-icon">
+                        <i class="bi bi-heart"></i>
+                    </span>
+                    <span class="nav-icon">
+                        <i class="bi bi-person-circle"></i>
+                    </span>
                 </div>
                 @endauth
             </div>
 
-            <button class="mobile-menu-toggle">☰</button>
         </div>
     </nav>
 
@@ -327,44 +524,68 @@
         @yield('content')
     </main>
 
-    <footer class="footer-container">
-        <div class="footer-left">
-            <div class="logo">
-                <img src="storage/image/maneviz-white.png" alt="MANEVIZ Logo" />
-            </div>
-            <p class="find-us">FIND US ON</p>
-            <div class="social-icons">
-                <img src="wa.png" alt="WhatsApp" />
-                <img src="shopee.png" alt="Shopee" />
-                <img src="ig.png" alt="Instagram" />
-                <img src="tokopedia.png" alt="Tokopedia" />
-                <img src="tiktok.png" alt="TikTok" />
-                <img src="x.png" alt="X" />
-                <img src="yt.png" alt="YouTube" />
-            </div>
-            <div class="auth-buttons">
-                @guest
-                <button class="btn-outline"><a href="{{ route('signIn') }}">Sign In</a></button>
-                <button class="btn-filled"><a href="{{ route('signUp') }}">Sign Up</a></button>
-                @else
-                <button class="btn-outline" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                    Logout
-                </button>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                    @csrf
-                </form>
-                @endguest
-            </div>
-        </div>
+    <!-- Footer -->
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-main">
+                <!-- Left Section -->
+                <div class="footer-left">
+                    <div class="footer-logo">
+                        <img src="storage/image/maneviz-white.png">
+                    </div>
 
-        <div class="footer-right">
-            <ul>
-                <li><a href="#">Refund Policy</a></li>
-                <li><a href="#">How To Order</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Payment Confirmation</a></li>
-                <li class="copyright">Copyright © 2025 MANEVIZ</li>
-            </ul>
+                    <div class="footer-social-section">
+                        <h4>Find Us On</h4>
+                        <div class="footer-social">
+                            <a href="#" class="social-icon" title="WhatsApp">
+                                <i class="bi bi-whatsapp"></i>
+                            </a>
+                            <a href="#" class="social-icon" title="Shopee">
+                                <i class="bi bi-shop"></i>
+                            </a>
+                            <a href="#" class="social-icon" title="Instagram">
+                                <i class="bi bi-instagram"></i>
+                            </a>
+                            <a href="#" class="social-icon" title="Discord">
+                                <i class="bi bi-discord"></i>
+                            </a>
+                            <a href="#" class="social-icon" title="TikTok">
+                                <i class="bi bi-tiktok"></i>
+                            </a>
+                            <a href="#" class="social-icon" title="Twitter">
+                                <i class="bi bi-twitter-x"></i>
+                            </a>
+                            <a href="#" class="social-icon" title="YouTube">
+                                <i class="bi bi-youtube"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="auth-buttons">
+                        <a href="#" class="auth-btn sign-in">Sign In</a>
+                        <a href="#" class="auth-btn sign-up">Sign Up</a>
+                    </div>
+                </div>
+
+                <!-- Right Section -->
+                <div class="footer-right">
+                    <ul class="footer-links">
+                        <li><a href="#">Refund Policy</a></li>
+                        <hr>
+                        <li><a href="#">How To Order</a></li>
+                        <hr>
+                        <li><a href="#">About</a></li>
+                        <hr>
+                        <li><a href="#">Payment Confirmation</a></li>
+                        <hr>
+                        <li><a href="#">Copyright © 2025 MANEVIZ</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+
         </div>
     </footer>
     <script>
@@ -388,6 +609,53 @@
                         behavior: 'smooth'
                     });
                 }
+            });
+        });
+
+
+        // Add smooth scrolling and interaction effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate footer elements on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -30px 0px'
+            };
+
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            // Observe footer elements
+            document.querySelectorAll('.footer-main > *').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'all 0.6s ease';
+                observer.observe(el);
+            });
+
+            // Add click handlers for auth buttons
+            document.querySelectorAll('.auth-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const action = this.classList.contains('sign-in') ? 'Sign In' : 'Sign Up';
+                    console.log(`${action} clicked`);
+                    // Add your authentication logic here
+                });
+            });
+
+            // Add click handlers for social icons
+            document.querySelectorAll('.social-icon').forEach(icon => {
+                icon.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const platform = this.getAttribute('title');
+                    console.log(`${platform} social icon clicked`);
+                    // Add your social media redirect logic here
+                });
             });
         });
     </script>
