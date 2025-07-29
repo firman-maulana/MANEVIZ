@@ -14,7 +14,7 @@
         font-family: 'Montserrat', sans-serif;
         line-height: 1.6;
         color: #333;
-        background-color: #f5f5f5;
+        background-color: white;
     }
 
     /* style back */

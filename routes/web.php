@@ -23,6 +23,19 @@ Route::get('/contact', function () {
     return view('contact');
 });
 
+Route::get('/refundPolicy', function () {
+    return view('refundPolicy');
+});
+
+Route::get('/howToOrder', function () {
+    return view('howToOrder');
+});
+
+Route::get('/paymentConfirmation', function () {
+    return view('paymentConfirmation');
+});
+
+
 // Auth Routes
 Route::get('/signUp', [RegisterController::class, 'showsignUpForm'])->name('signUp');
 Route::post('/signUp', [RegisterController::class, 'signUp']);

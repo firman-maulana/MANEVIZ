@@ -17,7 +17,7 @@
             font-family: 'Montserrat', sans-serif;
             line-height: 1.6;
             color: #333;
-            background-color: #f5f5f5;
+            background-color: white;
         }
 
         .container {
@@ -35,7 +35,7 @@
             z-index: 1000;
             padding: 15px 0;
             transition: all 0.3s ease;
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2), transparent);
+            background: transparent;
         }
 
         .navbar.scrolled {
@@ -365,6 +365,18 @@
             border-bottom: 1px solid transparent;
         }
 
+        .copy{
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 0.95rem;
+            /* Reduced from 1rem */
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 6px 0;
+            /* Reduced from 8px */
+            border-bottom: 1px solid transparent;
+        }
+
         .footer-links li a:hover {
             color: white;
             border-bottom-color: rgba(255, 255, 255, 0.3);
@@ -471,7 +483,8 @@
         hr {
             width: 580px;
         }
-        .footer-logo img{
+
+        .footer-logo img {
             height: 80px;
             width: auto;
         }
@@ -571,15 +584,15 @@
                 <!-- Right Section -->
                 <div class="footer-right">
                     <ul class="footer-links">
-                        <li><a href="#">Refund Policy</a></li>
+                        <li><a href="{{ url('/refundPolicy') }}">Refund Policy</a></li>
                         <hr>
-                        <li><a href="#">How To Order</a></li>
+                        <li><a href="{{ url('/howToOrder') }}">How To Order</a></li>
                         <hr>
-                        <li><a href="#">About</a></li>
+                        <li><a href="{{ url('/about') }}">About</a></li>
                         <hr>
-                        <li><a href="#">Payment Confirmation</a></li>
+                        <li><a href="{{ url('/paymentConfirmation') }}">Payment Confirmation</a></li>
                         <hr>
-                        <li><a href="#">Copyright © 2025 MANEVIZ</a></li>
+                        <li class="copy">Copyright © 2025 MANEVIZ</li>
                     </ul>
                 </div>
             </div>

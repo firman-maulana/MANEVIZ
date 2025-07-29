@@ -194,7 +194,6 @@
     }
 
     /* Outfit Grid */
-    /* Outfit Grid - Perbaikan */
     .outfit-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -212,17 +211,7 @@
     .outfit-card {
         background-color: #ffffff;
         overflow: hidden;
-        /* Menghilangkan hover effect untuk card */
-        /* transition: all 0.3s ease; */
-        /* Menghilangkan box-shadow/border */
-        /* box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); */
     }
-
-    /* Menghilangkan hover effect untuk card */
-    /* .outfit-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-} */
 
     .outfit-content {
         display: flex;
@@ -250,14 +239,7 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-        /* Menghilangkan zoom effect pada hover */
-        /* transition: transform 0.3s ease; */
     }
-
-    /* Menghilangkan zoom effect pada hover */
-    /* .outfit-card:hover .outfit-image img {
-    transform: scale(1.05);
-} */
 
     .outfit-text {
         flex: 1;
@@ -342,7 +324,6 @@
         }
     }
 
-    /* Collections Product Card Styles - Same as Best Seller */
     .products-grid .product-card {
         background-color: transparent;
         border-radius: 20px;
@@ -537,24 +518,320 @@
         opacity: 0.7;
     }
 
-    /* Specific styling for featured images - NO ZOOM EFFECT */
     .featured-content img {
         width: 100%;
         height: 100%;
         object-fit: cover;
         border-radius: 0;
-        /* Remove border radius since parent has it */
         display: block;
-        /* Completely disable any transitions or transforms */
         transition: none !important;
         transform: none !important;
     }
 
-    /* Override any inherited hover effects for featured images */
     .featured-card:hover .featured-content img,
     .featured-card .featured-content img:hover {
         transform: none !important;
         scale: none !important;
+    }
+
+    /* Product Detail Modal */
+    .product-detail-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .product-detail-modal.active {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 20px;
+        width: 90%;
+        max-width: 1000px;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+        animation: slideUp 0.3s ease;
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: #f8f9fa;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+        transition: all 0.3s ease;
+    }
+
+    .modal-close:hover {
+        background: #e9ecef;
+    }
+
+    .product-detail {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        min-height: 600px;
+    }
+
+    @media (max-width: 768px) {
+        .product-detail {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .product-gallery {
+        background: #f8f9fa;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+        position: relative;
+    }
+
+    .main-product-image {
+        width: 100%;
+        max-width: 400px;
+        height: 400px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .thumbnail-gallery {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .thumbnail {
+        width: 60px;
+        height: 60px;
+        border-radius: 8px;
+        object-fit: cover;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+
+    .thumbnail:hover,
+    .thumbnail.active {
+        border-color: #000;
+    }
+
+    .product-info-detail {
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .brand-name {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .brand-logo {
+        width: 24px;
+        height: 24px;
+        background: #000;
+        border-radius: 50%;
+    }
+
+    .brand-text {
+        font-size: 14px;
+        color: #666;
+        font-weight: 500;
+    }
+
+    .product-title {
+        font-size: 28px;
+        font-weight: bold;
+        color: #000;
+        margin-bottom: 15px;
+        line-height: 1.3;
+    }
+
+    .product-rating {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .stars {
+        display: flex;
+        gap: 2px;
+    }
+
+    .star {
+        color: #ffc107;
+        font-size: 16px;
+    }
+
+    .star.empty {
+        color: #e9ecef;
+    }
+
+    .rating-text {
+        color: #666;
+        font-size: 14px;
+    }
+
+    .product-price-detail {
+        font-size: 32px;
+        font-weight: bold;
+        color: #000;
+        margin-bottom: 30px;
+    }
+
+    .product-options {
+        margin-bottom: 30px;
+    }
+
+    .option-group {
+        margin-bottom: 25px;
+    }
+
+    .option-label {
+        font-size: 16px;
+        font-weight: 600;
+        color: #000;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    .color-options,
+    .size-options {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .color-option {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .color-option.selected {
+        border-color: #000;
+    }
+
+    .color-beige { background-color: #F5F5DC; }
+    .color-gray { background-color: #808080; }
+    .color-black { background-color: #000000; }
+
+    .size-option {
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 14px;
+        font-weight: 500;
+        min-width: 45px;
+        text-align: center;
+    }
+
+    .size-option:hover,
+    .size-option.selected {
+        border-color: #000;
+        background-color: #000;
+        color: white;
+    }
+
+    .size-guide {
+        color: #666;
+        font-size: 14px;
+        text-decoration: underline;
+        cursor: pointer;
+        margin-top: 10px;
+        display: inline-block;
+    }
+
+    .product-actions {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .add-to-cart-btn {
+        flex: 1;
+        background: #000;
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 50px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .add-to-cart-btn:hover {
+        background: #333;
+    }
+
+    .wishlist-btn {
+        width: 50px;
+        height: 50px;
+        border: 1px solid #ddd;
+        border-radius: 50%;
+        background: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .wishlist-btn:hover {
+        border-color: #000;
+    }
+
+    .delivery-info {
+        padding: 15px 0;
+        border-top: 1px solid #eee;
+        font-size: 14px;
+        color: #666;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .delivery-icon {
+        width: 20px;
+        height: 20px;
     }
 
     /* Responsive Design */
@@ -590,6 +867,18 @@
             padding: 10px 20px;
             font-size: 14px;
         }
+
+        .product-info-detail {
+            padding: 20px;
+        }
+
+        .product-title {
+            font-size: 24px;
+        }
+
+        .product-price-detail {
+            font-size: 28px;
+        }
     }
 
     /* Loading Animation */
@@ -598,10 +887,25 @@
             opacity: 0;
             transform: translateY(30px);
         }
-
         to {
             opacity: 1;
             transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(50px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
         }
     }
 
@@ -620,7 +924,7 @@
                 The New Innovation:
             </h1>
             <h2 class="hero-subtitle">
-                Form Chaos To Cosmos
+                Form Chaos To Order
             </h2>
             <button class="btn-primary">
                 Get Started
@@ -634,7 +938,7 @@
             <h3 class="section-title">Best Seller</h3>
             <div class="product-grid">
                 <!-- Product 1 -->
-                <div class="product-card">
+                <div class="product-card" data-product="muzan-tshirt" data-price="50000" data-image="storage/image/produk1.jpg">
                     <div class="product-image">
                         <img src="storage/image/produk1.jpg" alt="Muzan T-Shirt">
                     </div>
@@ -654,7 +958,7 @@
                 </div>
 
                 <!-- Product 2 -->
-                <div class="product-card">
+                <div class="product-card" data-product="douma-tshirt" data-price="50000" data-image="storage/image/produk2.jpg">
                     <div class="product-image">
                         <img src="storage/image/produk2.jpg" alt="Douma T-Shirt">
                     </div>
@@ -674,7 +978,7 @@
                 </div>
 
                 <!-- Product 3 -->
-                <div class="product-card">
+                <div class="product-card" data-product="mt-shirt" data-price="50000" data-image="storage/image/produk2.jpg">
                     <div class="product-image">
                         <img src="storage/image/produk2.jpg" alt="MT-Shirt">
                     </div>
@@ -694,14 +998,14 @@
                 </div>
 
                 <!-- Product 4 -->
-                <div class="product-card">
+                <div class="product-card" data-product="muzan-premium" data-price="50000" data-image="storage/image/produk3.jpg">
                     <div class="product-image">
-                        <img src="storage/image/produk3.jpg" alt="Muzan T-Shirt">
+                        <img src="storage/image/produk3.jpg" alt="Muzan T-Shirt Premium">
                     </div>
                     <div class="product-info">
                         <div class="product-content">
                             <div class="product-details">
-                                <h4 class="product-name">Muzan T-Shirt</h4>
+                                <h4 class="product-name">Muzan T-Shirt Premium</h4>
                                 <p class="product-price">IDR 50,000.00</p>
                             </div>
                             <button class="product-arrow">
@@ -765,7 +1069,10 @@
             <!-- Products Grid -->
             <div class="products-grid">
                 @for($i = 1; $i <= 16; $i++)
-                    <div class="product-card">
+                    <div class="product-card" 
+                         data-product="product-{{ $i }}" 
+                         data-price="{{ $i % 4 == 1 ? '150000' : ($i % 4 == 2 ? '350000' : ($i % 4 == 3 ? '350000' : '125000')) }}" 
+                         data-image="storage/image/produk2.jpg">
                         <div class="product-image">
                             <img src="storage/image/produk2.jpg" alt="Product {{ $i }}">
                         </div>
@@ -773,7 +1080,7 @@
                             <div class="product-content">
                                 <div class="product-details">
                                     <h4 class="product-name">
-                                        @if($i % 4 == 1) Cosmos Tshirt
+                                        @if($i % 4 == 1) Fashion Tshirt
                                         @elseif($i % 4 == 2) Hoodie
                                         @elseif($i % 4 == 3) Hoodie
                                         @else White Tshirt
@@ -798,79 +1105,290 @@
                 @endfor
             </div>
 
-        <!-- See All Button -->
-        <div class="see-all-container">
-            <a href="#" class="see-all-btn">See All →</a>
+            <!-- See All Button -->
+            <div class="see-all-container">
+                <a href="#" class="see-all-btn">See All →</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Section -->
+    <div class="section">
+        <div class="container">
+            <h3 class="section-title">Featured</h3>
+            <div class="featured-grid">
+                <!-- Featured Item 1 -->
+                <div class="featured-card featured-universe">
+                    <div class="featured-content">
+                        <img src="storage/image/banner2.jpg" alt="Featured Banner">
+                    </div>
+                </div>
+
+                <!-- Featured Item 2 -->
+                <div class="featured-card featured-minimalist">
+                    <div class="featured-content">
+                        <img src="storage/image/banner-sepatu.jpg" alt="Shoes Banner">
+                    </div>
+                </div>
+
+                <!-- Featured Item 3 -->
+                <div class="featured-card featured-marvel">
+                    <div class="featured-content">
+                        <img src="storage/image/banner-sepatu2.jpg" alt="Shoes Banner 2">
+                    </div>
+                </div>
+
+                <!-- Featured Item 4 -->
+                <div class="featured-card featured-future">
+                    <div class="featured-content">
+                        <img src="storage/image/banner-hoodie.jpg" alt="Hoodie Banner">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Featured Section -->
-<div class="section">
-    <div class="container">
-        <h3 class="section-title">Featured</h3>
-        <div class="featured-grid">
-            <!-- Featured Item 1 -->
-            <div class="featured-card featured-universe">
-                <div class="featured-content">
-                    <img src="storage/image/banner2.jpg">
+<!-- Product Detail Modal -->
+<div class="product-detail-modal" id="productModal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeProductModal()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+        
+        <div class="product-detail">
+            <div class="product-gallery">
+                <img id="mainProductImage" class="main-product-image" src="" alt="Product Image">
+                <div class="thumbnail-gallery">
+                    <img class="thumbnail active" src="" alt="Thumbnail 1">
+                    <img class="thumbnail" src="" alt="Thumbnail 2">
+                    <img class="thumbnail" src="" alt="Thumbnail 3">
+                    <img class="thumbnail" src="" alt="Thumbnail 4">
                 </div>
             </div>
-
-            <!-- Featured Item 2 -->
-            <div class="featured-card featured-minimalist">
-                <div class="featured-content">
-                    <img src="storage/image/banner-sepatu.jpg">
+            
+            <div class="product-info-detail">
+                <div class="brand-name" style="display: none;">
+                    <div class="brand-logo"></div>
+                    <span class="brand-text">BRAND</span>
                 </div>
-            </div>
-
-            <!-- Featured Item 3 -->
-            <div class="featured-card featured-marvel">
-                <div class="featured-content">
-                    <img src="storage/image/banner-sepatu2.jpg">
+                
+                <h1 id="modalProductTitle" class="product-title">Product Name</h1>
+                
+                <div class="product-rating">
+                    <div class="stars">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star empty">★</span>
+                    </div>
+                    <span class="rating-text">4.2 reviews</span>
                 </div>
-            </div>
-
-            <!-- Featured Item 4 -->
-            <div class="featured-card featured-future">
-                <div class="featured-content">
-                    <img src="storage/image/banner-hoodie.jpg">
+                
+                <div id="modalProductPrice" class="product-price-detail">$199.00</div>
+                
+                <div class="product-options">
+                    <div class="option-group">
+                        <label class="option-label">Color <span id="selectedColor">White</span></label>
+                        <div class="color-options">
+                            <div class="color-option color-beige selected" data-color="Beige"></div>
+                            <div class="color-option color-gray" data-color="Gray"></div>
+                            <div class="color-option color-black" data-color="Black"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label class="option-label">Size <span id="selectedSize">EU / Men</span></label>
+                        <div class="size-options">
+                            <button class="size-option" data-size="40.5">40.5</button>
+                            <button class="size-option selected" data-size="41">41</button>
+                            <button class="size-option" data-size="42">42</button>
+                            <button class="size-option" data-size="43">43</button>
+                            <button class="size-option" data-size="43.5">43.5</button>
+                            <button class="size-option" data-size="44">44</button>
+                            <button class="size-option" data-size="44.5">44.5</button>
+                            <button class="size-option" data-size="45">45</button>
+                            <button class="size-option" data-size="46">46</button>
+                        </div>
+                        <a href="#" class="size-guide">Size guide</a>
+                    </div>
+                </div>
+                
+                <div class="product-actions">
+                    <button class="add-to-cart-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="9" cy="21" r="1"></circle>
+                            <circle cx="20" cy="21" r="1"></circle>
+                            <path d="m1 1 4 4 5.5 9H21l-4-8H7.2"></path>
+                        </svg>
+                        Add to cart
+                    </button>
+                    <button class="wishlist-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="delivery-info">
+                    <svg class="delivery-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="1" y="3" width="15" height="13"></rect>
+                        <polygon points="16,8 20,8 23,11 23,16 16,16"></polygon>
+                        <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                        <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                    </svg>
+                    Free delivery on orders over $30.0
                 </div>
             </div>
         </div>
     </div>
-</div>
 </div>
 
 <script>
+    // Product data untuk modal
+    const productData = {
+        'muzan-tshirt': {
+            name: 'Muzan T-Shirt',
+            price: 'IDR 50,000.00',
+            image: 'storage/image/produk1.jpg'
+        },
+        'douma-tshirt': {
+            name: 'Douma T-Shirt', 
+            price: 'IDR 50,000.00',
+            image: 'storage/image/produk2.jpg'
+        },
+        'mt-shirt': {
+            name: 'MT-Shirt',
+            price: 'IDR 50,000.00', 
+            image: 'storage/image/produk2.jpg'
+        },
+        'muzan-premium': {
+            name: 'Muzan T-Shirt Premium',
+            price: 'IDR 50,000.00',
+            image: 'storage/image/produk3.jpg'
+        }
+    };
+
+    // Generate dynamic product data for collections
+    for(let i = 1; i <= 16; i++) {
+        const productType = i % 4;
+        let name, price;
+        
+        if(productType === 1) {
+            name = 'Fashion Tshirt';
+            price = 'IDR 150,000.00';
+        } else if(productType === 2) {
+            name = 'Hoodie';
+            price = 'IDR 350,000.00';
+        } else if(productType === 3) {
+            name = 'Hoodie';
+            price = 'IDR 350,000.00';
+        } else {
+            name = 'White Tshirt';
+            price = 'IDR 125,000.00';
+        }
+        
+        productData[`product-${i}`] = {
+            name: name,
+            price: price,
+            image: 'storage/image/produk2.jpg'
+        };
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         // Filter functionality
         const filterButtons = document.querySelectorAll('.filter-btn');
-
         filterButtons.forEach(button => {
             button.addEventListener('click', function() {
-                // Remove active class from all buttons
                 filterButtons.forEach(btn => btn.classList.remove('active'));
-
-                // Add active class to clicked button
                 this.classList.add('active');
-
-                // Filter logic here
                 const filterType = this.getAttribute('data-filter');
                 console.log('Filter by:', filterType);
             });
         });
 
-        // Add click events to product cards
+        // Product card click events
         const productCards = document.querySelectorAll('.product-card');
         productCards.forEach(card => {
             card.addEventListener('click', function() {
-                const productName = this.querySelector('.product-name');
-                if (productName) {
-                    console.log('Product clicked:', productName.textContent);
-                }
+                const productId = this.getAttribute('data-product');
+                openProductModal(productId);
             });
         });
+
+        // Color selection
+        const colorOptions = document.querySelectorAll('.color-option');
+        colorOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                colorOptions.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                document.getElementById('selectedColor').textContent = this.getAttribute('data-color');
+            });
+        });
+
+        // Size selection
+        const sizeOptions = document.querySelectorAll('.size-option');
+        sizeOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                sizeOptions.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        // Thumbnail click
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        thumbnails.forEach(thumb => {
+            thumb.addEventListener('click', function() {
+                thumbnails.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById('mainProductImage').src = this.src;
+            });
+        });
+
+        // Modal close on background click
+        document.getElementById('productModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeProductModal();
+            }
+        });
+    });
+
+    function openProductModal(productId) {
+        const modal = document.getElementById('productModal');
+        const product = productData[productId];
+        
+        if (!product) return;
+
+        // Update modal content
+        document.getElementById('modalProductTitle').textContent = product.name;
+        document.getElementById('modalProductPrice').textContent = product.price;
+        document.getElementById('mainProductImage').src = product.image;
+        
+        // Update all thumbnails to show the same image (bisa disesuaikan dengan gambar yang berbeda)
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        thumbnails.forEach(thumb => {
+            thumb.src = product.image;
+        });
+
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeProductModal() {
+        const modal = document.getElementById('productModal');
+        modal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeProductModal();
+        }
     });
 </script>
 @endsection

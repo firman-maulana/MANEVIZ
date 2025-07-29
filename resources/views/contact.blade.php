@@ -7,6 +7,7 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 40px 20px;
+            background-color: white;
         }
 
         .contact-section {
@@ -17,16 +18,19 @@
         }
 
         .divider {
-            width: 1px;
-            background-color: #e1e1e1;
-            height: 100%;
+            width: 2px;
+            background-color: black;
+            height: 600px;
             min-height: 500px;
+            margin-top: 85px;
+            border-radius: 20px;
         }
 
         .form-section h1 {
             font-size: 2.5rem;
             font-weight: 600;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
+            margin-top: 30px;
             color: #000;
         }
 
@@ -51,11 +55,11 @@
         .form-group textarea {
             width: 100%;
             padding: 12px 16px;
-            border: 2px solid #e1e1e1;
+            border: 1px solid #000000ff;
             border-radius: 4px;
             font-size: 1rem;
             transition: border-color 0.3s ease;
-            background-color: white;
+            background-color: transparent;
         }
 
         .form-group input:focus,
@@ -104,7 +108,8 @@
         .social-section h2 {
             font-size: 1.5rem;
             font-weight: 600;
-            margin-bottom: 30px;
+            margin-bottom: 15px;
+            margin-top: 40px;
             color: #000;
         }
 
