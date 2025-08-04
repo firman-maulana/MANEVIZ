@@ -5,55 +5,90 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Laravel\Socialite\Facades\Socialite;
 
 class RegisterController extends Controller
 {
-    public function showsignUpForm(): View
+    public function showsignUpForm()
     {
-        return view('auth.signUp');
+        return view('auth.register');
     }
 
     public function signUp(Request $request)
     {
-        $validated = $request->validate([
-            'name'       => 'required|string|max:255',
-            'email'      => 'required|email|max:255|unique:users',
-            'password'   => 'required|string|min:8|confirmed',
-            'phone'      => 'nullable|string|max:20',
-            'gender'     => 'nullable|in:male,female',
-            'birth_date' => 'nullable|date',
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+            'terms' => 'required|accepted',
+        ], [
+            'name.required' => 'Nama wajib diisi',
+            'email.required' => 'Email wajib diisi',
+            'email.email' => 'Format email tidak valid',
+            'email.unique' => 'Email sudah terdaftar',
+            'password.required' => 'Password wajib diisi',
+            'password.min' => 'Password minimal 8 karakter',
+            'password.confirmed' => 'Konfirmasi password tidak cocok',
+            'terms.required' => 'Anda harus menyetujui syarat dan ketentuan',
         ]);
 
-        // Create user dengan hanya field yang ada di database
-        $userData = [
-            'name'     => $validated['name'],
-            'email'    => $validated['email'],
-            'password' => Hash::make($validated['password']),
-        ];
-
-        // Tambahkan field opsional hanya jika ada
-        if (!empty($validated['phone'])) {
-            $userData['phone'] = $validated['phone'];
-        }
-
-        if (!empty($validated['gender'])) {
-            $userData['gender'] = $validated['gender'];
-        }
-
-        if (!empty($validated['birth_date'])) {
-            $userData['birth_date'] = $validated['birth_date'];
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
         }
 
         try {
-            $user = User::create($userData);
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'role' => 'customer',
+                'is_active' => true,
+            ]);
+
             Auth::login($user);
 
-            return redirect('/beranda')->with('success', 'Selamat datang di MANEVIZ! Akun Anda berhasil dibuat.');
+            return redirect('/')->with('success', 'Akun berhasil dibuat! Selamat datang, ' . $user->name . '!');
         } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Terjadi kesalahan saat membuat akun. Silakan coba lagi.'])->withInput();
+            return redirect()->back()
+                ->withErrors(['error' => 'Terjadi kesalahan saat membuat akun.'])
+                ->withInput();
         }
     }
+
+    // ✅ Tambahan untuk Register/Login dengan Google
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->redirect();
+    }
+
+    public function handleGoogleCallback()
+{
+    try {
+        // Panggil stateless SEBELUM user()
+        $googleUser = Socialite::driver('google')->stateless()->user();
+
+        $user = User::where('email', $googleUser->getEmail())->first();
+
+        if (!$user) {
+            $user = User::create([
+                'name' => $googleUser->getName(),
+                'email' => $googleUser->getEmail(),
+                'password' => Hash::make(uniqid()), // password acak
+                'role' => 'customer',
+                'is_active' => true,
+            ]);
+        }
+
+        Auth::login($user);
+
+        return redirect('/')->with('success', 'Login menggunakan Google berhasil. Selamat datang, ' . $user->name . '!');
+    } catch (\Exception $e) {
+        return redirect('/signUp')->withErrors(['error' => 'Gagal login dengan Google.']);
+    }
+}
 }

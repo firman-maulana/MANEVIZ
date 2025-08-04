@@ -265,15 +265,60 @@
     /* Hero Section */
     .hero {
         height: 100vh;
-        background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('storage/image/banner.png');
+        background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('storage/image/bannerfiks.jpeg');
         background-size: cover;
         background-position: center;
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         position: relative;
+        padding-left: 80px;
     }
 
+    .hero-content {
+        max-width: 600px;
+        color: white;
+        z-index: 2;
+    }
+
+    .hero-content h1 {
+        font-size: 4.5rem;
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        letter-spacing: -2px;
+    }
+
+    .hero-content .highlight {
+        color: #ffffff;
+        font-weight: 900;
+    }
+
+    /* Responsive untuk hero text */
+    @media (max-width: 768px) {
+        .hero {
+            padding-left: 40px;
+            padding-right: 40px;
+        }
+
+        .hero-content h1 {
+            font-size: 3rem;
+            letter-spacing: -1px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .hero {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .hero-content h1 {
+            font-size: 2.2rem;
+            letter-spacing: -0.5px;
+        }
+    }
 
     /* Responsive Design */
     @media (max-width: 768px) {
@@ -338,7 +383,13 @@
 
 <!-- Hero Section -->
 <section class="hero" id="home">
-    <!-- Hero section is now empty, showing only the background image -->
+    <div class="hero-content">
+        <h1>
+            Built For The<br>
+            <span class="highlight">Grind</span>, Styled By<br>
+            <span class="highlight">Chaos</span>
+        </h1>
+    </div>
 </section>
 
 <!-- styleback -->
@@ -450,7 +501,7 @@
     </div>
 
     <h2>The Latest</h2>
-    <img src="storage/image/banner2.jpg" class="banner2">
+    <img src="storage/image/banner.png" class="banner2">
 </section>
 
 <!-- Timeless Choice -->

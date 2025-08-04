@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css">
-    <title>MANEVIZ</title>
+    <title>@yield('title', 'MANEVIZ')</title>
     <style>
         * {
             margin: 0;
@@ -93,13 +94,43 @@
             width: 100%;
         }
 
-        .logo {
+        /* Logo Container Styles */
+        .logo-container {
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
             height: 93px;
             width: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo {
+            height: 93px;
+            width: auto;
             object-fit: contain;
+            transition: opacity 0.3s ease;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .logo-white {
+            opacity: 1;
+        }
+
+        .logo-black {
+            opacity: 0;
+        }
+
+        .navbar.scrolled .logo-white {
+            opacity: 0;
+        }
+
+        .navbar.scrolled .logo-black {
+            opacity: 1;
         }
 
         .nav-right {
@@ -182,6 +213,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            text-decoration: none;
         }
 
         .navbar.scrolled .nav-icon {
@@ -196,7 +228,60 @@
             position: relative;
         }
 
-        /* Footer Styles */
+        /* User Dropdown */
+        .user-dropdown {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 12px 20px;
+            color: #333;
+            text-decoration: none;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background: #f8f9fa;
+            color: #ff6b6b;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item.logout {
+            color: #dc3545;
+        }
+
+        .dropdown-item.logout:hover {
+            background: #dc3545;
+            color: white;
+        }
+
         /* Footer Styles */
         .footer {
             background: #000;
@@ -209,7 +294,6 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 25px 20px;
-            /* Reduced from 40px */
             position: relative;
         }
 
@@ -217,16 +301,13 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 40px;
-            /* Reduced from 60px */
             align-items: start;
         }
 
-        /* Left Section - Brand and Social */
         .footer-left {
             display: flex;
             flex-direction: column;
             gap: 20px;
-            /* Reduced from 30px */
         }
 
         .footer-logo {
@@ -235,24 +316,17 @@
             margin-left: -8px;
             gap: 10px;
             margin-bottom: 1px;
-            /* Reduced from 20px */
         }
 
-
-        .footer-logo h2 {
-            font-size: 1.6rem;
-            /* Reduced from 1.8rem */
-            font-weight: 700;
-            color: white;
-            letter-spacing: 2px;
+        .footer-logo img {
+            height: 80px;
+            width: auto;
         }
 
         .footer-social-section h4 {
             font-size: 0.85rem;
-            /* Reduced from 0.9rem */
             font-weight: 600;
             margin-bottom: 12px;
-            /* Reduced from 15px */
             color: rgba(255, 255, 255, 0.8);
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -261,7 +335,6 @@
         .footer-social {
             display: flex;
             gap: 10px;
-            /* Reduced from 12px */
             flex-wrap: wrap;
         }
 
@@ -270,15 +343,12 @@
             align-items: center;
             justify-content: center;
             width: 36px;
-            /* Reduced from 40px */
             height: 36px;
-            /* Reduced from 40px */
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 8px;
             color: white;
             font-size: 1rem;
-            /* Reduced from 1.1rem */
             transition: all 0.3s ease;
             text-decoration: none;
         }
@@ -293,19 +363,16 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
-            /* Reduced from 10px */
             max-width: 200px;
         }
 
         .auth-btn {
             padding: 10px 20px;
-            /* Reduced from 12px 24px */
             border: 2px solid white;
             border-radius: 25px;
             background: transparent;
             color: white;
             font-size: 0.85rem;
-            /* Reduced from 0.9rem */
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -335,12 +402,10 @@
             color: white;
         }
 
-        /* Right Section - Links */
         .footer-right {
             display: flex;
             flex-direction: column;
             gap: 15px;
-            /* Reduced from 20px */
             align-items: flex-end;
             text-align: right;
         }
@@ -350,18 +415,15 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
-            /* Reduced from 30px */
         }
 
-        .copy{
+        .copy {
             color: rgba(255, 255, 255, 0.8);
             text-decoration: none;
             font-size: 0.95rem;
-            /* Reduced from 1rem */
             font-weight: 500;
             transition: all 0.3s ease;
             padding: 6px 0;
-            /* Reduced from 8px */
             border-bottom: 1px solid transparent;
         }
 
@@ -369,11 +431,9 @@
             color: rgba(255, 255, 255, 0.8);
             text-decoration: none;
             font-size: 0.95rem;
-            /* Reduced from 1rem */
             font-weight: 500;
             transition: all 0.3s ease;
             padding: 6px 0;
-            /* Reduced from 8px */
             border-bottom: 1px solid transparent;
         }
 
@@ -382,21 +442,8 @@
             border-bottom-color: rgba(255, 255, 255, 0.3);
         }
 
-        /* Footer Bottom */
-        .footer-bottom {
-            margin-top: 25px;
-            /* Reduced from 40px */
-            padding-top: 15px;
-            /* Reduced from 20px */
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: right;
-        }
-
-        .footer-copyright {
-            font-size: 0.8rem;
-            /* Reduced from 0.85rem */
-            color: rgba(255, 255, 255, 0.6);
-            font-weight: 400;
+        hr {
+            width: 580px;
         }
 
         /* Responsive Design */
@@ -404,16 +451,11 @@
             .footer-main {
                 grid-template-columns: 1fr;
                 gap: 30px;
-                /* Reduced from 40px */
                 text-align: center;
             }
 
             .footer-right {
                 align-items: center;
-                text-align: center;
-            }
-
-            .footer-bottom {
                 text-align: center;
             }
 
@@ -425,67 +467,10 @@
                 max-width: 100%;
                 align-self: center;
             }
-        }
 
-        @media (max-width: 480px) {
-            .footer-content {
-                padding: 20px 15px;
-                /* Reduced from 30px */
+            .nav-menu {
+                display: none;
             }
-
-            .footer-logo h2 {
-                font-size: 1.4rem;
-                /* Reduced from 1.5rem */
-            }
-
-            .social-icon {
-                width: 32px;
-                /* Reduced from 35px */
-                height: 32px;
-                /* Reduced from 35px */
-                font-size: 0.9rem;
-                /* Reduced from 1rem */
-            }
-
-            .auth-btn {
-                padding: 8px 18px;
-                /* Reduced from 10px 20px */
-                font-size: 0.8rem;
-                /* Reduced from 0.85rem */
-            }
-        }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .footer-main>* {
-            animation: fadeInUp 0.6s ease forwards;
-        }
-
-        .footer-left {
-            animation-delay: 0.1s;
-        }
-
-        .footer-right {
-            animation-delay: 0.2s;
-        }
-
-        hr {
-            width: 580px;
-        }
-        .footer-logo img{
-            height: 80px;
-            width: auto;
         }
     </style>
 </head>
@@ -496,17 +481,16 @@
     <nav class="navbar" id="navbar">
         <div class="nav-content">
             <ul class="nav-menu">
-                @auth
                 <li><a class="nav-link" href="{{ url('/') }}">Home</a></li>
-                @else
-                <li><a class="nav-link" href="{{ url('/') }}">Home</a></li>
-                @endauth
                 <li><a class="nav-link" href="{{ url('/allProduct') }}">Products</a></li>
                 <li><a class="nav-link" href="{{ url('/about') }}">About</a></li>
                 <li><a class="nav-link" href="{{ url('/contact') }}">Contact</a></li>
             </ul>
 
-            <img src="storage/image/maneviz.png" alt="TIMELESS Logo" class="logo">
+            <div class="logo-container">
+                <img src="{{ asset('storage/image/maneviz-white.png') }}" alt="MANEVIZ Logo" class="logo logo-white">
+                <img src="{{ asset('storage/image/maneviz.png') }}" alt="MANEVIZ Logo" class="logo logo-black">
+            </div>
 
             <div class="nav-right">
                 <div class="search-container">
@@ -516,15 +500,32 @@
 
                 @auth
                 <div class="nav-icons">
-                    <span class="nav-icon cart-icon" onclick="toggleCart()">
+                    <a href="{{ url('/cart') }}" class="nav-icon cart-icon">
                         <i class="bi bi-cart3"></i>
-                    </span>
-                    <span class="nav-icon">
+                    </a>
+                    <a href="{{ url('/wishlist') }}" class="nav-icon">
                         <i class="bi bi-heart"></i>
-                    </span>
-                    <span class="nav-icon">
+                    </a>
+                    <div class="nav-icon user-dropdown" onclick="toggleUserDropdown()">
                         <i class="bi bi-person-circle"></i>
-                    </span>
+                        <div class="dropdown-menu" id="userDropdown">
+                            <a href="{{ url('/profile') }}" class="dropdown-item">
+                                <i class="bi bi-person me-2"></i>Profile
+                            </a>
+                            <a href="{{ url('/orders') }}" class="dropdown-item">
+                                <i class="bi bi-bag me-2"></i>My Orders
+                            </a>
+                            <a href="{{ url('/settings') }}" class="dropdown-item">
+                                <i class="bi bi-gear me-2"></i>Settings
+                            </a>
+                            <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                                @csrf
+                                <button type="submit" class="dropdown-item logout" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
                 @endauth
             </div>
@@ -537,14 +538,13 @@
     </main>
 
     <!-- Footer -->
-    <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-main">
                 <!-- Left Section -->
                 <div class="footer-left">
                     <div class="footer-logo">
-                        <img src="storage/image/maneviz-white.png">
+                        <img src="{{ asset('storage/image/maneviz-white.png') }}" alt="MANEVIZ">
                     </div>
 
                     <div class="footer-social-section">
@@ -574,10 +574,22 @@
                         </div>
                     </div>
 
+                    @guest
                     <div class="auth-buttons">
-                        <a href="#" class="auth-btn sign-in">Sign In</a>
-                        <a href="#" class="auth-btn sign-up">Sign Up</a>
+                        <a href="{{ route('signIn') }}" class="auth-btn sign-in">Sign In</a>
+                        <a href="{{ route('signUp') }}" class="auth-btn sign-up">Sign Up</a>
                     </div>
+                    @else
+                    <div class="auth-buttons">
+                        <div style="text-align: left; color: rgba(255, 255, 255, 0.8); font-size: 0.9rem;">
+                            Selamat datang, <strong>{{ Auth::user()->name }}</strong>!
+                        </div>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="auth-btn sign-in">Logout</button>
+                        </form>
+                    </div>
+                    @endguest
                 </div>
 
                 <!-- Right Section -->
@@ -595,11 +607,9 @@
                     </ul>
                 </div>
             </div>
-
-            <!-- Footer Bottom -->
-
         </div>
     </footer>
+
     <script>
         // Navbar scroll effect
         window.addEventListener('scroll', function() {
@@ -608,6 +618,22 @@
                 navbar.classList.add('scrolled');
             } else {
                 navbar.classList.remove('scrolled');
+            }
+        });
+
+        // User dropdown toggle
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('userDropdown');
+            const userIcon = document.querySelector('.user-dropdown');
+            
+            if (dropdown && !userIcon.contains(event.target)) {
+                dropdown.classList.remove('show');
             }
         });
 
@@ -623,7 +649,6 @@
                 }
             });
         });
-
 
         // Add smooth scrolling and interaction effects
         document.addEventListener('DOMContentLoaded', function() {
@@ -650,16 +675,6 @@
                 observer.observe(el);
             });
 
-            // Add click handlers for auth buttons
-            document.querySelectorAll('.auth-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const action = this.classList.contains('sign-in') ? 'Sign In' : 'Sign Up';
-                    console.log(`${action} clicked`);
-                    // Add your authentication logic here
-                });
-            });
-
             // Add click handlers for social icons
             document.querySelectorAll('.social-icon').forEach(icon => {
                 icon.addEventListener('click', function(e) {
@@ -671,7 +686,6 @@
             });
         });
     </script>
-
 
 </body>
 
