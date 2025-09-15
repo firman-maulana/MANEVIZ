@@ -13,8 +13,8 @@ class StatsDashboard extends BaseWidget
         $countUsers = UsersModel::count();
         return [
             Stat::make('Jumlah User', $countUsers . ' users'),
-            Stat::make('Bounce rate', '21%'),
-            Stat::make('Average time on page', '3:12'),
+            // Stat::make('Bounce rate', '21%'),
+            // Stat::make('Average time on page', '3:12'),
         ];
     }
 }
