@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
+use App\Models\Users; // Menggunakan Users
 
 class AuthController extends Controller
 {
@@ -20,7 +20,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Handle login request
+     * Handle login request - HANYA UNTUK CUSTOMER
      */
     public function signIn(Request $request)
     {
@@ -43,7 +43,8 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
         $remember = $request->has('remember');
 
-        if (Auth::attempt($credentials, $remember)) {
+        // ⭐ Gunakan guard 'web' (untuk tabel users)
+        if (Auth::guard('web')->attempt($credentials, $remember)) {
             $request->session()->regenerate();
 
             $user = Auth::user();
@@ -55,12 +56,14 @@ class AuthController extends Controller
                     ->with('error', 'Akun Anda tidak aktif. Silakan hubungi administrator.');
             }
 
-            // Redirect based on role
+            // ⭐ BLOKIR ADMIN - Jangan biarkan admin login di sini
             if ($user->role === 'admin') {
-                return redirect()->intended('/admin/dashboard')
-                    ->with('success', 'Selamat datang, Admin ' . $user->name . '!');
+                Auth::logout();
+                return redirect()->back()
+                    ->with('error', 'Admin tidak dapat login melalui halaman ini. Silakan gunakan panel admin.');
             }
 
+            // Hanya customer yang boleh login di sini
             return redirect()->intended('/')
                 ->with('success', 'Selamat datang, ' . $user->name . '!');
         }
@@ -75,7 +78,7 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        Auth::logout();
+        Auth::guard('web')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

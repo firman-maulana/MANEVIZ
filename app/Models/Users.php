@@ -13,7 +13,7 @@ class Users extends Authenticatable // HARUS User, bukan Users
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
-        'name',        // PENTING: pastikan 'name' ada di fillable
+        'name',
         'email',
         'password',
         'phone',
@@ -32,7 +32,7 @@ class Users extends Authenticatable // HARUS User, bukan Users
         'email_verified_at' => 'datetime',
         'birth_date' => 'date',
         'is_active' => 'boolean',
-        'password' => 'hashed', // Laravel 10+ otomatis hash
+        'password' => 'hashed',
     ];
 
     protected $attributes = [
@@ -40,7 +40,7 @@ class Users extends Authenticatable // HARUS User, bukan Users
         'is_active' => true,
     ];
 
-    // Sisanya sama seperti sebelumnya...
+    // Method-method yang ada tetap sama
     public function hasRole($role)
     {
         return $this->role === $role;

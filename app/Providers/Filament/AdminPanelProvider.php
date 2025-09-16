@@ -35,6 +35,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->authGuard('admin') // ⭐ PENTING: Guard admin terpisah
             ->brandLogo(asset('image/maneviz-white.png'))
             ->brandName('MANEVIZ')
             ->brandLogoHeight('5.5rem')
@@ -48,7 +49,6 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                // Custom Dashboard Widgets (in order of appearance)
                 StatsOverviewWidget::class,
                 OrdersOverviewWidget::class,
                 OrderStatusWidget::class,
@@ -56,10 +56,6 @@ class AdminPanelProvider extends PanelProvider
                 ReviewsStatsWidget::class,
                 TopProductsWidget::class,
                 RecentOrdersWidget::class,
-                
-                // Default Filament Widgets (optional - can be removed if not needed)
-                // Widgets\AccountWidget::class,
-                // Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

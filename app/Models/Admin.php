@@ -57,13 +57,34 @@ class Admin extends Authenticatable
     ];
 
     /**
+     * ⭐ TAMBAHAN: Accessor untuk name (dibutuhkan Filament)
+     * Filament mencari field 'name', tapi kita punya 'username'
+     */
+    public function getNameAttribute()
+    {
+        return $this->username;
+    }
+
+    /**
+     * ⭐ PERBAIKAN: Gunakan ID sebagai identifier, bukan email
      * Get the name of the unique identifier for the user.
      *
      * @return string
      */
     public function getAuthIdentifierName()
     {
-        return 'email'; // atau 'username' jika ingin login dengan username
+        return 'id'; // ⭐ Ubah dari 'email' ke 'id'
+    }
+
+    /**
+     * ⭐ PERBAIKAN: Return ID sebagai identifier
+     * Get the unique identifier for the user.
+     *
+     * @return mixed
+     */
+    public function getAuthIdentifier()
+    {
+        return $this->getKey(); // Return ID, bukan email
     }
 
     /**

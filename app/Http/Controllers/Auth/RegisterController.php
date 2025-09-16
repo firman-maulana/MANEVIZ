@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\Users; // Menggunakan Users
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Controllers\Auth\AuthController;
 use Laravel\Socialite\Facades\Socialite;
 
 class RegisterController extends Controller
@@ -43,15 +42,16 @@ class RegisterController extends Controller
         }
 
         try {
-            $user = User::create([
+            // ⭐ HANYA buat customer di tabel users
+            $user = Users::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'role' => 'customer',
+                'role' => 'customer', // ⭐ PASTI customer
                 'is_active' => true,
             ]);
 
-            Auth::login($user);
+            Auth::guard('web')->login($user);
 
             return redirect('/')->with('success', 'Akun berhasil dibuat! Selamat datang, ' . $user->name . '!');
         } catch (\Exception $e) {
@@ -61,7 +61,7 @@ class RegisterController extends Controller
         }
     }
 
-    // ✅ Tambahan untuk Register/Login dengan Google
+    // Google OAuth methods tetap sama...
     public function redirectToGoogle()
     {
         return Socialite::driver('google')->stateless()->redirect();
@@ -72,19 +72,19 @@ class RegisterController extends Controller
         try {
             $googleUser = Socialite::driver('google')->stateless()->user();
 
-            $user = User::where('email', $googleUser->getEmail())->first();
+            $user = Users::where('email', $googleUser->getEmail())->first();
 
             if (!$user) {
-                $user = User::create([
+                $user = Users::create([
                     'name' => $googleUser->getName(),
                     'email' => $googleUser->getEmail(),
-                    'password' => Hash::make(uniqid()), // password acak
-                    'role' => 'customer',
+                    'password' => Hash::make(uniqid()),
+                    'role' => 'customer', // ⭐ PASTI customer
                     'is_active' => true,
                 ]);
             }
 
-            Auth::login($user);
+            Auth::guard('web')->login($user);
 
             return redirect('/')->with('success', 'Login menggunakan Google berhasil. Selamat datang, ' . $user->name . '!');
         } catch (\Exception $e) {
