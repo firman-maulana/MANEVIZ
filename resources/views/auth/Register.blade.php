@@ -873,15 +873,15 @@
 
                     <!-- Nama Lengkap Field -->
                     <div class="form-group">
-                        <label for="full_name" class="form-label">Nama Lengkap</label>
+                        <label for="name" class="form-label">Nama Lengkap</label>
                         <input type="text"
-                            class="form-control @error('full_name') is-invalid @enderror"
-                            id="full_name"
-                            name="full_name"
-                            value="{{ old('full_name') }}"
+                            class="form-control @error('name') is-invalid @enderror"
+                            id="name"
+                            name="name"
+                            value="{{ old('name') }}"
                             placeholder="Masukkan nama lengkap Anda"
                             required autofocus>
-                        @error('full_name')
+                        @error('name')
                         <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
