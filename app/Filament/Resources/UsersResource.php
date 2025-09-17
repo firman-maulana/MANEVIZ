@@ -42,6 +42,13 @@ class UsersResource extends Resource
                 TextColumn::make('password')
                     ->formatStateUsing(fn($state) => '********')
                     ->label('Password'),
+                TextColumn::make('phone'),
+                TextColumn::make('birth_date'),
+                TextColumn::make('gender'),
+                TextColumn::make('is_active'),
+
+
+
             ])
             ->filters([
                 //
