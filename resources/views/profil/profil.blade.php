@@ -23,6 +23,7 @@
             grid-template-columns: 280px 1fr;
             gap: 20px;
             align-items: start;
+            padding-top: 90px;
         }
 
         /* Left Sidebar */
@@ -88,7 +89,7 @@
         }
 
         .profile-info-section:last-child {
-            border-bottom: 1px solid #000;
+            border-bottom: none;
             margin-bottom: 0;
         }
 
@@ -619,7 +620,7 @@
                         <path d="M8 18c0-2 2-4 4-4s4 2 4 4" stroke="#666" stroke-width="2" stroke-linecap="round"/>
                     </svg>
                 </div>
-                <div class="profile-name">Jhonattan Smith</div>
+                <div class="profile-name">{{ $user->name }}</div>
             </div>
 
             <!-- Identity Section -->
@@ -627,11 +628,11 @@
                 <div class="section-title">Identity</div>
                 <div class="info-item">
                     <div class="info-label">Birth Date</div>
-                    <div class="info-value">6 Juli 2003</div>
+                    <div class="info-value">{{ $user->birth_date ? $user->birth_date->format('j F Y') : 'Tidak diset' }}</div>
                 </div>
                 <div class="info-item">
                     <div class="info-label">Gender</div>
-                    <div class="info-value">Male</div>
+                    <div class="info-value">{{ $user->gender_label }}</div>
                 </div>
             </div>
 
@@ -640,19 +641,34 @@
                 <div class="section-title">Contacts</div>
                 <div class="info-item">
                     <div class="info-label">Phone</div>
-                    <div class="info-value">+62 812 9245 8877</div>
+                    <div class="info-value">{{ $user->phone ?? 'Tidak diset' }}</div>
                 </div>
                 <div class="info-item">
                     <div class="info-label">E-Mail</div>
-                    <div class="info-value">Yuka@Gmail.Com</div>
+                    <div class="info-value">{{ $user->email }}</div>
                 </div>
             </div>
         </div>
 
         <!-- Main Content -->
         <div class="profile-main">
+            <!-- Display alert messages -->
+            @if(session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
+
+            @if($errors->any())
+                <div class="alert alert-error">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <div class="main-header">
-                <div class="main-header-greeting">Hello, Jonattan!</div>
+                <div class="main-header-greeting">Hello, {{ explode(' ', $user->name)[0] }}!</div>
                 <div class="main-header-actions">
                     <button class="btn-header" onclick="openModal('profileModal')">Edit Profile</button>
                     <button class="btn-header" onclick="openModal('passwordModal')">Edit Password</button>
@@ -661,66 +677,28 @@
             </div>
 
             <div class="order-list">
-                <!-- Sample data untuk demo sesuai gambar -->
-                <div class="order-item">
-                    <div class="order-info">
-                        <div class="order-details">
-                            <div class="product-name">Kaos Murzan T-Shirt</div>
-                            <div class="order-date">06:40 Des 20, 2025</div>
-                        </div>
+                @forelse($orders as $order)
+                    @foreach($order->orderItems as $orderItem)
+                        <a href="{{ route('orders.show', $order->order_number) }}" class="order-item" style="text-decoration: none; color: inherit;">
+                            <div class="order-info">
+                                <div class="order-details">
+                                    <div class="product-name">{{ $orderItem->product_name }}</div>
+                                    <div class="order-date">{{ $order->created_at->format('H:i M d, Y') }}</div>
+                                </div>
+                            </div>
+                            <div class="order-price">Rp {{ number_format($orderItem->subtotal, 0, ',', '.') }}</div>
+                            <div class="order-status status-{{ strtolower($order->status) }}">
+                                {{ ucfirst($order->status) }}
+                            </div>
+                            <div class="order-arrow">&rsaquo;</div>
+                        </a>
+                    @endforeach
+                @empty
+                    <div class="empty-state">
+                        <div class="empty-state-title">Belum ada pesanan</div>
+                        <div class="empty-state-text">Yuk mulai berbelanja sekarang!</div>
                     </div>
-                    <div class="order-price">$ 126.50</div>
-                    <div class="order-status status-pending">Awaiting</div>
-                    <div class="order-arrow">&rsaquo;</div>
-                </div>
-                
-                <div class="order-item">
-                    <div class="order-info">
-                        <div class="order-details">
-                            <div class="product-name">Kaos Murzan T-Shirt</div>
-                            <div class="order-date">06:40 Des 20, 2025</div>
-                        </div>
-                    </div>
-                    <div class="order-price">$ 126.50</div>
-                    <div class="order-status status-pending">Awaiting</div>
-                    <div class="order-arrow">&rsaquo;</div>
-                </div>
-                
-                <div class="order-item">
-                    <div class="order-info">
-                        <div class="order-details">
-                            <div class="product-name">Kaos Murzan T-Shirt</div>
-                            <div class="order-date">06:40 Des 20, 2025</div>
-                        </div>
-                    </div>
-                    <div class="order-price">$ 126.50</div>
-                    <div class="order-status status-pending">Awaiting</div>
-                    <div class="order-arrow">&rsaquo;</div>
-                </div>
-                
-                <div class="order-item">
-                    <div class="order-info">
-                        <div class="order-details">
-                            <div class="product-name">Kaos Murzan T-Shirt</div>
-                            <div class="order-date">06:40 Des 20, 2025</div>
-                        </div>
-                    </div>
-                    <div class="order-price">$ 126.50</div>
-                    <div class="order-status status-pending">Awaiting</div>
-                    <div class="order-arrow">&rsaquo;</div>
-                </div>
-                
-                <div class="order-item">
-                    <div class="order-info">
-                        <div class="order-details">
-                            <div class="product-name">Kaos Murzan T-Shirt</div>
-                            <div class="order-date">06:40 Des 20, 2025</div>
-                        </div>
-                    </div>
-                    <div class="order-price">$ 126.50</div>
-                    <div class="order-status status-delivered">Delivered</div>
-                    <div class="order-arrow">&rsaquo;</div>
-                </div>
+                @endforelse
             </div>
         </div>
     </div>
@@ -733,36 +711,45 @@
                 <button class="modal-close" onclick="closeModal('profileModal')">&times;</button>
             </div>
             <div class="modal-body">
-                <form>
+                <form method="POST" action="{{ route('profil.update') }}">
+                    @csrf
+                    @method('PUT')
+                    
                     <div class="radio-group">
                         <div class="radio-option">
-                            <input type="radio" id="male" name="gender" value="male" checked>
+                            <input type="radio" id="male" name="gender" value="male" 
+                                   {{ $user->gender === 'male' ? 'checked' : '' }}>
                             <label for="male">Laki-laki</label>
                         </div>
                         <div class="radio-option">
-                            <input type="radio" id="female" name="gender" value="female">
+                            <input type="radio" id="female" name="gender" value="female"
+                                   {{ $user->gender === 'female' ? 'checked' : '' }}>
                             <label for="female">Perempuan</label>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label" for="name">Nama Lengkap</label>
-                        <input type="text" id="name" name="name" class="form-input" value="Jhonattan Smith" required>
+                        <input type="text" id="name" name="name" class="form-input" 
+                               value="{{ old('name', $user->name) }}" required>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label" for="email">Email</label>
-                        <input type="email" id="email" name="email" class="form-input" value="yuka@gmail.com" required>
+                        <input type="email" id="email" name="email" class="form-input" 
+                               value="{{ old('email', $user->email) }}" required>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label" for="phone">Nomor Telepon</label>
-                            <input type="tel" id="phone" name="phone" class="form-input" value="+62 812 9245 8877">
+                            <input type="tel" id="phone" name="phone" class="form-input" 
+                                   value="{{ old('phone', $user->phone) }}">
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="birth_date">Tanggal Lahir</label>
-                            <input type="date" id="birth_date" name="birth_date" class="form-input" value="2003-07-06">
+                            <input type="date" id="birth_date" name="birth_date" class="form-input" 
+                                   value="{{ old('birth_date', $user->birth_date ? $user->birth_date->format('Y-m-d') : '') }}">
                         </div>
                     </div>
 
@@ -783,11 +770,17 @@
                 <button class="modal-close" onclick="closeModal('passwordModal')">&times;</button>
             </div>
             <div class="modal-body">
-                <form>
+                <form method="POST" action="{{ route('profil.update-password') }}">
+                    @csrf
+                    @method('PUT')
+                    
                     <div class="form-group">
                         <label class="form-label" for="current_password">Password Lama</label>
                         <input type="password" id="current_password" name="current_password" 
                                class="form-input" placeholder="••••••••" required>
+                        @error('current_password')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="form-group">
@@ -795,6 +788,9 @@
                         <input type="password" id="new_password" name="new_password" 
                                class="form-input" placeholder="••••••••" required>
                         <div style="font-size: 12px; color: #86868b; margin-top: 4px;">Password baru minimal harus 8 karakter.</div>
+                        @error('new_password')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="form-group">
