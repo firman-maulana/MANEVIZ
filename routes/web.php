@@ -9,6 +9,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\OrderHistoryController;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,7 +51,11 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    Route::view('/profil', 'profil.profil')->name('profil');
+    // Profile Routes - UPDATED
+    Route::get('/profil', [ProfileController::class, 'index'])->name('profil');
+    Route::put('/profil/update', [ProfileController::class, 'updateProfile'])->name('profil.update');
+    Route::put('/profil/update-password', [ProfileController::class, 'updatePassword'])->name('profil.update-password');
+    
     Route::view('/wishlist', 'wishlist')->name('wishlist');
     Route::view('/settings', 'settings')->name('settings');
     

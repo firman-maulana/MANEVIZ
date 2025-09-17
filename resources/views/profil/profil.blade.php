@@ -9,46 +9,48 @@
     }
 
     body {
-        font-family: 'Montserrat', sans-serif;
+        font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         line-height: 1.6;
         color: #333;
-        background-color: white;
+        background-color: #f8fafc;
         margin: 0;
         padding: 0;
     }
 
-    .container {
+    .profile-container {
         max-width: 1200px;
         margin: 0 auto;
-        padding: 0 20px;
+        padding: 40px 20px;
+        display: flex;
+        gap: 40px;
     }
 
-    /* Hero Section with Gradient */
+    /* Left Sidebar */
+    .profile-sidebar {
+        width: 300px;
+        background: white;
+        border-radius: 12px;
+        padding: 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        height: fit-content;
+        flex-shrink: 0;
+    }
+
     .profile-header {
-        height: 300px;
-        background: linear-gradient(135deg, #927c84ff 0%, #828273ff 50%, #a0b5beff 100%);
-        position: relative;
-        display: flex;
-        align-items: flex-end;
-        padding: 40px;
-        width: 100%;
-    }
-
-    .profile-info {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        color: white;
+        text-align: center;
+        padding: 40px 30px 30px;
+        border-bottom: 1px solid #f1f5f9;
     }
 
     .profile-avatar {
-        width: 80px;
-        height: 80px;
+        width: 100px;
+        height: 100px;
         border-radius: 50%;
-        background: white;
+        background: #e2e8f0;
+        margin: 0 auto 20px;
         overflow: hidden;
-        border: 4px solid white;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border: 4px solid #f8fafc;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
     .profile-avatar img {
@@ -57,79 +59,299 @@
         object-fit: cover;
     }
 
-    .profile-details h1 {
-        font-size: 28px;
-        font-weight: 600;
-        margin-bottom: 5px;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .profile-email {
-        font-size: 16px;
-        opacity: 0.9;
-    }
-
-    /* Content Area */
-    .tab-content {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 40px;
-        background: white;
-    }
-
-    .content-section h2 {
+    .profile-name {
         font-size: 24px;
-        font-weight: 600;
-        color: #1f2937;
+        font-weight: 700;
+        color: #1e293b;
         margin-bottom: 8px;
     }
 
-    .content-section p {
-        color: #6b7280;
-        margin-bottom: 30px;
-        font-size: 14px;
-    }
-
-    /* Form Styles */
-    .form-section {
-        margin-bottom: 30px;
-    }
-
-    .radio-group {
-        display: flex;
-        gap: 20px;
+    .profile-greeting {
+        font-size: 16px;
+        color: #64748b;
         margin-bottom: 25px;
     }
 
-    .radio-option {
+    .profile-actions {
         display: flex;
-        align-items: center;
-        gap: 8px;
-        cursor: pointer;
+        gap: 10px;
+        justify-content: center;
     }
 
-    .radio-option input[type="radio"] {
-        width: 18px;
-        height: 18px;
-        cursor: pointer;
-        accent-color: #3b82f6;
-    }
-
-    .radio-option label {
+    .btn-profile {
+        padding: 10px 20px;
+        border-radius: 8px;
         font-size: 14px;
-        color: #374151;
+        font-weight: 500;
+        border: none;
         cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+    }
+
+    .btn-edit-profile {
+        background: #ef4444;
+        color: white;
+    }
+
+    .btn-edit-profile:hover {
+        background: #dc2626;
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-edit-password {
+        background: #ef4444;
+        color: white;
+    }
+
+    .btn-edit-password:hover {
+        background: #dc2626;
+        color: white;
+        text-decoration: none;
+    }
+
+    /* Profile Info Sections */
+    .profile-info-section {
+        padding: 25px 30px;
+    }
+
+    .profile-info-section:not(:last-child) {
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .section-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 15px;
+    }
+
+    .info-item {
+        margin-bottom: 12px;
+    }
+
+    .info-label {
+        font-size: 13px;
+        color: #64748b;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .info-value {
+        font-size: 15px;
+        color: #334155;
         font-weight: 500;
     }
 
-    .form-row {
-        display: flex;
-        margin-left: px;
-        gap: 20px
+    /* Main Content */
+    .profile-main {
+        flex: 1;
+        background: white;
+        border-radius: 12px;
+        padding: 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     }
 
-    .form-group {
+    .main-header {
+        padding: 30px 40px;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .main-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1e293b;
+    }
+
+    .order-list {
+        padding: 0;
+    }
+
+    .order-item {
+        padding: 20px 40px;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: all 0.2s;
+        background: #1e293b;
+        color: white;
+        margin-bottom: 2px;
+        cursor: pointer;
+    }
+
+    .order-item:hover {
+        background: #334155;
+    }
+
+    .order-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+
+    .order-item.delivered {
+        background: #1e293b;
+    }
+
+    .order-item.delivered:hover {
+        background: #334155;
+    }
+
+    .order-info {
+        display: flex;
+        align-items: center;
+        gap: 20px;
         flex: 1;
+    }
+
+    .product-name {
+        font-size: 16px;
+        font-weight: 600;
+        color: white;
+    }
+
+    .order-date {
+        font-size: 14px;
+        color: #cbd5e1;
+    }
+
+    .order-price {
+        font-size: 16px;
+        font-weight: 600;
+        color: white;
+        margin-right: 20px;
+    }
+
+    .order-status {
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+        text-transform: capitalize;
+        margin-right: 15px;
+    }
+
+    .status-awaiting,
+    .status-pending {
+        background: #92400e;
+        color: #fbbf24;
+    }
+
+    .status-delivered {
+        background: #15803d;
+        color: #22c55e;
+    }
+
+    .status-processing,
+    .status-shipped {
+        background: #1e40af;
+        color: #60a5fa;
+    }
+
+    .status-cancelled {
+        background: #dc2626;
+        color: #f87171;
+    }
+
+    .order-arrow {
+        color: #94a3b8;
+        font-size: 18px;
+    }
+
+    /* Alert Messages */
+    .alert {
+        padding: 12px 16px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .alert-success {
+        background-color: #d1fae5;
+        color: #065f46;
+        border: 1px solid #a7f3d0;
+    }
+
+    .alert-error {
+        background-color: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-content {
+        background: white;
+        padding: 0;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 500px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header {
+        padding: 25px 30px 20px;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #1e293b;
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #64748b;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+        background: #f1f5f9;
+        color: #1e293b;
+    }
+
+    .modal-body {
+        padding: 30px;
+    }
+
+    /* Form Styles */
+    .form-group {
         margin-bottom: 20px;
     }
 
@@ -153,58 +375,62 @@
 
     .form-input:focus {
         outline: none;
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        border-color: #ef4444;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
     }
 
-    .form-select {
-        width: 100%;
-        padding: 12px 16px;
-        border: 1px solid #d1d5db;
-        border-radius: 8px;
-        font-size: 14px;
-        background: white;
-        cursor: pointer;
-        appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236B7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 16px center;
-        padding-right: 50px;
+    .form-input.is-invalid {
+        border-color: #ef4444;
     }
 
-    .verified-icon {
-        width: 16px;
-        height: 16px;
-        fill: #10b981;
-    }
-
-    .delete-btn {
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: none;
-        border: none;
-        color: #9ca3af;
-        cursor: pointer;
-        padding: 5px;
-        border-radius: 4px;
-        transition: color 0.2s;
-    }
-
-    .delete-btn:hover {
+    .invalid-feedback {
+        display: block;
+        font-size: 12px;
         color: #ef4444;
+        margin-top: 4px;
     }
 
-    .date-input-wrapper {
-        position: relative;
+    .radio-group {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .radio-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+    }
+
+    .radio-option input[type="radio"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: #ef4444;
+    }
+
+    .radio-option label {
+        font-size: 14px;
+        color: #374151;
+        cursor: pointer;
+        font-weight: 500;
+    }
+
+    .form-row {
+        display: flex;
+        gap: 20px;
+    }
+
+    .form-row .form-group {
+        flex: 1;
     }
 
     .form-actions {
         display: flex;
-        gap: 15px;
-        margin-top: 40px;
+        gap: 12px;
         justify-content: flex-end;
+        margin-top: 30px;
     }
 
     .btn {
@@ -215,72 +441,60 @@
         cursor: pointer;
         transition: all 0.2s;
         border: 1px solid transparent;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
     }
 
     .btn-secondary {
-        background: #f9fafb;
-        color: #374151;
-        border-color: #d1d5db;
+        background: #f1f5f9;
+        color: #64748b;
+        border-color: #e2e8f0;
     }
 
     .btn-secondary:hover {
-        background: #f3f4f6;
-        border-color: #9ca3af;
+        background: #e2e8f0;
+        color: #475569;
     }
 
     .btn-primary {
-        background: #ff6b6b;
+        background: #ef4444;
         color: white;
-        border-color: #ff6b6b;
+        border-color: #ef4444;
     }
 
     .btn-primary:hover {
-        background: #ff6b6b;
-        border-color: #ff6b6b;
+        background: #dc2626;
+        border-color: #dc2626;
     }
 
-    /* Password Form Styles for demonstration */
-    .password-form {
-        display: none;
-    }
-
-    .password-form.active {
-        display: block;
-    }
-
-    .password-input-group {
-        margin-bottom: 20px;
-    }
-
-    .password-help {
-        font-size: 12px;
-        color: #6b7280;
-        margin-top: 5px;
-    }
-
-    /* Responsive Styles */
-    @media (max-width: 1024px) {
-        .container {
-            padding: 0 15px;
-        }
-        
-        .profile-header {
-            padding: 35px 25px;
-        }
-        
-        .tab-content {
-            padding: 35px 25px;
-        }
-    }
-
+    /* Responsive */
     @media (max-width: 768px) {
-        .profile-header {
-            padding: 30px 20px;
-            height: 250px;
+        .profile-container {
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px 15px;
         }
 
-        .tab-content {
-            padding: 30px 20px;
+        .profile-sidebar {
+            width: 100%;
+        }
+
+        .order-item {
+            padding: 15px 20px;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
+        }
+
+        .order-info {
+            justify-content: space-between;
+        }
+
+        .order-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .form-row {
@@ -288,273 +502,244 @@
             gap: 0;
         }
 
-        .form-actions {
-            flex-direction: column-reverse;
-        }
-        
-        .profile-details h1 {
-            font-size: 24px;
-        }
-        
-        .profile-email {
-            font-size: 15px;
-        }
-        
-        .content-section h2 {
-            font-size: 22px;
-        }
-    }
-
-    @media (max-width: 640px) {
-        .profile-header {
-            padding: 25px 15px;
-            height: 220px;
+        .modal-content {
+            width: 95%;
+            margin: 20px;
         }
 
-        .profile-info {
-            gap: 15px;
-        }
-
-        .profile-avatar {
-            width: 70px;
-            height: 70px;
-        }
-
-        .profile-details h1 {
-            font-size: 22px;
-        }
-
-        .profile-email {
-            font-size: 14px;
-        }
-
-        .tab-content {
-            padding: 25px 15px;
-        }
-
-        .content-section h2 {
-            font-size: 20px;
-        }
-
-        .radio-group {
-            gap: 15px;
-        }
-
-        .btn {
-            width: 100%;
-            margin-bottom: 10px;
-        }
-
-        .form-actions {
-            gap: 10px;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .profile-header {
-            padding: 20px 15px;
-            height: 200px;
-        }
-
-        .profile-avatar {
-            width: 60px;
-            height: 60px;
-        }
-
-        .profile-details h1 {
-            font-size: 20px;
-        }
-
-        .profile-email {
-            font-size: 13px;
-        }
-
-        .tab-content {
-            padding: 20px 15px;
-        }
-
-        .content-section h2 {
-            font-size: 18px;
-        }
-
-        .form-input, .form-select {
-            padding: 10px 12px;
-            font-size: 16px;
-        }
-
-        .form-select {
-            padding-right: 40px;
-        }
-
-        .radio-group {
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .btn {
-            padding: 14px 20px;
-            font-size: 16px;
-        }
-
-        .form-actions {
-            margin-top: 30px;
-        }
-    }
-
-    @media (max-width: 360px) {
-        .container {
-            padding: 0 10px;
-        }
-
-        .profile-header {
-            padding: 15px 10px;
-            height: 180px;
-        }
-
-        .profile-info {
-            gap: 12px;
-        }
-
-        .profile-avatar {
-            width: 50px;
-            height: 50px;
-        }
-
-        .profile-details h1 {
-            font-size: 18px;
-        }
-
-        .profile-email {
-            font-size: 12px;
-        }
-
-        .tab-content {
-            padding: 15px 10px;
-        }
-
-        .content-section h2 {
-            font-size: 16px;
-        }
-
-        .form-input, .form-select {
-            padding: 8px 10px;
-        }
-
-        .btn {
-            padding: 12px 16px;
-            font-size: 14px;
+        .modal-body {
+            padding: 20px;
         }
     }
 </style>
 
 <div class="profile-container">
-    <!-- Header with Gradient Background -->
-    <div class="profile-header">
-        <div class="profile-info">
+    <!-- Left Sidebar -->
+    <div class="profile-sidebar">
+        <!-- Profile Header -->
+        <div class="profile-header">
             <div class="profile-avatar">
-                <img src="data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='40' cy='40' r='40' fill='%23e2e8f0'/%3E%3Ccircle cx='40' cy='30' r='12' fill='%236b7280'/%3E%3Cpath d='M20 65c0-11 9-20 20-20s20 9 20 20' fill='%236b7280'/%3E%3C/svg%3E" alt="Profile">
+                <img src="{{ $user->avatar_url }}" alt="Profile Avatar">
             </div>
-            <div class="profile-details">
-                <h1>Username</h1>
-                <div class="profile-email">firman6@mail.com</div>
+            <div class="profile-name">{{ $user->name }}</div>
+            <div class="profile-greeting">Hello, {{ explode(' ', $user->name)[0] }}!</div>
+            
+            <div class="profile-actions">
+                <button class="btn-profile btn-edit-profile" onclick="openModal('profileModal')">Edit Profile</button>
+                <button class="btn-profile btn-edit-password" onclick="openModal('passwordModal')">Edit Password</button>
+            </div>
+        </div>
+
+        <!-- Identity Section -->
+        <div class="profile-info-section">
+            <div class="section-title">Identity</div>
+            <div class="info-item">
+                <div class="info-label">Birth Date</div>
+                <div class="info-value">{{ $user->birth_date ? $user->birth_date->format('j F Y') : 'Belum diatur' }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Gender</div>
+                <div class="info-value">{{ $user->gender_label }}</div>
+            </div>
+        </div>
+
+        <!-- Contacts Section -->
+        <div class="profile-info-section">
+            <div class="section-title">Contacts</div>
+            <div class="info-item">
+                <div class="info-label">Phone</div>
+                <div class="info-value">{{ $user->phone ?: 'Belum diatur' }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">E-Mail</div>
+                <div class="info-value">{{ $user->email }}</div>
             </div>
         </div>
     </div>
 
-    <!-- Tab Content -->
-    <div class="tab-content">
-        <!-- Personal Information Form (Default Active) -->
-        <div class="content-section personal-info active">
-            <h2>Profile</h2>
+    <!-- Main Content -->
+    <div class="profile-main">
+        <!-- Display Alert Messages -->
+        @if(session('success'))
+        <div class="alert alert-success" style="margin: 20px 40px 0;">
+            {{ session('success') }}
+        </div>
+        @endif
 
-            <div class="radio-group">
-                <div class="radio-option">
-                    <input type="radio" id="male" name="gender" value="male">
-                    <label for="male">Male</label>
-                </div>
-                <div class="radio-option">
-                    <input type="radio" id="female" name="gender" value="female">
-                    <label for="female">Female</label>
-                </div>
-            </div>
+        @if($errors->any())
+        <div class="alert alert-error" style="margin: 20px 40px 0;">
+            <ul style="margin: 0; padding-left: 20px;">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
 
-            <form class="personal-form">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label" for="firstName">Name</label>
-                        <input type="text" id="firstName" class="form-input" value="Roland">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="email">Email</label>
-                        <input type="email" id="email" class="form-input">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="address">Address</label>
-                    <input type="text" id="address" class="form-input">
-                </div>
+        <div class="main-header">
+            <div class="main-title">Order History</div>
+        </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label" for="phone">Phone Number</label>
-                        <input type="number" id="phone" class="form-input">
-                    </div>
-                    <div class="form-group">
-
-                        <label class="form-label" for="dob">Date of Birth</label>
-                        <div class="date-input-wrapper">
-                            <input type="date" id="dob" class="form-input">
+        <div class="order-list">
+            @forelse($orders as $order)
+                @foreach($order->orderItems as $orderItem)
+                <div class="order-item {{ $order->status == 'delivered' ? 'delivered' : '' }}" onclick="window.location='{{ route('orders.show', $order->order_number) }}'">
+                    <div class="order-info">
+                        <div>
+                            <div class="product-name">{{ $orderItem->product_name }}</div>
+                            <div class="order-date">
+                                {{ $order->created_at->format('H:i') }} {{ $order->created_at->translatedFormat('M d, Y') }}
+                            </div>
                         </div>
                     </div>
+                    <div class="order-price">Rp {{ number_format($orderItem->subtotal, 0, ',', '.') }}</div>
+                    <div class="order-status status-{{ $order->status }}">
+                        @switch($order->status)
+                            @case('pending')
+                                Menunggu
+                                @break
+                            @case('processing')
+                                Diproses
+                                @break
+                            @case('shipped')
+                                Dikirim
+                                @break
+                            @case('delivered')
+                                Terkirim
+                                @break
+                            @case('cancelled')
+                                Dibatalkan
+                                @break
+                            @default
+                                {{ ucfirst($order->status) }}
+                        @endswitch
+                    </div>
+                    <div class="order-arrow">›</div>
+                </div>
+                @endforeach
+            @empty
+                <div style="padding: 40px; text-align: center; color: #64748b;">
+                    <div style="font-size: 18px; margin-bottom: 8px;">Belum Ada Order</div>
+                    <div style="font-size: 14px;">Mulai berbelanja untuk melihat riwayat pesanan Anda</div>
+                </div>
+            @endforelse
+        </div>
+    </div>
+</div>
+
+<!-- Profile Edit Modal -->
+<div id="profileModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">Edit Profile</div>
+            <button class="modal-close" onclick="closeModal('profileModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form method="POST" action="{{ route('profil.update') }}">
+                @csrf
+                @method('PUT')
+
+                <div class="radio-group">
+                    <div class="radio-option">
+                        <input type="radio" id="male" name="gender" value="male" 
+                               {{ old('gender', $user->gender) == 'male' ? 'checked' : '' }}>
+                        <label for="male">Laki-laki</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="female" name="gender" value="female"
+                               {{ old('gender', $user->gender) == 'female' ? 'checked' : '' }}>
+                        <label for="female">Perempuan</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="name">Nama Lengkap</label>
+                    <input type="text" id="name" name="name" class="form-input @error('name') is-invalid @enderror" 
+                           value="{{ old('name', $user->name) }}" required>
+                    @error('name')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="email">Email</label>
+                    <input type="email" id="email" name="email" class="form-input @error('email') is-invalid @enderror" 
+                           value="{{ old('email', $user->email) }}" required>
+                    @error('email')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="location">Location</label>
-                        <select id="location" class="form-select">
-                            <option value="atlanta">Malang</option>
-                            <option value="new-york"> Surabaya</option>
-                            <option value="los-angeles">Semarang</option>
-                        </select>
+                        <label class="form-label" for="phone">Nomor Telepon</label>
+                        <input type="tel" id="phone" name="phone" class="form-input @error('phone') is-invalid @enderror" 
+                               value="{{ old('phone', $user->phone) }}">
+                        @error('phone')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="postalCode">Post Code</label>
-                        <input type="text" id="postalCode" class="form-input" value="30301">
+                        <label class="form-label" for="birth_date">Tanggal Lahir</label>
+                        <input type="date" id="birth_date" name="birth_date" class="form-input @error('birth_date') is-invalid @enderror" 
+                               value="{{ old('birth_date', $user->birth_date ? $user->birth_date->format('Y-m-d') : '') }}">
+                        @error('birth_date')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
 
                 <div class="form-actions">
-                    <button type="button" class="btn btn-secondary">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('profileModal')">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
                 </div>
             </form>
         </div>
+    </div>
+</div>
 
-        <!-- Password Form (Hidden by default, shown when Password tab is clicked) -->
-        <div class="content-section password-form">
-            <h2>Password</h2>
-            <p>Please enter your current password to change your password.</p>
+<!-- Password Edit Modal -->
+<div id="passwordModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">Edit Password</div>
+            <button class="modal-close" onclick="closeModal('passwordModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form method="POST" action="{{ route('profil.update-password') }}">
+                @csrf
+                @method('PUT')
 
-            <form>
                 <div class="form-group">
-                    <label class="form-label" for="currentPassword">Current password</label>
-                    <input type="password" id="currentPassword" class="form-input" placeholder="••••••••">
+                    <label class="form-label" for="current_password">Password Lama</label>
+                    <input type="password" id="current_password" name="current_password" 
+                           class="form-input @error('current_password') is-invalid @enderror" 
+                           placeholder="••••••••" required>
+                    @error('current_password')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="newPassword">New password</label>
-                    <input type="password" id="newPassword" class="form-input" placeholder="••••••••">
-                    <div class="password-help">Your new password must be more than 8 characters.</div>
+                    <label class="form-label" for="new_password">Password Baru</label>
+                    <input type="password" id="new_password" name="new_password" 
+                           class="form-input @error('new_password') is-invalid @enderror" 
+                           placeholder="••••••••" required>
+                    @error('new_password')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                    <div style="font-size: 12px; color: #64748b; margin-top: 4px;">Password baru minimal harus 8 karakter.</div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="confirmPassword">Confirm new password</label>
-                    <input type="password" id="confirmPassword" class="form-input" placeholder="••••••••">
+                    <label class="form-label" for="new_password_confirmation">Konfirmasi Password Baru</label>
+                    <input type="password" id="new_password_confirmation" name="new_password_confirmation" 
+                           class="form-input" placeholder="••••••••" required>
                 </div>
 
                 <div class="form-actions">
-                    <button type="button" class="btn btn-secondary">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Update password</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('passwordModal')">Batal</button>
+                    <button type="submit" class="btn btn-primary">Update Password</button>
                 </div>
             </form>
         </div>
@@ -562,53 +747,32 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Tab switching functionality
-        const tabItems = document.querySelectorAll('.tab-item');
-        const personalInfo = document.querySelector('.personal-info');
-        const passwordForm = document.querySelector('.password-form');
+    function openModal(modalId) {
+        document.getElementById(modalId).classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
 
-        tabItems.forEach(tab => {
-            tab.addEventListener('click', function() {
-                // Remove active class from all tabs
-                tabItems.forEach(t => t.classList.remove('active'));
-                // Add active class to clicked tab
-                this.classList.add('active');
+    function closeModal(modalId) {
+        document.getElementById(modalId).classList.remove('show');
+        document.body.style.overflow = 'auto';
+    }
 
-                // Handle content switching
-                const tabText = this.textContent.trim();
-
-                if (tabText.startsWith('Password')) {
-                    personalInfo.style.display = 'none';
-                    passwordForm.style.display = 'block';
-                } else {
-                    personalInfo.style.display = 'block';
-                    passwordForm.style.display = 'none';
-                }
-            });
-        });
-
-        // Cancel buttons
-        const cancelBtns = document.querySelectorAll('.btn-secondary');
-        cancelBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                if (confirm('Are you sure you want to cancel? Any unsaved changes will be lost.')) {
-                    // Reset form or navigate away
-                    const form = this.closest('form');
-                    if (form) {
-                        form.reset();
-                    }
-                }
-            });
-        });
-
-        // Delete date button
-        const deleteBtn = document.querySelector('.delete-btn');
-        if (deleteBtn) {
-            deleteBtn.addEventListener('click', function() {
-                document.getElementById('birthDate').value = '';
-            });
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.classList.remove('show');
+            document.body.style.overflow = 'auto';
         }
+    }
+
+    // Auto hide alert messages after 5 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.display = 'none';
+            });
+        }, 5000);
     });
 </script>
 @endsection
