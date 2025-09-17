@@ -10,12 +10,13 @@
 
     body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-        background-color: #f5f5f7;
+        background-color: #ffffff;
         color: #1d1d1f;
         line-height: 1.5;
     }
 
     .profile-container {
+        /* margin-top: 90px; */
         max-width: 1200px;
         margin: 0 auto;
         padding: 20px;
@@ -23,6 +24,7 @@
         grid-template-columns: 280px 1fr;
         gap: 20px;
         align-items: start;
+        padding-top: 80px;
     }
 
     /* Left Sidebar */
@@ -178,27 +180,34 @@
     }
 
     .order-list {
-        padding: 0;
-    }
+    padding: 0;
+    margin-top: 20px; /* pisahkan dari main-header */
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* jarak antar item */
+}
 
-    .order-item {
-        padding: 16px 24px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        cursor: pointer;
-        border-bottom: 1px solid #f0f0f0;
-        transition: background-color 0.2s ease;
-        background: #2c2c2e;
-    }
+.order-item {
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    background: #2c2c2e;
+    border-radius: 12px; /* border radius */
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
 
-    .order-item:hover {
-        background: #3a3a3c;
-    }
+.order-item:hover {
+    background: #3a3a3c;
+    transform: translateY(-2px); /* efek hover */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
 
-    .order-item:last-child {
-        border-bottom: none;
-    }
+.order-item:last-child {
+    border-bottom: none; /* hilangkan border lama */
+}
+
 
     .order-info {
         display: flex;
@@ -681,7 +690,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="order-price">$ {{ number_format($orderItem->subtotal / 15000, 2) }}</div>
+                    <div class="order-price">Rp. {{ number_format($orderItem->subtotal) }}</div>
                     <div class="order-status status-{{ $order->status }}">
                         @switch($order->status)
                             @case('pending')
@@ -712,7 +721,7 @@
                     <div class="order-info">
                         <div class="order-details">
                             <div class="product-name">Kaos Murzan T-Shirt</div>
-                            <div class="order-date">06:40 Des 20, 2025</div>
+                            <div class="order-date">06:140 Des 20, 2025</div>
                         </div>
                     </div>
                     <div class="order-price">$ 126.50</div>
