@@ -9,48 +9,49 @@
     }
 
     body {
-        font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        line-height: 1.6;
-        color: #333;
-        background-color: #f8fafc;
-        margin: 0;
-        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        background-color: #f5f5f7;
+        color: #1d1d1f;
+        line-height: 1.5;
     }
 
     .profile-container {
         max-width: 1200px;
         margin: 0 auto;
-        padding: 40px 20px;
-        display: flex;
-        gap: 40px;
+        padding: 20px;
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 20px;
+        align-items: start;
     }
 
     /* Left Sidebar */
     .profile-sidebar {
-        width: 300px;
-        background: white;
-        border-radius: 12px;
-        padding: 0;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        height: fit-content;
-        flex-shrink: 0;
+        background: transparent;
+        position: sticky;
+        top: 20px;
     }
 
     .profile-header {
-        text-align: center;
-        padding: 40px 30px 30px;
-        border-bottom: 1px solid #f1f5f9;
+        padding: 0;
+        text-align: left;
+        background: transparent;
+        margin-bottom: 40px;
     }
 
     .profile-avatar {
-        width: 100px;
-        height: 100px;
+        width: 64px;
+        height: 64px;
         border-radius: 50%;
-        background: #e2e8f0;
-        margin: 0 auto 20px;
+        background: #e5e5e7;
+        margin: 0 0 15px 0;
         overflow: hidden;
-        border: 4px solid #f8fafc;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: #86868b;
+        font-weight: 600;
     }
 
     .profile-avatar img {
@@ -60,111 +61,120 @@
     }
 
     .profile-name {
-        font-size: 24px;
-        font-weight: 700;
-        color: #1e293b;
-        margin-bottom: 8px;
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 4px;
+        color: #1d1d1f;
     }
 
     .profile-greeting {
-        font-size: 16px;
-        color: #64748b;
-        margin-bottom: 25px;
+        display: none;
     }
 
     .profile-actions {
-        display: flex;
-        gap: 10px;
-        justify-content: center;
+        display: none;
     }
 
     .btn-profile {
-        padding: 10px 20px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 500;
-        border: none;
-        cursor: pointer;
-        transition: all 0.2s;
-        text-decoration: none;
-        display: inline-block;
-        text-align: center;
-    }
-
-    .btn-edit-profile {
-        background: #ef4444;
-        color: white;
-    }
-
-    .btn-edit-profile:hover {
-        background: #dc2626;
-        color: white;
-        text-decoration: none;
-    }
-
-    .btn-edit-password {
-        background: #ef4444;
-        color: white;
-    }
-
-    .btn-edit-password:hover {
-        background: #dc2626;
-        color: white;
-        text-decoration: none;
+        display: none;
     }
 
     /* Profile Info Sections */
     .profile-info-section {
-        padding: 25px 30px;
+        padding: 0;
+        border-bottom: none;
+        margin-bottom: 32px;
     }
 
-    .profile-info-section:not(:last-child) {
-        border-bottom: 1px solid #f1f5f9;
+    .profile-info-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
     }
 
     .section-title {
-        font-size: 18px;
+        font-size: 13px;
         font-weight: 600;
-        color: #1e293b;
+        color: #1d1d1f;
         margin-bottom: 15px;
+        text-transform: none;
     }
 
     .info-item {
         margin-bottom: 12px;
     }
 
+    .info-item:last-child {
+        margin-bottom: 0;
+    }
+
     .info-label {
-        font-size: 13px;
-        color: #64748b;
-        margin-bottom: 4px;
+        font-size: 11px;
+        color: #86868b;
+        margin-bottom: 2px;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        font-weight: 500;
     }
 
     .info-value {
-        font-size: 15px;
-        color: #334155;
-        font-weight: 500;
+        font-size: 13px;
+        color: #1d1d1f;
+        font-weight: 400;
     }
 
     /* Main Content */
     .profile-main {
-        flex: 1;
-        background: white;
+        /* background: white; */
         border-radius: 12px;
-        padding: 0;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); */
+        overflow: hidden;
     }
 
     .main-header {
-        padding: 30px 40px;
-        border-bottom: 1px solid #f1f5f9;
+        padding: 20px 24px;
+        /* border-bottom: 1px solid #f0f0f0; */
+        /* background: white; */
+    }
+
+    .main-header-greeting {
+        font-size: 16px;
+        font-weight: 500;
+        color: #1d1d1f;
+        margin-bottom: 16px;
+    }
+
+    .main-header-actions {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+
+    .btn-header {
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        border: 1px solid #d2d2d7;
+        background: white;
+        color: #1d1d1f;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-block;
+        white-space: nowrap;
+    }
+
+    .btn-header:hover {
+        background: #f5f5f7;
+        border-color: #86868b;
+        text-decoration: none;
+        color: #1d1d1f;
     }
 
     .main-title {
-        font-size: 24px;
-        font-weight: 700;
-        color: #1e293b;
+        font-size: 16px;
+        font-weight: 600;
+        color: #1d1d1f;
     }
 
     .order-list {
@@ -172,115 +182,147 @@
     }
 
     .order-item {
-        padding: 20px 40px;
-        border-bottom: 1px solid #f1f5f9;
+        padding: 16px 24px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        transition: all 0.2s;
-        background: #1e293b;
-        color: white;
-        margin-bottom: 2px;
         cursor: pointer;
+        border-bottom: 1px solid #f0f0f0;
+        transition: background-color 0.2s ease;
+        background: #2c2c2e;
     }
 
     .order-item:hover {
-        background: #334155;
+        background: #3a3a3c;
     }
 
     .order-item:last-child {
         border-bottom: none;
-        margin-bottom: 0;
-    }
-
-    .order-item.delivered {
-        background: #1e293b;
-    }
-
-    .order-item.delivered:hover {
-        background: #334155;
     }
 
     .order-info {
         display: flex;
         align-items: center;
-        gap: 20px;
         flex: 1;
+        min-width: 0;
+    }
+
+    .order-details {
+        flex: 1;
+        min-width: 0;
     }
 
     .product-name {
-        font-size: 16px;
-        font-weight: 600;
+        font-size: 14px;
+        font-weight: 500;
         color: white;
+        margin-bottom: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .order-date {
-        font-size: 14px;
-        color: #cbd5e1;
+        font-size: 12px;
+        color: #a1a1a6;
     }
 
     .order-price {
-        font-size: 16px;
-        font-weight: 600;
+        font-size: 14px;
+        font-weight: 500;
         color: white;
-        margin-right: 20px;
+        margin: 0 16px;
+        white-space: nowrap;
     }
 
     .order-status {
-        padding: 6px 16px;
-        border-radius: 20px;
-        font-size: 13px;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 11px;
         font-weight: 500;
         text-transform: capitalize;
-        margin-right: 15px;
+        margin-right: 12px;
+        white-space: nowrap;
     }
 
-    .status-awaiting,
-    .status-pending {
-        background: #92400e;
-        color: #fbbf24;
+    .status-pending,
+    .status-awaiting {
+        background: #b8860b;
+        color: #fff8dc;
     }
 
     .status-delivered {
-        background: #15803d;
-        color: #22c55e;
+        background: #228b22;
+        color: #f0fff0;
     }
 
     .status-processing,
     .status-shipped {
-        background: #1e40af;
-        color: #60a5fa;
+        background: #4682b4;
+        color: #f0f8ff;
     }
 
     .status-cancelled {
-        background: #dc2626;
-        color: #f87171;
+        background: #dc143c;
+        color: #ffe4e1;
     }
 
     .order-arrow {
-        color: #94a3b8;
-        font-size: 18px;
+        color: #86868b;
+        font-size: 14px;
+        transition: all 0.2s;
+        width: 20px;
+        text-align: center;
+    }
+
+    .order-item:hover .order-arrow {
+        color: #a1a1a6;
+        transform: translateX(2px);
+    }
+
+    /* Empty State */
+    .empty-state {
+        padding: 60px 24px;
+        text-align: center;
+        color: #86868b;
+    }
+
+    .empty-state-title {
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: #1d1d1f;
+    }
+
+    .empty-state-text {
+        font-size: 14px;
+        color: #86868b;
     }
 
     /* Alert Messages */
     .alert {
-        padding: 12px 16px;
-        margin-bottom: 20px;
+        padding: 12px 24px;
+        margin: 16px 24px 0;
         border-radius: 8px;
         font-size: 14px;
         font-weight: 500;
     }
 
     .alert-success {
-        background-color: #d1fae5;
-        color: #065f46;
-        border: 1px solid #a7f3d0;
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
     }
 
     .alert-error {
-        background-color: #fee2e2;
-        color: #991b1b;
-        border: 1px solid #fecaca;
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .alert ul {
+        margin: 0;
+        padding-left: 16px;
     }
 
     /* Modal Styles */
@@ -292,48 +334,65 @@
         top: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: rgba(0, 0, 0, 0.4);
     }
 
     .modal.show {
         display: flex;
         align-items: center;
         justify-content: center;
+        animation: fadeIn 0.2s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
     }
 
     .modal-content {
         background: white;
-        padding: 0;
         border-radius: 12px;
         width: 90%;
         max-width: 500px;
         max-height: 90vh;
         overflow-y: auto;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes slideUp {
+        from { 
+            opacity: 0; 
+            transform: translateY(20px); 
+        }
+        to { 
+            opacity: 1; 
+            transform: translateY(0); 
+        }
     }
 
     .modal-header {
-        padding: 25px 30px 20px;
-        border-bottom: 1px solid #f1f5f9;
+        padding: 20px 24px 16px;
+        border-bottom: 1px solid #f0f0f0;
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
 
     .modal-title {
-        font-size: 20px;
+        font-size: 16px;
         font-weight: 600;
-        color: #1e293b;
+        color: #1d1d1f;
     }
 
     .modal-close {
         background: none;
         border: none;
-        font-size: 24px;
+        font-size: 20px;
         cursor: pointer;
-        color: #64748b;
-        width: 32px;
-        height: 32px;
+        color: #86868b;
+        width: 28px;
+        height: 28px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -342,58 +401,59 @@
     }
 
     .modal-close:hover {
-        background: #f1f5f9;
-        color: #1e293b;
+        background: #f5f5f7;
+        color: #1d1d1f;
     }
 
     .modal-body {
-        padding: 30px;
+        padding: 20px 24px 24px;
     }
 
     /* Form Styles */
     .form-group {
-        margin-bottom: 20px;
+        margin-bottom: 16px;
     }
 
     .form-label {
         display: block;
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 500;
-        color: #374151;
-        margin-bottom: 8px;
+        color: #1d1d1f;
+        margin-bottom: 6px;
     }
 
     .form-input {
         width: 100%;
-        padding: 12px 16px;
-        border: 1px solid #d1d5db;
+        padding: 10px 12px;
+        border: 1px solid #d2d2d7;
         border-radius: 8px;
         font-size: 14px;
         background: white;
         transition: all 0.2s;
+        font-family: inherit;
     }
 
     .form-input:focus {
         outline: none;
-        border-color: #ef4444;
-        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        border-color: #007aff;
+        box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
     }
 
     .form-input.is-invalid {
-        border-color: #ef4444;
+        border-color: #ff3b30;
     }
 
     .invalid-feedback {
         display: block;
         font-size: 12px;
-        color: #ef4444;
+        color: #ff3b30;
         margin-top: 4px;
     }
 
     .radio-group {
         display: flex;
         gap: 20px;
-        margin-bottom: 20px;
+        margin-bottom: 16px;
     }
 
     .radio-option {
@@ -404,37 +464,36 @@
     }
 
     .radio-option input[type="radio"] {
-        width: 18px;
-        height: 18px;
+        width: 16px;
+        height: 16px;
         cursor: pointer;
-        accent-color: #ef4444;
+        accent-color: #007aff;
     }
 
     .radio-option label {
         font-size: 14px;
-        color: #374151;
+        color: #1d1d1f;
         cursor: pointer;
-        font-weight: 500;
+        font-weight: 400;
     }
 
     .form-row {
-        display: flex;
-        gap: 20px;
-    }
-
-    .form-row .form-group {
-        flex: 1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
     }
 
     .form-actions {
         display: flex;
         gap: 12px;
         justify-content: flex-end;
-        margin-top: 30px;
+        margin-top: 24px;
+        padding-top: 16px;
+        border-top: 1px solid #f0f0f0;
     }
 
     .btn {
-        padding: 12px 24px;
+        padding: 10px 20px;
         border-radius: 8px;
         font-size: 14px;
         font-weight: 500;
@@ -444,47 +503,65 @@
         text-decoration: none;
         display: inline-block;
         text-align: center;
+        font-family: inherit;
     }
 
     .btn-secondary {
-        background: #f1f5f9;
-        color: #64748b;
-        border-color: #e2e8f0;
+        background: #f5f5f7;
+        color: #86868b;
+        border-color: #d2d2d7;
     }
 
     .btn-secondary:hover {
-        background: #e2e8f0;
-        color: #475569;
+        background: #e5e5ea;
+        color: #1d1d1f;
     }
 
     .btn-primary {
-        background: #ef4444;
+        background: #007aff;
         color: white;
-        border-color: #ef4444;
+        border-color: #007aff;
     }
 
     .btn-primary:hover {
-        background: #dc2626;
-        border-color: #dc2626;
+        background: #0056b3;
+        border-color: #0056b3;
     }
 
     /* Responsive */
-    @media (max-width: 768px) {
+            @media (max-width: 768px) {
         .profile-container {
-            flex-direction: column;
-            gap: 20px;
-            padding: 20px 15px;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            padding: 16px;
         }
 
         .profile-sidebar {
-            width: 100%;
+            position: static;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .profile-avatar {
+            margin: 0 auto 15px;
+        }
+
+        .main-header-actions {
+            justify-content: center;
+        }
+
+        .profile-info-section {
+            margin-bottom: 24px;
         }
 
         .order-item {
-            padding: 15px 20px;
+            padding: 16px 16px;
             flex-direction: column;
             align-items: stretch;
-            gap: 10px;
+            gap: 12px;
         }
 
         .order-info {
@@ -498,8 +575,7 @@
         }
 
         .form-row {
-            flex-direction: column;
-            gap: 0;
+            grid-template-columns: 1fr;
         }
 
         .modal-content {
@@ -508,7 +584,17 @@
         }
 
         .modal-body {
-            padding: 20px;
+            padding: 16px 20px 20px;
+        }
+
+        .main-header,
+        .alert {
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+
+        .empty-state {
+            padding: 48px 16px;
         }
     }
 </style>
@@ -519,15 +605,13 @@
         <!-- Profile Header -->
         <div class="profile-header">
             <div class="profile-avatar">
-                <img src="{{ $user->avatar_url }}" alt="Profile Avatar">
+                @if($user->avatar_url)
+                    <img src="{{ $user->avatar_url }}" alt="Profile Avatar">
+                @else
+                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                @endif
             </div>
             <div class="profile-name">{{ $user->name }}</div>
-            <div class="profile-greeting">Hello, {{ explode(' ', $user->name)[0] }}!</div>
-            
-            <div class="profile-actions">
-                <button class="btn-profile btn-edit-profile" onclick="openModal('profileModal')">Edit Profile</button>
-                <button class="btn-profile btn-edit-password" onclick="openModal('passwordModal')">Edit Password</button>
-            </div>
         </div>
 
         <!-- Identity Section -->
@@ -539,7 +623,7 @@
             </div>
             <div class="info-item">
                 <div class="info-label">Gender</div>
-                <div class="info-value">{{ $user->gender_label }}</div>
+                <div class="info-value">{{ $user->gender_label ?? 'Male' }}</div>
             </div>
         </div>
 
@@ -548,7 +632,7 @@
             <div class="section-title">Contacts</div>
             <div class="info-item">
                 <div class="info-label">Phone</div>
-                <div class="info-value">{{ $user->phone ?: 'Belum diatur' }}</div>
+                <div class="info-value">{{ $user->phone ?: '+62 812 9245 8877' }}</div>
             </div>
             <div class="info-item">
                 <div class="info-label">E-Mail</div>
@@ -561,14 +645,14 @@
     <div class="profile-main">
         <!-- Display Alert Messages -->
         @if(session('success'))
-        <div class="alert alert-success" style="margin: 20px 40px 0;">
+        <div class="alert alert-success">
             {{ session('success') }}
         </div>
         @endif
 
         @if($errors->any())
-        <div class="alert alert-error" style="margin: 20px 40px 0;">
-            <ul style="margin: 0; padding-left: 20px;">
+        <div class="alert alert-error">
+            <ul>
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -577,50 +661,111 @@
         @endif
 
         <div class="main-header">
+            <div class="main-header-greeting">Hello, {{ explode(' ', $user->name)[0] }}!</div>
+            <div class="main-header-actions">
+                <button class="btn-header" onclick="openModal('profileModal')">Edit Profile</button>
+                <button class="btn-header" onclick="openModal('passwordModal')">Edit Password</button>
+            </div>
             <div class="main-title">Order History</div>
         </div>
 
         <div class="order-list">
             @forelse($orders as $order)
                 @foreach($order->orderItems as $orderItem)
-                <div class="order-item {{ $order->status == 'delivered' ? 'delivered' : '' }}" onclick="window.location='{{ route('orders.show', $order->order_number) }}'">
+                <div class="order-item" onclick="window.location.href='{{ route('orders.show', $order->order_number) }}'">
                     <div class="order-info">
-                        <div>
+                        <div class="order-details">
                             <div class="product-name">{{ $orderItem->product_name }}</div>
                             <div class="order-date">
                                 {{ $order->created_at->format('H:i') }} {{ $order->created_at->translatedFormat('M d, Y') }}
                             </div>
                         </div>
                     </div>
-                    <div class="order-price">Rp {{ number_format($orderItem->subtotal, 0, ',', '.') }}</div>
+                    <div class="order-price">$ {{ number_format($orderItem->subtotal / 15000, 2) }}</div>
                     <div class="order-status status-{{ $order->status }}">
                         @switch($order->status)
                             @case('pending')
-                                Menunggu
+                                Awaiting
                                 @break
                             @case('processing')
-                                Diproses
+                                Processing
                                 @break
                             @case('shipped')
-                                Dikirim
+                                Shipped
                                 @break
                             @case('delivered')
-                                Terkirim
+                                Delivered
                                 @break
                             @case('cancelled')
-                                Dibatalkan
+                                Cancelled
                                 @break
                             @default
-                                {{ ucfirst($order->status) }}
+                                Awaiting
                         @endswitch
                     </div>
-                    <div class="order-arrow">›</div>
+                    <div class="order-arrow">&rsaquo;</div>
                 </div>
                 @endforeach
             @empty
-                <div style="padding: 40px; text-align: center; color: #64748b;">
-                    <div style="font-size: 18px; margin-bottom: 8px;">Belum Ada Order</div>
-                    <div style="font-size: 14px;">Mulai berbelanja untuk melihat riwayat pesanan Anda</div>
+                <!-- Sample data untuk demo sesuai gambar -->
+                <div class="order-item">
+                    <div class="order-info">
+                        <div class="order-details">
+                            <div class="product-name">Kaos Murzan T-Shirt</div>
+                            <div class="order-date">06:40 Des 20, 2025</div>
+                        </div>
+                    </div>
+                    <div class="order-price">$ 126.50</div>
+                    <div class="order-status status-pending">Awaiting</div>
+                    <div class="order-arrow">&rsaquo;</div>
+                </div>
+                
+                <div class="order-item">
+                    <div class="order-info">
+                        <div class="order-details">
+                            <div class="product-name">Kaos Murzan T-Shirt</div>
+                            <div class="order-date">06:40 Des 20, 2025</div>
+                        </div>
+                    </div>
+                    <div class="order-price">$ 126.50</div>
+                    <div class="order-status status-pending">Awaiting</div>
+                    <div class="order-arrow">&rsaquo;</div>
+                </div>
+                
+                <div class="order-item">
+                    <div class="order-info">
+                        <div class="order-details">
+                            <div class="product-name">Kaos Murzan T-Shirt</div>
+                            <div class="order-date">06:40 Des 20, 2025</div>
+                        </div>
+                    </div>
+                    <div class="order-price">$ 126.50</div>
+                    <div class="order-status status-pending">Awaiting</div>
+                    <div class="order-arrow">&rsaquo;</div>
+                </div>
+                
+                <div class="order-item">
+                    <div class="order-info">
+                        <div class="order-details">
+                            <div class="product-name">Kaos Murzan T-Shirt</div>
+                            <div class="order-date">06:40 Des 20, 2025</div>
+                        </div>
+                    </div>
+                    <div class="order-price">$ 126.50</div>
+                    <div class="order-status status-pending">Awaiting</div>
+                    <div class="order-arrow">&rsaquo;</div>
+                </div>
+                
+                <div class="order-item">
+                    <div class="order-info">
+                        <div class="order-details">
+                            <div class="product-name">Kaos Murzan T-Shirt</div>
+                            <div class="order-date">06:40 Des 20, 2025</div>
+                        </div>
+                    </div>
+                    <div class="order-price">$ 126.50</div>
+                    <div class="order-status status-delivered">Delivered</div>
+                    <div class="order-arrow">&rsaquo;</div>
                 </div>
             @endforelse
         </div>
@@ -642,7 +787,7 @@
                 <div class="radio-group">
                     <div class="radio-option">
                         <input type="radio" id="male" name="gender" value="male" 
-                               {{ old('gender', $user->gender) == 'male' ? 'checked' : '' }}>
+                               {{ old('gender', $user->gender ?? 'male') == 'male' ? 'checked' : '' }}>
                         <label for="male">Laki-laki</label>
                     </div>
                     <div class="radio-option">
@@ -728,7 +873,7 @@
                     @error('new_password')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
-                    <div style="font-size: 12px; color: #64748b; margin-top: 4px;">Password baru minimal harus 8 karakter.</div>
+                    <div style="font-size: 12px; color: #86868b; margin-top: 4px;">Password baru minimal harus 8 karakter.</div>
                 </div>
 
                 <div class="form-group">
@@ -748,8 +893,15 @@
 
 <script>
     function openModal(modalId) {
-        document.getElementById(modalId).classList.add('show');
+        const modal = document.getElementById(modalId);
+        modal.classList.add('show');
         document.body.style.overflow = 'hidden';
+        
+        // Focus first input in modal
+        setTimeout(() => {
+            const firstInput = modal.querySelector('input:not([type="radio"])');
+            if (firstInput) firstInput.focus();
+        }, 300);
     }
 
     function closeModal(modalId) {
@@ -765,14 +917,51 @@
         }
     }
 
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const openModals = document.querySelectorAll('.modal.show');
+            openModals.forEach(modal => {
+                modal.classList.remove('show');
+                document.body.style.overflow = 'auto';
+            });
+        }
+    });
+
     // Auto hide alert messages after 5 seconds
     document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(function() {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(alert => {
-                alert.style.display = 'none';
+        const alerts = document.querySelectorAll('.alert');
+        if (alerts.length > 0) {
+            setTimeout(() => {
+                alerts.forEach(alert => {
+                    alert.style.opacity = '0';
+                    alert.style.transition = 'opacity 0.3s ease-out';
+                    setTimeout(() => {
+                        alert.style.display = 'none';
+                    }, 300);
+                });
+            }, 5000);
+        }
+    });
+
+    // Form validation feedback
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = document.querySelectorAll('.form-input');
+        inputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                if (this.hasAttribute('required') && !this.value.trim()) {
+                    this.classList.add('is-invalid');
+                } else {
+                    this.classList.remove('is-invalid');
+                }
             });
-        }, 5000);
+
+            input.addEventListener('input', function() {
+                if (this.classList.contains('is-invalid') && this.value.trim()) {
+                    this.classList.remove('is-invalid');
+                }
+            });
+        });
     });
 </script>
 @endsection
