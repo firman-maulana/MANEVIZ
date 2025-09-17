@@ -10,6 +10,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\OrderHistoryController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AddressController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,10 +52,21 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // Profile Routes - UPDATED
+    // Profile Routes
     Route::get('/profil', [ProfileController::class, 'index'])->name('profil');
     Route::put('/profil/update', [ProfileController::class, 'updateProfile'])->name('profil.update');
     Route::put('/profil/update-password', [ProfileController::class, 'updatePassword'])->name('profil.update-password');
+    
+    // Address Routes - NEW
+    Route::prefix('address')->name('address.')->group(function () {
+        Route::get('/', [AddressController::class, 'index'])->name('index');
+        Route::get('/create', [AddressController::class, 'create'])->name('create');
+        Route::post('/', [AddressController::class, 'store'])->name('store');
+        Route::get('/{address}/edit', [AddressController::class, 'edit'])->name('edit');
+        Route::put('/{address}', [AddressController::class, 'update'])->name('update');
+        Route::delete('/{address}', [AddressController::class, 'destroy'])->name('destroy');
+        Route::patch('/{address}/set-default', [AddressController::class, 'setDefault'])->name('set-default');
+    });
     
     Route::view('/wishlist', 'wishlist')->name('wishlist');
     Route::view('/settings', 'settings')->name('settings');

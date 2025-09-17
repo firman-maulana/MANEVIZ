@@ -122,6 +122,85 @@
             font-weight: 400;
         }
 
+        /* Quick Links Section */
+        .quick-links-section {
+            padding: 0 0 20px 0;
+            border-bottom: 1px solid #000;
+            margin-bottom: 32px;
+        }
+
+        .quick-link {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            color: #1d1d1f;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .quick-link:hover {
+            color: #007aff;
+        }
+
+        .quick-link svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 10px;
+            color: #666;
+        }
+
+        .quick-link:hover svg {
+            color: #007aff;
+        }
+
+        /* Address Display */
+        .address-display {
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            margin-bottom: 8px;
+        }
+
+        .address-display:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .address-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .address-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .address-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1d1d1f;
+            margin-bottom: 2px;
+        }
+
+        .address-details {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .address-badge {
+            font-size: 10px;
+            padding: 2px 6px;
+            background: #28a745;
+            color: white;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
         /* Main Content */
         .profile-main {
             background: white;
@@ -613,8 +692,8 @@
             <!-- Profile Header -->
             <div class="profile-header">
                 <div class="profile-avatar">
-                    <!-- Profile image or initial -->
-                    <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <svg style="display: none;" width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="12" cy="12" r="10" stroke="#666" stroke-width="2"/>
                         <circle cx="12" cy="8" r="3" stroke="#666" stroke-width="2"/>
                         <path d="M8 18c0-2 2-4 4-4s4 2 4 4" stroke="#666" stroke-width="2" stroke-linecap="round"/>
@@ -622,6 +701,51 @@
                 </div>
                 <div class="profile-name">{{ $user->name }}</div>
             </div>
+
+            <!-- Quick Links Section -->
+            <div class="quick-links-section">
+                <div class="section-title">Quick Links</div>
+                <a href="{{ route('address.index') }}" class="quick-link">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    Alamat Saya ({{ $user->addresses->count() }})
+                </a>
+                <a href="{{ route('orders.index') }}" class="quick-link">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg>
+                    Pesanan Aktif
+                </a>
+                <a href="{{ route('order-history.index') }}" class="quick-link">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                    </svg>
+                    Riwayat Pesanan
+                </a>
+                <a href="{{ route('wishlist') }}" class="quick-link">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                    Wishlist
+                </a>
+            </div>
+
+            <!-- Address Display -->
+            @if($user->defaultAddress)
+            <div class="profile-info-section">
+                <div class="section-title">Alamat Utama</div>
+                <div class="address-display">
+                    <div class="address-label">{{ $user->defaultAddress->label ?? 'Alamat Utama' }}</div>
+                    <div class="address-name">{{ $user->defaultAddress->recipient_name }}</div>
+                    <div class="address-details">
+                        {{ $user->defaultAddress->address }}<br>
+                        {{ $user->defaultAddress->city }}, {{ $user->defaultAddress->province }}
+                    </div>
+                </div>
+            </div>
+            @endif
 
             <!-- Identity Section -->
             <div class="profile-info-section">
@@ -883,3 +1007,4 @@
     </script>
 </body>
 </html>
+@endsection

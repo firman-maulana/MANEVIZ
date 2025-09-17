@@ -1203,7 +1203,7 @@
                             <a href="{{ url('/profil') }}" class="dropdown-item">
                                 <i class="bi bi-person me-2"></i> Profile
                             </a>
-                            <a href="{{ url('/alamat') }}" class="dropdown-item">
+                            <a href="{{ url('/address') }}" class="dropdown-item">
                                 <i class="bi bi-geo-alt me-2"></i> Alamat
                             </a>
                             <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
