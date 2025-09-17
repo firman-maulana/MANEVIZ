@@ -1214,12 +1214,9 @@
             <a href="/cart" class="nav-icon cart-icon">
                 <i class="bi bi-cart3"></i>
             </a>
-            <a href="/wishlist" class="nav-icon">
-                <i class="bi bi-heart"></i>
-            </a>
 
-            <a href="/order-history" class="nav-icon">
-                <i class="bi bi-clock-history"></i>
+            <a href="/alamat" class="nav-icon">
+                <i class="bi bi-geo-alt me-2"></i>
             </a>
         </div>
         @endauth
@@ -1266,8 +1263,8 @@
                     <a href="{{ url('/cart') }}" class="nav-icon cart-icon">
                         <i class="bi bi-cart3"></i>
                     </a>
-                    <a href="{{ url('/wishlist') }}" class="nav-icon">
-                        <i class="bi bi-heart"></i>
+                    <a href="{{ url('/orders') }}" class="nav-icon">
+                        <i class="bi-bag-check"></i>
                     </a>
                     <div class="nav-icon user-dropdown" onclick="toggleUserDropdown()">
                         <i class="bi bi-person-circle"></i>
@@ -1275,11 +1272,8 @@
                             <a href="{{ url('/profil') }}" class="dropdown-item">
                                 <i class="bi bi-person me-2"></i> Profile
                             </a>
-                            <a href="{{ url('/orders') }}" class="dropdown-item">
-                                <i class="bi bi-bag-check"></i> Pesanan
-                            </a>
-                            <a href="{{ url('/order-history.index') }}" class="dropdown-item">
-                                <i class="bi bi-clock-history"></i> Riwayat Pesanan
+                            <a href="{{ url('/alamat') }}" class="dropdown-item">
+                                <i class="bi bi-geo-alt me-2"></i> Alamat
                             </a>
                             <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
                                 @csrf
