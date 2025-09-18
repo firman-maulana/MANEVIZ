@@ -1,17 +1,18 @@
-@extends('layouts.app')
+@extends('layouts.app2')
 
 @section('content')
 <style>
     .address-container {
         margin-top: 50px;
+        margin-bottom: 20px;
         min-height: 100vh;
-        background-color: #f8f9fa;
+        /* background-color: #f8f9fa; */
         padding: 2rem 0;
     }
     .address-wrapper {
         max-width: 1024px;
         margin: 0 auto;
-        padding: 0 1rem;
+        /* padding: 0 1rem; */
     }
     .header-section {
         margin-bottom: 3rem;
@@ -322,14 +323,14 @@
         @endif
 
         <!-- Back to Profile -->
-        <div class="back-to-profile">
+        <!-- <div class="back-to-profile">
             <a href="{{ route('profil') }}" class="back-link">
                 <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                 </svg>
                 Kembali ke Profil
             </a>
-        </div>
+        </div> -->
     </div>
 </div>
 @endsection
