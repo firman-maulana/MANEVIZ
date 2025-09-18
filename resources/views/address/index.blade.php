@@ -3,6 +3,7 @@
 @section('content')
 <style>
     .address-container {
+        margin-top: 50px;
         min-height: 100vh;
         background-color: #f8f9fa;
         padding: 2rem 0;
@@ -31,19 +32,20 @@
         margin: 0;
     }
     .add-address-btn {
-        background-color: #0d6efd;
-        color: white;
+        background-color: white;
+        color: #000000;
         padding: 0.75rem 1.5rem;
-        border-radius: 0.5rem;
+        border-radius: 12px;
         text-decoration: none;
         font-weight: 500;
         display: flex;
         align-items: center;
         gap: 0.5rem;
         transition: background-color 0.2s;
+        border: 1px solid #000000;
     }
     .add-address-btn:hover {
-        background-color: #0b5ed7;
+        background-color: #000000;
         color: white;
     }
     .success-alert {
