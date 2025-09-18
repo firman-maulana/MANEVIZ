@@ -31,7 +31,7 @@ class UserAddress extends Model
      */
     public function user()
     {
-        return $this->belongsTo(Users::class);
+        return $this->belongsTo(User::class); // Fixed: changed from Users to User
     }
 
     /**
@@ -39,7 +39,7 @@ class UserAddress extends Model
      */
     public function getPhoneAttribute()
     {
-        return $this->user->phone;
+        return $this->user->phone ?? null;
     }
 
     /**
@@ -70,5 +70,21 @@ class UserAddress extends Model
 
         // Set this address as default
         $this->update(['is_default' => true]);
+    }
+
+    /**
+     * Get formatted address for checkout
+     */
+    public function getFormattedAddressAttribute()
+    {
+        return [
+            'name' => $this->recipient_name,
+            'phone' => $this->phone,
+            'address' => $this->address,
+            'city' => $this->city,
+            'province' => $this->province,
+            'postal_code' => $this->postal_code,
+            'full_address' => $this->full_address
+        ];
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\UserAddress;
 use App\Services\MidtransService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -44,6 +45,15 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->with('error', 'Tidak ada item yang dipilih untuk checkout');
         }
 
+        // Get user addresses
+        $userAddresses = UserAddress::where('user_id', Auth::id())
+            ->orderBy('is_default', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Get default address
+        $defaultAddress = $userAddresses->where('is_default', true)->first();
+
         // Calculate totals
         $subtotal = $selectedItems->sum(function ($item) {
             return ($item->product->harga_jual ?? $item->product->harga) * $item->kuantitas;
@@ -53,7 +63,7 @@ class CheckoutController extends Controller
         $shipping = 15; // IDR 15,000 flat shipping
         $total = $subtotal + $tax + $shipping;
 
-        return view('checkout', compact('selectedItems', 'subtotal', 'tax', 'shipping', 'total'));
+        return view('checkout', compact('selectedItems', 'subtotal', 'tax', 'shipping', 'total', 'userAddresses', 'defaultAddress'));
     }
 
     // Create Midtrans payment token
@@ -61,13 +71,14 @@ class CheckoutController extends Controller
     {
         $request->validate([
             'items' => 'required|string',
-            'shipping_name' => 'required|string|max:255',
-            'shipping_email' => 'required|email|max:255',
-            'shipping_phone' => 'required|string|max:20',
-            'shipping_address' => 'required|string',
-            'shipping_city' => 'required|string|max:255',
-            'shipping_province' => 'required|string|max:255',
-            'shipping_postal_code' => 'required|string|max:10',
+            'selected_address' => 'required', // NEW: validate address selection
+            'shipping_name' => 'required_if:selected_address,manual|string|max:255',
+            'shipping_email' => 'required_if:selected_address,manual|email|max:255',
+            'shipping_phone' => 'required_if:selected_address,manual|string|max:20',
+            'shipping_address' => 'required_if:selected_address,manual|string',
+            'shipping_city' => 'required_if:selected_address,manual|string|max:255',
+            'shipping_province' => 'required_if:selected_address,manual|string|max:255',
+            'shipping_postal_code' => 'required_if:selected_address,manual|string|max:10',
             'notes' => 'nullable|string|max:500',
             'same_as_shipping' => 'nullable|boolean',
         ]);
@@ -104,6 +115,43 @@ class CheckoutController extends Controller
                 }
             }
 
+            // Get shipping address data
+            $selectedAddressId = null;
+            $shippingData = [];
+            
+            if ($request->selected_address !== 'manual') {
+                // Using saved address
+                $selectedAddressId = $request->selected_address;
+                $address = UserAddress::where('id', $selectedAddressId)
+                    ->where('user_id', Auth::id())
+                    ->first();
+                
+                if (!$address) {
+                    throw new \Exception('Selected address not found');
+                }
+                
+                $shippingData = [
+                    'name' => $address->recipient_name,
+                    'email' => Auth::user()->email,
+                    'phone' => Auth::user()->phone ?? '',
+                    'address' => $address->address,
+                    'city' => $address->city,
+                    'province' => $address->province,
+                    'postal_code' => $address->postal_code,
+                ];
+            } else {
+                // Using manual address
+                $shippingData = [
+                    'name' => $request->shipping_name,
+                    'email' => $request->shipping_email,
+                    'phone' => $request->shipping_phone,
+                    'address' => $request->shipping_address,
+                    'city' => $request->shipping_city,
+                    'province' => $request->shipping_province,
+                    'postal_code' => $request->shipping_postal_code,
+                ];
+            }
+
             // Calculate totals
             $subtotal = $cartItems->sum(function ($item) {
                 return ($item->product->harga_jual ?? $item->product->harga) * $item->kuantitas;
@@ -125,20 +173,13 @@ class CheckoutController extends Controller
                 'tax' => $tax,
                 'shipping_cost' => $shippingCost,
                 'items' => $cartItems,
+                'selected_address_id' => $selectedAddressId, // NEW: store selected address ID
                 'customer' => [
-                    'name' => $request->shipping_name,
-                    'email' => $request->shipping_email,
-                    'phone' => $request->shipping_phone,
+                    'name' => $shippingData['name'],
+                    'email' => $shippingData['email'],
+                    'phone' => $shippingData['phone'],
                 ],
-                'shipping' => [
-                    'name' => $request->shipping_name,
-                    'email' => $request->shipping_email,
-                    'phone' => $request->shipping_phone,
-                    'address' => $request->shipping_address,
-                    'city' => $request->shipping_city,
-                    'province' => $request->shipping_province,
-                    'postal_code' => $request->shipping_postal_code,
-                ],
+                'shipping' => $shippingData,
                 'billing' => !$request->same_as_shipping ? [
                     'name' => $request->billing_name,
                     'email' => $request->billing_email,
@@ -147,15 +188,7 @@ class CheckoutController extends Controller
                     'city' => $request->billing_city,
                     'province' => $request->billing_province,
                     'postal_code' => $request->billing_postal_code,
-                ] : [
-                    'name' => $request->shipping_name,
-                    'email' => $request->shipping_email,
-                    'phone' => $request->shipping_phone,
-                    'address' => $request->shipping_address,
-                    'city' => $request->shipping_city,
-                    'province' => $request->shipping_province,
-                    'postal_code' => $request->shipping_postal_code,
-                ],
+                ] : $shippingData,
                 'notes' => $request->notes,
             ];
 
@@ -223,6 +256,7 @@ class CheckoutController extends Controller
             $order = Order::create([
                 'order_number' => $realOrderNumber,
                 'user_id' => Auth::id(),
+                'address_id' => $orderData['selected_address_id'], // NEW: store address reference
                 'status' => 'processing',
                 'subtotal' => $orderData['subtotal'],
                 'tax' => $orderData['tax'],

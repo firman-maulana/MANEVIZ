@@ -66,6 +66,25 @@ class AddressController extends Controller
             $address->setAsDefault();
         }
 
+        // Check if this was called from checkout (via AJAX or popup)
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Alamat berhasil ditambahkan!',
+                'address' => [
+                    'id' => $address->id,
+                    'label' => $address->label,
+                    'recipient_name' => $address->recipient_name,
+                    'address' => $address->address,
+                    'city' => $address->city,
+                    'province' => $address->province,
+                    'postal_code' => $address->postal_code,
+                    'is_default' => $address->is_default,
+                    'full_address' => $address->full_address
+                ]
+            ]);
+        }
+
         return redirect()->route('address.index')
             ->with('success', 'Alamat berhasil ditambahkan!');
     }
@@ -112,6 +131,25 @@ class AddressController extends Controller
             $address->setAsDefault();
         }
 
+        // Check if this was called via AJAX
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Alamat berhasil diperbarui!',
+                'address' => [
+                    'id' => $address->id,
+                    'label' => $address->label,
+                    'recipient_name' => $address->recipient_name,
+                    'address' => $address->address,
+                    'city' => $address->city,
+                    'province' => $address->province,
+                    'postal_code' => $address->postal_code,
+                    'is_default' => $address->is_default,
+                    'full_address' => $address->full_address
+                ]
+            ]);
+        }
+
         return redirect()->route('address.index')
             ->with('success', 'Alamat berhasil diperbarui!');
     }
@@ -139,6 +177,14 @@ class AddressController extends Controller
             }
         }
 
+        // Check if this was called via AJAX
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Alamat berhasil dihapus!'
+            ]);
+        }
+
         return redirect()->route('address.index')
             ->with('success', 'Alamat berhasil dihapus!');
     }
@@ -155,7 +201,44 @@ class AddressController extends Controller
 
         $address->setAsDefault();
 
+        // Check if this was called via AJAX
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Alamat utama berhasil diperbarui!'
+            ]);
+        }
+
         return redirect()->route('address.index')
             ->with('success', 'Alamat utama berhasil diperbarui!');
+    }
+
+    /**
+     * Get addresses for AJAX requests (for checkout page)
+     */
+    public function getAddresses()
+    {
+        $addresses = UserAddress::where('user_id', Auth::id())
+            ->orderBy('is_default', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'addresses' => $addresses->map(function ($address) {
+                return [
+                    'id' => $address->id,
+                    'label' => $address->label,
+                    'recipient_name' => $address->recipient_name,
+                    'address' => $address->address,
+                    'city' => $address->city,
+                    'province' => $address->province,
+                    'postal_code' => $address->postal_code,
+                    'is_default' => $address->is_default,
+                    'full_address' => $address->full_address,
+                    'phone' => $address->phone
+                ];
+            })
+        ]);
     }
 }

@@ -85,7 +85,7 @@
         margin-bottom: 8px;
     }
 
-    .form-input {
+    .form-input, .form-select {
         width: 100%;
         padding: 12px 16px;
         border: 2px solid #e9ecef;
@@ -94,7 +94,7 @@
         transition: border-color 0.3s ease;
     }
 
-    .form-input:focus {
+    .form-input:focus, .form-select:focus {
         outline: none;
         border-color: #333;
     }
@@ -121,6 +121,114 @@
         font-size: 14px;
         color: #333;
         cursor: pointer;
+    }
+
+    .address-section {
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .address-selector {
+        margin-bottom: 20px;
+    }
+
+    .address-option {
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .address-option:hover {
+        border-color: #333;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .address-option.selected {
+        border-color: #333;
+        background-color: #f8f9fa;
+    }
+
+    .address-option input[type="radio"] {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        transform: scale(1.2);
+        accent-color: #333;
+    }
+
+    .address-name {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .address-label {
+        background-color: #333;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        margin-left: 10px;
+    }
+
+    .address-details {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 5px;
+        line-height: 1.4;
+    }
+
+    .address-actions {
+        margin-top: 15px;
+    }
+
+    .btn-link {
+        background: none;
+        border: none;
+        color: #007bff;
+        cursor: pointer;
+        text-decoration: underline;
+        font-size: 14px;
+        margin-right: 15px;
+    }
+
+    .btn-link:hover {
+        color: #0056b3;
+    }
+
+    .add-address-btn {
+        display: inline-block;
+        background-color: #333;
+        color: white;
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        transition: background-color 0.3s ease;
+    }
+
+    .add-address-btn:hover {
+        background-color: #555;
+        text-decoration: none;
+        color: white;
+    }
+
+    .manual-address-form {
+        display: none;
+        border-top: 2px solid #f8f9fa;
+        padding-top: 20px;
+        margin-top: 20px;
+    }
+
+    .manual-address-form.show {
+        display: block;
     }
 
     .order-summary {
@@ -466,48 +574,104 @@
                 <div class="form-section">
                     <h3 class="section-title">Shipping Information</h3>
                     
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">Full Name *</label>
-                            <input type="text" name="shipping_name" class="form-input" 
-                                   value="{{ old('shipping_name', auth()->user()->name) }}" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Email *</label>
-                            <input type="email" name="shipping_email" class="form-input" 
-                                   value="{{ old('shipping_email', auth()->user()->email) }}" required>
-                        </div>
-                    </div>
+                    <div class="address-section">
+                        @if($userAddresses->count() > 0)
+                            <div class="address-selector">
+                                <label class="form-label">Select Address</label>
+                                @foreach($userAddresses as $address)
+                                    <div class="address-option {{ $defaultAddress && $defaultAddress->id === $address->id ? 'selected' : '' }}" 
+                                         onclick="selectAddress({{ $address->id }})">
+                                        <input type="radio" name="selected_address" value="{{ $address->id }}" 
+                                               {{ $defaultAddress && $defaultAddress->id === $address->id ? 'checked' : '' }}>
+                                        
+                                        <div class="address-name">
+                                            {{ $address->recipient_name }}
+                                            @if($address->label)
+                                                <span class="address-label">{{ $address->label }}</span>
+                                            @endif
+                                            @if($address->is_default)
+                                                <span class="address-label" style="background-color: #28a745;">Default</span>
+                                            @endif
+                                        </div>
+                                        
+                                        <div class="address-details">
+                                            {{ $address->address }}<br>
+                                            {{ $address->city }}, {{ $address->province }} {{ $address->postal_code }}<br>
+                                            Phone: {{ $address->user->phone ?? 'No phone' }}
+                                        </div>
+                                    </div>
+                                @endforeach
+                                
+                                <div class="address-option" onclick="selectManualAddress()">
+                                    <input type="radio" name="selected_address" value="manual">
+                                    <div class="address-name">Use different address</div>
+                                    <div class="address-details">Enter a new address for this order</div>
+                                </div>
+                            </div>
+                            
+                            <div class="address-actions">
+                                <button type="button" onclick="refreshAddresses()" class="btn-link">
+                                    Refresh Addresses
+                                </button>
+                                <a href="{{ route('address.create') }}" class="add-address-btn" target="_blank">
+                                    Add New Address
+                                </a>
+                            </div>
+                        @else
+                            <p style="color: #6c757d; margin-bottom: 20px;">
+                                You don't have any saved addresses. Please add an address first.
+                            </p>
+                            <a href="{{ route('address.create') }}" class="add-address-btn">
+                                Add Your First Address
+                            </a>
+                        @endif
+                        
+                        <!-- Manual Address Form (Hidden by default when addresses exist) -->
+                        <div class="manual-address-form" id="manualAddressForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Full Name *</label>
+                                    <input type="text" name="shipping_name" class="form-input" 
+                                           value="{{ old('shipping_name', auth()->user()->name) }}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email *</label>
+                                    <input type="email" name="shipping_email" class="form-input" 
+                                           value="{{ old('shipping_email', auth()->user()->email) }}" required>
+                                </div>
+                            </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Phone Number *</label>
-                        <input type="tel" name="shipping_phone" class="form-input" 
-                               value="{{ old('shipping_phone') }}" required placeholder="08xxxxxxxxxx">
-                    </div>
+                            <div class="form-group">
+                                <label class="form-label">Phone Number *</label>
+                                <input type="tel" name="shipping_phone" class="form-input" 
+                                       value="{{ old('shipping_phone') }}" required placeholder="08xxxxxxxxxx">
+                            </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Address *</label>
-                        <textarea name="shipping_address" class="form-input form-textarea" 
-                                  required placeholder="Street address, building, apartment, etc.">{{ old('shipping_address') }}</textarea>
-                    </div>
+                            <div class="form-group">
+                                <label class="form-label">Address *</label>
+                                <textarea name="shipping_address" class="form-input form-textarea" 
+                                          required placeholder="Street address, building, apartment, etc.">{{ old('shipping_address') }}</textarea>
+                            </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label">City *</label>
-                            <input type="text" name="shipping_city" class="form-input" 
-                                   value="{{ old('shipping_city') }}" required>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">City *</label>
+                                    <input type="text" name="shipping_city" class="form-input" 
+                                           value="{{ old('shipping_city') }}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Province *</label>
+                                    <input type="text" name="shipping_province" class="form-input" 
+                                           value="{{ old('shipping_province') }}" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Postal Code *</label>
+                                <input type="text" name="shipping_postal_code" class="form-input" 
+                                       value="{{ old('shipping_postal_code') }}" required maxlength="10">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">Province *</label>
-                            <input type="text" name="shipping_province" class="form-input" 
-                                   value="{{ old('shipping_province') }}" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Postal Code *</label>
-                        <input type="text" name="shipping_postal_code" class="form-input" 
-                               value="{{ old('shipping_postal_code') }}" required maxlength="10">
                     </div>
                 </div>
 
@@ -677,6 +841,92 @@
 <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
 
 <script>
+    // Address selection functions
+    function selectAddress(addressId) {
+        // Remove selected class from all address options
+        document.querySelectorAll('.address-option').forEach(option => {
+            option.classList.remove('selected');
+        });
+        
+        // Add selected class to clicked option
+        event.currentTarget.classList.add('selected');
+        
+        // Check the radio button
+        event.currentTarget.querySelector('input[type="radio"]').checked = true;
+        
+        // Hide manual address form
+        document.getElementById('manualAddressForm').classList.remove('show');
+        
+        // Fill form with selected address data (if needed for processing)
+        if (addressId !== 'manual') {
+            fillAddressForm(addressId);
+        }
+    }
+    
+    function selectManualAddress() {
+        // Remove selected class from all address options
+        document.querySelectorAll('.address-option').forEach(option => {
+            option.classList.remove('selected');
+        });
+        
+        // Add selected class to manual option
+        event.currentTarget.classList.add('selected');
+        
+        // Show manual address form
+        document.getElementById('manualAddressForm').classList.add('show');
+        
+        // Clear form fields
+        clearAddressForm();
+    }
+    
+    function refreshAddresses() {
+        // Fetch updated addresses from server
+        fetch('{{ route("address.index") }}', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Reload the page to show updated addresses
+                window.location.reload();
+            }
+        })
+        .catch(error => {
+            console.error('Error refreshing addresses:', error);
+            showNotification('info', 'Please refresh the page to see new addresses');
+        });
+    }
+    
+    function fillAddressForm(addressId) {
+        const addresses = @json($userAddresses);
+        const selectedAddress = addresses.find(addr => addr.id == addressId);
+        
+        if (selectedAddress) {
+            document.querySelector('input[name="shipping_name"]').value = selectedAddress.recipient_name;
+            document.querySelector('input[name="shipping_email"]').value = '{{ auth()->user()->email }}';
+            document.querySelector('input[name="shipping_phone"]').value = '{{ auth()->user()->phone ?? "" }}';
+            document.querySelector('textarea[name="shipping_address"]').value = selectedAddress.address;
+            document.querySelector('input[name="shipping_city"]').value = selectedAddress.city;
+            document.querySelector('input[name="shipping_province"]').value = selectedAddress.province;
+            document.querySelector('input[name="shipping_postal_code"]').value = selectedAddress.postal_code;
+        }
+    }
+    
+    function clearAddressForm() {
+        document.querySelector('input[name="shipping_name"]').value = '{{ auth()->user()->name }}';
+        document.querySelector('input[name="shipping_email"]').value = '{{ auth()->user()->email }}';
+        document.querySelector('input[name="shipping_phone"]').value = '';
+        document.querySelector('textarea[name="shipping_address"]').value = '';
+        document.querySelector('input[name="shipping_city"]').value = '';
+        document.querySelector('input[name="shipping_province"]').value = '';
+        document.querySelector('input[name="shipping_postal_code"]').value = '';
+    }
+
     function toggleBillingFields() {
         const checkbox = document.getElementById('same_as_shipping');
         const billingFields = document.getElementById('billing-fields');
@@ -696,11 +946,20 @@
 
     // Payment button click handler
     document.getElementById('payNowBtn').addEventListener('click', function() {
-        // Validate form first
-        const form = document.getElementById('checkoutForm');
-        if (!form.checkValidity()) {
-            form.reportValidity();
+        // Check if address is selected
+        const selectedAddress = document.querySelector('input[name="selected_address"]:checked');
+        if (!selectedAddress) {
+            showNotification('error', 'Please select or enter a shipping address');
             return;
+        }
+        
+        // If manual address is selected, validate the form
+        if (selectedAddress.value === 'manual') {
+            const form = document.getElementById('checkoutForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
         }
 
         // Show modal and loading
@@ -708,7 +967,22 @@
         modal.classList.add('show');
         
         // Prepare form data
-        const formData = new FormData(form);
+        const formData = new FormData(document.getElementById('checkoutForm'));
+        
+        // If a saved address is selected, get address data
+        if (selectedAddress.value !== 'manual') {
+            const addresses = @json($userAddresses);
+            const address = addresses.find(addr => addr.id == selectedAddress.value);
+            if (address) {
+                formData.set('shipping_name', address.recipient_name);
+                formData.set('shipping_email', '{{ auth()->user()->email }}');
+                formData.set('shipping_phone', '{{ auth()->user()->phone ?? "" }}');
+                formData.set('shipping_address', address.address);
+                formData.set('shipping_city', address.city);
+                formData.set('shipping_province', address.province);
+                formData.set('shipping_postal_code', address.postal_code);
+            }
+        }
         
         // Create payment token
         fetch('{{ route("checkout.create-payment") }}', {
@@ -829,9 +1103,18 @@
         }
     });
 
-    // Initialize billing fields visibility on page load
+    // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
+        // Initialize billing fields visibility
         toggleBillingFields();
+        
+        @if($userAddresses->count() === 0)
+            // If no addresses exist, show manual form
+            document.getElementById('manualAddressForm').classList.add('show');
+        @elseif($defaultAddress)
+            // Fill form with default address
+            fillAddressForm({{ $defaultAddress->id }});
+        @endif
     });
 
     // Show server-side messages

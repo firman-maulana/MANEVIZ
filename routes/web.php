@@ -57,7 +57,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/profil/update', [ProfileController::class, 'updateProfile'])->name('profil.update');
     Route::put('/profil/update-password', [ProfileController::class, 'updatePassword'])->name('profil.update-password');
     
-    // Address Routes - NEW
+    // Address Routes - UPDATED
     Route::prefix('address')->name('address.')->group(function () {
         Route::get('/', [AddressController::class, 'index'])->name('index');
         Route::get('/create', [AddressController::class, 'create'])->name('create');
@@ -66,6 +66,9 @@ Route::middleware('auth')->group(function () {
         Route::put('/{address}', [AddressController::class, 'update'])->name('update');
         Route::delete('/{address}', [AddressController::class, 'destroy'])->name('destroy');
         Route::patch('/{address}/set-default', [AddressController::class, 'setDefault'])->name('set-default');
+        
+        // NEW: AJAX route for getting addresses (for checkout page refresh)
+        Route::get('/ajax/list', [AddressController::class, 'getAddresses'])->name('ajax.list');
     });
     
     Route::view('/wishlist', 'wishlist')->name('wishlist');
@@ -100,7 +103,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/cart/update/{id}', [CartController::class, 'updateQuantity'])->name('cart.update');
     Route::delete('/cart/remove/{id}', [CartController::class, 'removeItem'])->name('cart.remove');
     
-    // Checkout routes - NEW PAYMENT FLOW
+    // Checkout routes - UPDATED PAYMENT FLOW
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout/create-payment', [CheckoutController::class, 'createPayment'])->name('checkout.create-payment');
     Route::post('/checkout/handle-payment', [CheckoutController::class, 'handlePaymentSuccess'])->name('checkout.handle-payment');

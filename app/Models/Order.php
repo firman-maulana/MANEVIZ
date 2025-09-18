@@ -42,6 +42,8 @@ class Order extends Model
         'order_date',
         'shipped_date',
         'delivered_date',
+        // New field for address reference
+        'address_id', // Reference to UserAddress if used
     ];
 
     protected $casts = [
@@ -90,6 +92,12 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    // New relationship to UserAddress
+    public function userAddress()
+    {
+        return $this->belongsTo(UserAddress::class, 'address_id');
+    }
+
     // Accessors
     public function getStatusLabelAttribute()
     {
@@ -122,9 +130,22 @@ class Order extends Model
             'credit_card' => 'Kartu Kredit',
             'ewallet' => 'E-Wallet',
             'cod' => 'Cash on Delivery (COD)',
+            'midtrans' => 'Midtrans Payment Gateway',
         ];
 
         return $labels[$this->payment_method] ?? 'Unknown';
+    }
+
+    // Get full shipping address
+    public function getFullShippingAddressAttribute()
+    {
+        return $this->shipping_address . ', ' . $this->shipping_city . ', ' . $this->shipping_province . ' ' . $this->shipping_postal_code;
+    }
+
+    // Get full billing address
+    public function getFullBillingAddressAttribute()
+    {
+        return $this->billing_address . ', ' . $this->billing_city . ', ' . $this->billing_province . ' ' . $this->billing_postal_code;
     }
 
     // Scopes
