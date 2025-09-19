@@ -1184,10 +1184,10 @@
             </a>
 
             <div class="nav-right">
-                <div class="search-container">
+                {{-- <div class="search-container">
                     <input type="text" class="search-bar" placeholder="Search products...">
                     <span class="search-icon">⌕</span>
-                </div>
+                </div> --}}
 
                 @auth
                 <div class="nav-icons">
@@ -1220,7 +1220,7 @@
         </div>
 
         <!-- Mobile Search Bar (appears below navbar on mobile) -->
-        <div class="mobile-search-bar" id="mobileSearchBar">
+        {{-- <div class="mobile-search-bar" id="mobileSearchBar">
             <div class="search-container">
                 <input type="text" class="search-bar" placeholder="Search products..." id="mobileSearchInput">
                 <span class="search-icon">⌕</span>
@@ -1228,7 +1228,7 @@
                     <i class="bi bi-x"></i>
                 </div>
             </div>
-        </div>
+        </div> --}}
     </nav>
 
     <main id="konten">

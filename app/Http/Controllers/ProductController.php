@@ -52,7 +52,33 @@ class ProductController extends Controller
         $products = $query->paginate(12);
         $categories = Category::all();
 
-        return view('allProduk', compact('products', 'categories'));
+        // 🔥 NEW: Get best seller products (top 4 by sales)
+        $bestSellerProducts = Product::active()
+            ->with(['category', 'images'])
+            ->where('total_penjualan', '>', 0) // Only products with sales
+            ->orderBy('total_penjualan', 'desc')
+            ->limit(4)
+            ->get();
+
+        // If there are less than 4 products with sales, fill with featured or newest products
+        if ($bestSellerProducts->count() < 4) {
+            $remainingCount = 4 - $bestSellerProducts->count();
+            $bestSellerIds = $bestSellerProducts->pluck('id')->toArray();
+            
+            $additionalProducts = Product::active()
+                ->with(['category', 'images'])
+                ->whereNotIn('id', $bestSellerIds)
+                ->where(function ($query) {
+                    $query->where('is_featured', true)
+                          ->orOrderBy('created_at', 'desc');
+                })
+                ->limit($remainingCount)
+                ->get();
+                
+            $bestSellerProducts = $bestSellerProducts->concat($additionalProducts);
+        }
+
+        return view('allProduk', compact('products', 'categories', 'bestSellerProducts'));
     }
 
     // 🔥 FIXED METHOD - Dynamic star rating calculation

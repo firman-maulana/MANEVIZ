@@ -1,7 +1,7 @@
 <?php
 use App\Models\Product;
 ?>
-@extends('layouts.app2')
+@extends('layouts.app3')
 
 @section('content')
     <style>
@@ -800,6 +800,38 @@ use App\Models\Product;
                 font-size: 13px;
                 min-width: 70px;
             }
+
+            .sale-badge,
+            .bestseller-badge {
+                top: 8px;
+                padding: 3px 6px;
+                font-size: 9px;
+            }
+
+            .sale-badge {
+                left: 8px;
+            }
+
+            .bestseller-badge {
+                right: 8px;
+            }
+
+            .product-price-original {
+                font-size: 9px;
+            }
+
+            .product-sales {
+                font-size: 9px;
+            }
+
+            .rating-stars {
+                font-size: 11px;
+            }
+
+            .rating-value {
+                font-size: 9px;
+            }
+
         }
 
         /* Extra small devices (portrait phones, 576px and down) */
@@ -965,6 +997,38 @@ use App\Models\Product;
             .see-all-btn {
                 font-size: 15px;
             }
+
+            .sale-badge,
+            .bestseller-badge {
+                top: 6px;
+                padding: 2px 5px;
+                font-size: 8px;
+            }
+
+            .sale-badge {
+                left: 6px;
+            }
+
+            .bestseller-badge {
+                right: 6px;
+            }
+
+            .product-price-original {
+                font-size: 8px;
+            }
+
+            .product-sales {
+                font-size: 8px;
+            }
+
+            .rating-stars {
+                font-size: 10px;
+            }
+
+            .rating-value {
+                font-size: 8px;
+            }
+
         }
 
         /* Extra extra small devices (very small phones, 400px and down) */
@@ -1134,9 +1198,102 @@ use App\Models\Product;
                 image-rendering: -webkit-optimize-contrast;
             }
         }
-        .get a{
+
+        .get a {
             text-decoration: none;
             color: white;
+        }
+
+        /* Badges */
+        .sale-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #dc3545;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            z-index: 2;
+            text-transform: uppercase;
+        }
+
+        .bestseller-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #ffc107;
+            color: #000;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            z-index: 2;
+            text-transform: uppercase;
+        }
+
+        /* Product pricing with original price */
+        .product-pricing {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .product-price-original {
+            color: #999;
+            font-size: 10px;
+            font-weight: 400;
+            text-decoration: line-through;
+            margin: 0;
+        }
+
+        .product-price {
+            color: #666;
+            font-size: 12px;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        /* Sales count */
+        .product-sales {
+            color: #28a745;
+            font-size: 10px;
+            font-weight: 500;
+            margin: 2px 0 0 0;
+        }
+
+        /* Rating stars */
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 3px;
+        }
+
+        .rating-stars {
+            color: #ffc107;
+            font-size: 12px;
+            line-height: 1;
+        }
+
+        .rating-value {
+            color: #666;
+            font-size: 10px;
+            font-weight: 400;
+        }
+
+        /* No products fallback */
+        .no-products {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .no-products p {
+            font-size: 16px;
+            margin: 0;
         }
     </style>
 
@@ -1161,85 +1318,89 @@ use App\Models\Product;
             <div class="container">
                 <h3 class="section-title">Best Seller</h3>
                 <div class="product-grid">
-                    <!-- Product 1 - Muzan T-Shirt -->
-                    <a href="{{ route('products.show', 'muzan-t-shirt') }}" class="product-card">
-                        <div class="product-image">
-                            <img src=" image/produk1.jpg" alt="Muzan T-Shirt">
-                        </div>
-                        <div class="product-info">
-                            <div class="product-content">
-                                <div class="product-details">
-                                    <h4 class="product-name">Muzan T-Shirt</h4>
-                                    <p class="product-price">IDR 150,000.00</p>
-                                </div>
-                                <div class="product-arrow">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M5 12h14m-7-7 7 7-7 7" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
+                    @forelse ($bestSellerProducts as $product)
+                        <a href="{{ route('products.show', $product->slug) }}" class="product-card">
+                            <div class="product-image">
+                                @if ($product->primaryImage)
+                                    <img src="{{ asset('storage/' . $product->primaryImage->image_path) }}"
+                                        alt="{{ $product->name }}">
+                                @elseif ($product->images->isNotEmpty())
+                                    <img src="{{ asset('storage/' . $product->images->first()->image_path) }}"
+                                        alt="{{ $product->name }}">
+                                @else
+                                    <img src="{{ asset('images/no-image.png') }}"
+                                        onerror="this.onerror=null;this.src='https://via.placeholder.com/300x300?text=No+Image';"
+                                        alt="No Image">
+                                @endif
 
-                    <!-- Product 2 - Douma T-Shirt -->
-                    <a href="{{ route('products.show', 'douma-t-shirt') }}" class="product-card">
-                        <div class="product-image">
-                            <img src=" image/produk2.jpg" alt="Douma T-Shirt">
-                        </div>
-                        <div class="product-info">
-                            <div class="product-content">
-                                <div class="product-details">
-                                    <h4 class="product-name">Douma T-Shirt</h4>
-                                    <p class="product-price">IDR 150,000.00</p>
-                                </div>
-                                <div class="product-arrow">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M5 12h14m-7-7 7 7-7 7" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
+                                <!-- Sale Badge (if product is on sale) -->
+                                @if ($product->is_on_sale)
+                                    <div class="sale-badge">
+                                        Sale
+                                    </div>
+                                @endif
 
-                    <!-- Product 3 - MT-Shirt -->
-                    <a href="{{ route('products.show', 'mt-shirt') }}" class="product-card">
-                        <div class="product-image">
-                            <img src=" image/produk2.jpg" alt="MT-Shirt">
-                        </div>
-                        <div class="product-info">
-                            <div class="product-content">
-                                <div class="product-details">
-                                    <h4 class="product-name">MT-Shirt</h4>
-                                    <p class="product-price">IDR 125,000.00</p>
-                                </div>
-                                <div class="product-arrow">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M5 12h14m-7-7 7 7-7 7" />
-                                    </svg>
-                                </div>
+                                <!-- Best Seller Badge -->
+                                @if ($product->total_penjualan > 0)
+                                    <div class="bestseller-badge">
+                                        #{{ $loop->iteration }} Best Seller
+                                    </div>
+                                @endif
                             </div>
-                        </div>
-                    </a>
+                            <div class="product-info">
+                                <div class="product-content">
+                                    <div class="product-details">
+                                        <h4 class="product-name">{{ $product->name }}</h4>
+                                        <div class="product-pricing">
+                                            @if ($product->is_on_sale)
+                                                <span class="product-price-original">IDR
+                                                    {{ number_format($product->harga, 0, ',', '.') }}</span>
+                                                <span class="product-price">IDR
+                                                    {{ number_format($product->harga_jual, 0, ',', '.') }}</span>
+                                            @else
+                                                <span class="product-price">IDR
+                                                    {{ number_format($product->final_price, 0, ',', '.') }}</span>
+                                            @endif
+                                        </div>
 
-                    <!-- Product 4 - Cosmos Tshirt -->
-                    <a href="{{ route('products.show', 'cosmos-tshirt') }}" class="product-card">
-                        <div class="product-image">
-                            <img src=" image/produk3.jpg" alt="Cosmos Tshirt">
-                        </div>
-                        <div class="product-info">
-                            <div class="product-content">
-                                <div class="product-details">
-                                    <h4 class="product-name">Cosmos Tshirt</h4>
-                                    <p class="product-price">IDR 150,000.00</p>
-                                </div>
-                                <div class="product-arrow">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M5 12h14m-7-7 7 7-7 7" />
-                                    </svg>
+                                        <!-- Sales count -->
+                                        @if ($product->total_penjualan > 0)
+                                            <p class="product-sales">{{ $product->total_penjualan }} sold</p>
+                                        @endif
+
+                                        <!-- Rating (if available) -->
+                                        @if ($product->rating_rata > 0)
+                                            <div class="product-rating">
+                                                <span class="rating-stars">
+                                                    @for ($i = 1; $i <= 5; $i++)
+                                                        @if ($i <= floor($product->rating_rata))
+                                                            ★
+                                                        @elseif ($i - 0.5 <= $product->rating_rata)
+                                                            ☆
+                                                        @else
+                                                            ☆
+                                                        @endif
+                                                    @endfor
+                                                </span>
+                                                <span
+                                                    class="rating-value">({{ number_format($product->rating_rata, 1) }})</span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div class="product-arrow">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M5 12h14m-7-7 7 7-7 7" />
+                                        </svg>
+                                    </div>
                                 </div>
                             </div>
+                        </a>
+                    @empty
+                        <!-- Fallback jika tidak ada produk -->
+                        <div class="no-products">
+                            <p>No best seller products available at the moment.</p>
                         </div>
-                    </a>
+                    @endforelse
                 </div>
             </div>
         </div>

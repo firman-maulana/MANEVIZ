@@ -8,10 +8,10 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            color: #333333;
+            color: #111111;
             margin: 0;
             padding: 0;
-            background-color: #f8fafc;
+            background-color: #f9f9f9;
         }
         
         .container {
@@ -20,11 +20,11 @@
             background-color: #ffffff;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e5e5;
         }
         
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #000000;
             color: white;
             text-align: center;
             padding: 30px 20px;
@@ -48,16 +48,16 @@
         
         .greeting {
             font-size: 18px;
-            color: #2d3748;
+            color: #111111;
             margin-bottom: 20px;
         }
         
         .product-card {
-            border: 2px solid #e2e8f0;
+            border: 1px solid #d1d1d1;
             border-radius: 12px;
             padding: 25px;
             margin: 25px 0;
-            background: linear-gradient(45deg, #f7fafc 0%, #edf2f7 100%);
+            background: #f5f5f5;
             text-align: center;
         }
         
@@ -67,25 +67,25 @@
             object-fit: cover;
             border-radius: 8px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ccc;
         }
         
         .product-name {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
-            color: #2d3748;
+            color: #000000;
             margin-bottom: 10px;
         }
         
         .product-category {
-            color: #718096;
-            font-size: 16px;
+            color: #555555;
+            font-size: 15px;
             margin-bottom: 15px;
         }
         
         .product-description {
-            color: #4a5568;
-            font-size: 16px;
+            color: #333333;
+            font-size: 15px;
             line-height: 1.6;
             margin-bottom: 20px;
         }
@@ -95,20 +95,20 @@
         }
         
         .price {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 700;
-            color: #e53e3e;
+            color: #000000;
             margin-right: 10px;
         }
         
         .original-price {
-            font-size: 18px;
-            color: #718096;
+            font-size: 16px;
+            color: #777777;
             text-decoration: line-through;
         }
         
         .sale-badge {
-            background: #e53e3e;
+            background: #000000;
             color: white;
             padding: 4px 12px;
             border-radius: 20px;
@@ -124,41 +124,41 @@
         
         .btn {
             display: inline-block;
-            padding: 15px 35px;
+            padding: 12px 28px;
             text-decoration: none;
-            border-radius: 8px;
+            border-radius: 6px;
             font-weight: 600;
-            font-size: 16px;
+            font-size: 15px;
             transition: all 0.3s ease;
-            margin: 10px;
+            margin: 8px;
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #000000;
             color: white;
         }
         
         .btn-secondary {
-            background: #edf2f7;
-            color: #4a5568;
-            border: 2px solid #e2e8f0;
+            background: white;
+            color: #000000;
+            border: 1px solid #000000;
         }
         
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0.85;
         }
         
         .features {
-            background: #f7fafc;
+            background: #f9f9f9;
             padding: 20px;
             border-radius: 8px;
             margin: 25px 0;
+            border: 1px solid #e5e5e5;
         }
         
         .features h3 {
             margin-top: 0;
-            color: #2d3748;
+            color: #111111;
         }
         
         .feature-list {
@@ -168,27 +168,27 @@
         
         .feature-list li {
             padding: 5px 0;
-            color: #4a5568;
+            color: #333333;
         }
         
         .feature-list li:before {
             content: "✓";
-            color: #48bb78;
+            color: #000000;
             font-weight: bold;
             margin-right: 10px;
         }
         
         .footer {
-            background-color: #2d3748;
-            color: #cbd5e0;
+            background-color: #000000;
+            color: #cccccc;
             text-align: center;
             padding: 25px;
             font-size: 14px;
         }
         
         .footer a {
-            color: #81e6d9;
-            text-decoration: none;
+            color: #ffffff;
+            text-decoration: underline;
         }
         
         .social-links {
@@ -197,7 +197,8 @@
         
         .social-links a {
             margin: 0 10px;
-            font-size: 18px;
+            font-size: 16px;
+            color: white;
         }
         
         @media (max-width: 600px) {
@@ -230,7 +231,7 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <span class="emoji">🎉</span>
+            <span class="emoji">🖤</span>
             <h1>Produk Baru Tersedia!</h1>
         </div>
         
@@ -240,14 +241,14 @@
                 Halo <strong>{{ $userName }}</strong>! 👋
             </div>
             
-            <p>Kami dengan senang hati ingin memperkenalkan produk terbaru yang baru saja ditambahkan ke koleksi kami!</p>
+            <p>Kami ingin memperkenalkan produk terbaru yang baru saja ditambahkan ke koleksi kami.</p>
             
             <!-- Product Card -->
             <div class="product-card">
                 @if($primaryImage)
                     <img src="{{ $primaryImage }}" alt="{{ $product->name }}" class="product-image">
                 @else
-                    <div class="product-image" style="background: linear-gradient(45deg, #e2e8f0, #cbd5e0); display: flex; align-items: center; justify-content: center; color: #718096; font-size: 18px;">
+                    <div class="product-image" style="background:#e5e5e5; display:flex; align-items:center; justify-content:center; color:#555; font-size:16px;">
                         📦 Gambar Produk
                     </div>
                 @endif
@@ -266,27 +267,27 @@
                     @if($product->is_on_sale)
                         <span class="price">IDR {{ number_format($product->harga_jual, 0, ',', '.') }}</span>
                         <span class="original-price">IDR {{ number_format($product->harga, 0, ',', '.') }}</span>
-                        <span class="sale-badge">SALE!</span>
+                        <span class="sale-badge">SALE</span>
                     @else
                         <span class="price">IDR {{ number_format($product->harga, 0, ',', '.') }}</span>
                     @endif
                 </div>
                 
                 @if($product->stock_kuantitas > 0)
-                    <div style="color: #48bb78; font-weight: 600; margin: 10px 0;">
+                    <div style="color:#000; font-weight:600; margin:10px 0;">
                         ✅ Stok Tersedia ({{ $product->stock_kuantitas }} unit)
                     </div>
                 @else
-                    <div style="color: #e53e3e; font-weight: 600; margin: 10px 0;">
+                    <div style="color:#000; font-weight:600; margin:10px 0;">
                         ⚠️ Stok Terbatas
                     </div>
                 @endif
             </div>
             
-            <!-- Features (if available) -->
+            <!-- Features -->
             @if($product->meta_data && is_array($product->meta_data) && count($product->meta_data) > 0)
                 <div class="features">
-                    <h3>🌟 Keunggulan Produk:</h3>
+                    <h3>Keunggulan Produk:</h3>
                     <ul class="feature-list">
                         @foreach($product->meta_data as $key => $value)
                             <li><strong>{{ ucfirst($key) }}:</strong> {{ $value }}</li>
@@ -295,7 +296,7 @@
                 </div>
             @endif
             
-            <!-- CTA Section -->
+            <!-- CTA -->
             <div class="cta-section">
                 <a href="{{ $productUrl }}" class="btn btn-primary">
                     🛒 Lihat Detail Produk
@@ -305,28 +306,27 @@
                 </a>
             </div>
             
-            <p style="color: #718096; font-size: 14px; text-align: center; margin-top: 30px;">
-                <em>Jangan sampai kehabisan! Produk terbaru ini sangat populer dan stok terbatas. 
-                Segera kunjungi toko kami untuk mendapatkan penawaran terbaik.</em>
+            <p style="color: #555; font-size: 13px; text-align: center; margin-top: 30px;">
+                <em>Jangan sampai kehabisan! Produk terbaru ini sangat populer dan stok terbatas.</em>
             </p>
         </div>
         
         <!-- Footer -->
         <div class="footer">
             <div>
-                <strong>Terima kasih telah menjadi bagian dari keluarga kami! ❤️</strong>
+                <strong>Terima kasih telah menjadi bagian dari keluarga kami! 🖤</strong>
             </div>
             
             <div class="social-links">
-                <a href="#">📘 Facebook</a>
-                <a href="#">📷 Instagram</a>
-                <a href="#">🐦 Twitter</a>
+                <a href="#">Facebook</a>
+                <a href="#">Instagram</a>
+                <a href="#">Twitter</a>
             </div>
             
-            <div style="margin-top: 15px; font-size: 12px; color: #a0aec0;">
+            <div style="margin-top: 15px; font-size: 12px; color: #aaa;">
                 <p>Anda menerima email ini karena Anda adalah member terdaftar di toko kami.</p>
                 <p>Jika tidak ingin menerima notifikasi produk baru, silakan 
-                   <a href="#" style="color: #81e6d9;">kelola preferensi email</a> Anda.</p>
+                   <a href="#">kelola preferensi email</a>.</p>
             </div>
         </div>
     </div>

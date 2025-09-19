@@ -5,8 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css">
     <title>MANEVIZ</title>
     <style>
         * {
@@ -32,11 +31,12 @@
         .navbar {
             position: fixed;
             top: 0;
-            width: 100%;
-            padding: 12px 20px;
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0));
-            transition: all 0.3s ease;
+            left: 0;
+            right: 0;
             z-index: 1000;
+            padding: 15px 0;
+            transition: all 0.3s ease;
+            background: transparent;
         }
 
         .navbar.scrolled {
@@ -59,8 +59,7 @@
             display: flex;
             list-style: none;
             gap: 2rem;
-            margin: 0;
-            padding: 0;
+            flex: 1;
         }
 
         .nav-menu a {
@@ -70,13 +69,6 @@
             font-size: 1rem;
             transition: color 0.3s ease;
             position: relative;
-        }
-
-        .nav-menu .nav-link {
-            text-decoration: none;
-            font-weight: 500;
-            color: white;
-            transition: color 0.3s ease;
         }
 
         .navbar.scrolled .nav-menu a {
@@ -111,69 +103,23 @@
             object-fit: contain;
         }
 
-        .logo img {
-            height: 93px;
-            width: auto;
-            transition: opacity 0.3s ease;
-        }
-
-        .logo-white {
-            display: block;
-        }
-
-        .logo-black {
-            display: none;
-        }
-
-        .navbar.scrolled .logo-white {
-            display: none;
-        }
-
-        .navbar.scrolled .logo-black {
-            display: block;
-        }
-
         .nav-right {
             display: flex;
             align-items: center;
             gap: 1rem;
             flex: 1;
             justify-content: flex-end;
-            color: white;
-            font-size: 20px;
-            transition: color 0.3s ease;
-            cursor: pointer;
         }
 
         .search-container {
-            display: flex;
-            align-items: center;
-            background: transparent;
-            border: 1px solid #999;
-            border-radius: 20px;
-            padding: 5px 10px;
-            transition: background 0.3s ease;
             position: relative;
-            box-shadow: none;
-            color: black;
-        }
-
-        .search-container input {
-            border: none;
-            background: transparent;
-            outline: none;
-            color: black;
-            padding: 5px;
-            font-size: 14px;
-            width: 150px;
-            color: black;
         }
 
         .search-bar {
             padding: 8px 40px 8px 15px;
-            border: 1px solid white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 25px;
-            background: transparent;
+            background: black;
             color: white;
             font-size: 0.9rem;
             width: 200px;
@@ -194,23 +140,23 @@
         .search-bar:focus {
             outline: none;
             border-color: #ffff;
-            background: transparent;
+            background: black;
             width: 220px;
         }
 
         .navbar.scrolled .search-bar {
-            border-color: #999;
+            border-color: rgba(51, 51, 51, 0.3);
             background: rgba(255, 255, 255, 0.8);
-            color: black;
+            color: #333;
         }
 
         .navbar.scrolled .search-bar::placeholder {
-            color: #666;
+            color: rgba(51, 51, 51, 0.7);
         }
 
         .navbar.scrolled .search-bar:focus {
-            border-color: #999;
-            background: transparent !important;
+            border-color: black;
+            background: rgba(255, 255, 255, 0.9);
         }
 
         .search-icon {
@@ -224,7 +170,7 @@
         }
 
         .navbar.scrolled .search-icon {
-            color: black;
+            color: #333;
         }
 
         .nav-icons {
@@ -235,7 +181,7 @@
         }
 
         .nav-icon {
-            color: white;
+            color: black;
             font-size: 1.2rem;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -248,7 +194,7 @@
         }
 
         .navbar.scrolled .nav-icon {
-            color: black;
+            color: #333;
         }
 
         .nav-icon:hover {
@@ -282,7 +228,7 @@
         /* Mobile Search Icon */
         .mobile-search-icon {
             display: none;
-            color: white;
+            color: black;
             font-size: 1.2rem;
             cursor: pointer;
             padding: 8px;
@@ -291,7 +237,7 @@
         }
 
         .navbar.scrolled .mobile-search-icon {
-            color: black;
+            color: #333;
         }
 
         .mobile-search-icon:hover {
@@ -302,7 +248,7 @@
         /* Mobile Profile Icon */
         .mobile-profile-icon {
             display: none;
-            color: white;
+            color: black;
             font-size: 1.2rem;
             cursor: pointer;
             padding: 8px;
@@ -312,7 +258,7 @@
         }
 
         .navbar.scrolled .mobile-profile-icon {
-            color: black;
+            color: #333;
         }
 
         .mobile-profile-icon:hover {
@@ -428,7 +374,7 @@
             height: 100vh;
             background: rgba(0, 0, 0, 0.95);
             backdrop-filter: blur(10px);
-            z-index: 2000;
+            z-index: 998;
             transform: translateY(-100%);
             transition: transform 0.3s ease;
             display: flex;
@@ -510,7 +456,7 @@
             height: 100vh;
             background: rgba(0, 0, 0, 0.95);
             backdrop-filter: blur(10px);
-            z-index: 2000;
+            z-index: 999;
             transform: translateX(-100%);
             transition: transform 0.3s ease;
             display: flex;
@@ -598,7 +544,7 @@
         /* Mobile Menu Toggle */
         .mobile-menu-toggle {
             display: none;
-            color: white;
+            color: black;
             font-size: 1.5rem;
             cursor: pointer;
             padding: 8px;
@@ -769,9 +715,9 @@
                 gap: 8px;
             }
 
-            .logo img {
-                height: 70px;
-                padding-left: 53px;
+            .logo {
+                height: 60px;
+                flex: 1;
             }
 
             .mobile-menu-toggle {
@@ -838,13 +784,9 @@
                 gap: 6px;
             }
 
-            .nav-menu {
-                display: none;
-                /* hide menu di mobile */
-            }
-
-            .logo img {
-                height: 28px;
+            .logo {
+                height: 55px;
+                padding-left: 37px;
             }
 
             .mobile-menu-toggle,
@@ -852,16 +794,10 @@
             .mobile-profile-icon {
                 padding: 6px;
                 font-size: 1.1rem;
-                display: inline-block;
             }
 
             .mobile-search-bar {
                 padding: 8px 12px;
-            }
-
-            .search-container {
-                display: none;
-                /* hide search desktop di mobile */
             }
 
             /* Extra fixes for very small screens */
@@ -1208,18 +1144,18 @@
         </ul>
 
         @auth
-            <div class="mobile-nav-icons">
-                <a href="/orders" class="nav-icon">
-                    <i class="bi bi-bag-check"></i>
-                </a>
-                <a href="/cart" class="nav-icon cart-icon">
-                    <i class="bi bi-cart3"></i>
-                </a>
+        <div class="mobile-nav-icons">
+            <a href="/orders" class="nav-icon">
+                <i class="bi bi-bag-check"></i>
+            </a>
+            <a href="/cart" class="nav-icon cart-icon">
+                <i class="bi bi-cart3"></i>
+            </a>
 
-                <a href="/address" class="nav-icon">
-                    <i class="bi bi-geo-alt me-2"></i>
-                </a>
-            </div>
+            <a href="/alamat" class="nav-icon">
+                <i class="bi bi-geo-alt me-2"></i>
+            </a>
+        </div>
         @endauth
     </div>
 
@@ -1237,13 +1173,7 @@
                 <li><a class="nav-link" href="/contact">Contact</a></li>
             </ul>
 
-            <div class="logo">
-                <!-- Logo putih -->
-                <img src="image/maneviz-white.png" alt="MANEVIZ Logo White" class="logo-white">
-                <!-- Logo hitam -->
-                <img src="image/maneviz.png" alt="MANEVIZ Logo Black" class="logo-black">
-            </div>
-
+            <img src="../image/maneviz.png" alt="MANEVIZ Logo" class="logo">
 
             <div class="mobile-search-icon" onclick="toggleMobileSearchBar()">
                 <i class="bi bi-search"></i>
@@ -1254,44 +1184,43 @@
             </a>
 
             <div class="nav-right">
-                {{-- <div class="search-container">
+                <div class="search-container">
                     <input type="text" class="search-bar" placeholder="Search products...">
                     <span class="search-icon">⌕</span>
-                </div> --}}
+                </div>
 
                 @auth
-                    <div class="nav-icons">
-                        <a href="{{ url('/cart') }}" class="nav-icon cart-icon">
-                            <i class="bi bi-cart3"></i>
-                        </a>
-                        <a href="{{ url('/orders') }}" class="nav-icon">
-                            <i class="bi-bag-check"></i>
-                        </a>
-                        <div class="nav-icon user-dropdown" onclick="toggleUserDropdown()">
-                            <i class="bi bi-person-circle"></i>
-                            <div class="dropdown-menu" id="userDropdown">
-                                <a href="{{ url('/profil') }}" class="dropdown-item">
-                                    <i class="bi bi-person me-2"></i> Profile
-                                </a>
-                                <a href="{{ url('/address') }}" class="dropdown-item">
-                                    <i class="bi bi-geo-alt me-2"></i> Alamat
-                                </a>
-                                <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
-                                    @csrf
-                                    <button type="submit" class="dropdown-item logout"
-                                        style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">
-                                        <i class="bi bi-box-arrow-right me-2"></i> Logout
-                                    </button>
-                                </form>
-                            </div>
+                <div class="nav-icons">
+                    <a href="{{ url('/cart') }}" class="nav-icon cart-icon">
+                        <i class="bi bi-cart3"></i>
+                    </a>
+                    <a href="{{ url('/orders') }}" class="nav-icon">
+                        <i class="bi bi-bag-check"></i>
+                    </a>
+                    <div class="nav-icon user-dropdown" onclick="toggleUserDropdown()">
+                        <i class="bi bi-person-circle"></i>
+                        <div class="dropdown-menu" id="userDropdown">
+                            <a href="{{ url('/profil') }}" class="dropdown-item">
+                                <i class="bi bi-person me-2"></i> Profile
+                            </a>
+                            <a href="{{ url('/address') }}" class="dropdown-item">
+                                <i class="bi bi-geo-alt me-2"></i> Alamat
+                            </a>
+                            <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                                @csrf
+                                <button type="submit" class="dropdown-item logout" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">
+                                    <i class="bi bi-box-arrow-right me-2"></i> Logout
+                                </button>
+                            </form>
                         </div>
                     </div>
+                </div>
                 @endauth
             </div>
         </div>
 
         <!-- Mobile Search Bar (appears below navbar on mobile) -->
-        {{-- <div class="mobile-search-bar" id="mobileSearchBar">
+        <div class="mobile-search-bar" id="mobileSearchBar">
             <div class="search-container">
                 <input type="text" class="search-bar" placeholder="Search products..." id="mobileSearchInput">
                 <span class="search-icon">⌕</span>
@@ -1299,7 +1228,7 @@
                     <i class="bi bi-x"></i>
                 </div>
             </div>
-        </div> --}}
+        </div>
     </nav>
 
     <main id="konten">
@@ -1344,20 +1273,20 @@
                     </div>
 
                     @guest
-                        <div class="auth-buttons">
-                            <a href="{{ route('signIn') }}" class="auth-btn sign-in">Sign In</a>
-                            <a href="{{ route('signUp') }}" class="auth-btn sign-up">Sign Up</a>
-                        </div>
+                    <div class="auth-buttons">
+                        <a href="{{ route('signIn') }}" class="auth-btn sign-in">Sign In</a>
+                        <a href="{{ route('signUp') }}" class="auth-btn sign-up">Sign Up</a>
+                    </div>
                     @else
-                        <div class="auth-buttons">
-                            <div style="text-align: left; color: rgba(255, 255, 255, 0.8); font-size: 0.9rem;">
-                                Selamat datang, <strong>{{ Auth::user()->name }}</strong>!
-                            </div>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="auth-btn sign-in">Logout</button>
-                            </form>
+                    <div class="auth-buttons">
+                        <div style="text-align: left; color: rgba(255, 255, 255, 0.8); font-size: 0.9rem;">
+                            Selamat datang, <strong>{{ Auth::user()->name }}</strong>!
                         </div>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="auth-btn sign-in">Logout</button>
+                        </form>
+                    </div>
                     @endguest
                 </div>
 
@@ -1743,5 +1672,3 @@
 </body>
 
 </html>
-
-{{-- zjkfbkz --}}

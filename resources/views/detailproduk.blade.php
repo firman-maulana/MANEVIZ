@@ -8,7 +8,6 @@ use App\Models\Product;
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <style>
-        /* ... (keeping all existing styles) ... */
         * {
             margin: 0;
             padding: 0;
@@ -95,7 +94,7 @@ use App\Models\Product;
             transition: opacity 0.3s ease;
         }
 
-        /* 🔥 NEW: Slideshow Thumbnail Container */
+        /* Slideshow Thumbnail Container */
         .thumbnail-slideshow {
             position: relative;
             overflow: hidden;
@@ -129,7 +128,7 @@ use App\Models\Product;
             object-fit: cover;
         }
 
-        /* 🔥 NEW: Slideshow Navigation */
+        /* Slideshow Navigation */
         .slideshow-nav {
             display: flex;
             justify-content: space-between;
@@ -303,7 +302,7 @@ use App\Models\Product;
             border-color: #212529;
         }
 
-        /* Actions */
+        /* Actions - Updated with Buy Now Button */
         .product-actions {
             display: flex;
             gap: 15px;
@@ -311,10 +310,8 @@ use App\Models\Product;
             margin-top: 20px;
         }
 
-        .add-to-cart-btn {
+        .add-to-cart-btn, .buy-now-btn {
             flex: 1;
-            background: #212529;
-            color: white;
             border: none;
             padding: 16px 24px;
             border-radius: 12px;
@@ -326,6 +323,12 @@ use App\Models\Product;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            text-decoration: none;
+        }
+
+        .add-to-cart-btn {
+            background: #212529;
+            color: white;
         }
 
         .add-to-cart-btn:hover:not(:disabled) {
@@ -336,6 +339,28 @@ use App\Models\Product;
         .add-to-cart-btn:disabled {
             opacity: 0.7;
             cursor: not-allowed;
+        }
+
+        /* Buy Now Button Styles */
+        .buy-now-btn {
+            background: #dc3545;
+            color: white;
+            border: 2px solid #dc3545;
+        }
+
+        .buy-now-btn:hover:not(:disabled) {
+            background: #c82333;
+            border-color: #c82333;
+            transform: translateY(-2px);
+            color: white;
+            text-decoration: none;
+        }
+
+        .buy-now-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            background: #6c757d;
+            border-color: #6c757d;
         }
 
         .wishlist-btn {
@@ -813,6 +838,21 @@ use App\Models\Product;
             .thumbnail {
                 flex: 0 0 calc(50% - 7.5px); /* 2 thumbnails per view on mobile */
             }
+
+            /* Mobile: Stack buttons vertically */
+            .product-actions {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .add-to-cart-btn, .buy-now-btn {
+                flex: none;
+                width: 100%;
+            }
+
+            .wishlist-btn {
+                align-self: center;
+            }
         }
 
         @media (max-width: 576px) {
@@ -862,7 +902,7 @@ use App\Models\Product;
                         </div>
 
                         @if ($product->images && $product->images->count() > 1)
-                            <!-- 🔥 NEW: Slideshow Thumbnail Container -->
+                            <!-- Slideshow Thumbnail Container -->
                             <div class="thumbnail-slideshow {{ $product->images->count() <= 4 ? 'no-navigation' : '' }}">
                                 <div class="thumbnail-container" id="thumbnailContainer">
                                     @foreach ($product->images as $index => $image)
@@ -979,11 +1019,21 @@ use App\Models\Product;
                                 </svg>
                                 {{ $product->stock_kuantitas <= 0 ? 'Stok Habis' : 'Add to Cart' }}
                             </button>
-                            <button class="wishlist-btn" onclick="toggleWishlist()">
+                            
+                            <!-- Buy Now Button -->
+                            <button class="buy-now-btn" onclick="buyNow()" {{ $product->stock_kuantitas <= 0 ? 'disabled' : '' }}>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    style="width: 20px; height: 20px;">
+                                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                                </svg>
+                                {{ $product->stock_kuantitas <= 0 ? 'Stok Habis' : 'Buy Now' }}
+                            </button>
+                            
+                            {{-- <button class="wishlist-btn" onclick="toggleWishlist()">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                                 </svg>
-                            </button>
+                            </button> --}}
                         </div>
 
                         <!-- Delivery Info -->
@@ -1376,6 +1426,73 @@ use App\Models\Product;
                 showNotification('error', 'Terjadi kesalahan. Silakan coba lagi.');
             })
             .finally(() => {
+                button.disabled = false;
+                button.innerHTML = originalText;
+            });
+        }
+
+        // Buy Now Function
+        function buyNow() {
+            // Check if user is authenticated
+            @guest
+                showNotification('error', 'Silakan login terlebih dahulu untuk melakukan pembelian');
+                setTimeout(() => {
+                    window.location.href = '{{ route("login") }}';
+                }, 2000);
+                return;
+            @endguest
+
+            // Disable button to prevent double submission
+            const button = document.querySelector('.buy-now-btn');
+            const originalText = button.innerHTML;
+            button.disabled = true;
+            button.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px; animation: spin 1s linear infinite;">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M16 12l-4-4-4 4M12 16V8"></path>
+                </svg>
+                Processing...
+            `;
+
+            // First, add to cart temporarily
+            const data = {
+                product_id: {{ $product->id }},
+                kuantitas: 1,
+                color: selectedColor,
+                size: selectedSize
+            };
+
+            // AJAX request to add to cart first
+            fetch('{{ route("cart.add") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    // If successfully added to cart, redirect to checkout with the item
+                    // We need to get the cart item ID from the response or find it another way
+                    // For now, let's redirect to checkout and let checkout page handle getting the latest cart items
+                    showNotification('success', 'Produk ditambahkan ke keranjang. Mengarahkan ke checkout...');
+                    
+                    // Redirect to checkout after a brief delay
+                    setTimeout(() => {
+                        window.location.href = '{{ route("checkout.index") }}';
+                    }, 1500);
+                } else {
+                    showNotification('error', result.message);
+                    button.disabled = false;
+                    button.innerHTML = originalText;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('error', 'Terjadi kesalahan. Silakan coba lagi.');
                 button.disabled = false;
                 button.innerHTML = originalText;
             });
