@@ -31,7 +31,7 @@ class UserAddress extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class); // Fixed: changed from Users to User
+        return $this->belongsTo(Users::class); // Fixed: changed from Users to User
     }
 
     /**

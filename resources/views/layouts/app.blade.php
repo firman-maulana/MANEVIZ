@@ -145,93 +145,10 @@
             cursor: pointer;
         }
 
-        .search-container {
-            display: flex;
-            align-items: center;
-            background: transparent;
-            border: 1px solid #999;
-            border-radius: 20px;
-            padding: 5px 10px;
-            transition: background 0.3s ease;
-            position: relative;
-            box-shadow: none;
-            color: black;
-        }
-
-        .search-container input {
-            border: none;
-            background: transparent;
-            outline: none;
-            color: black;
-            padding: 5px;
-            font-size: 14px;
-            width: 150px;
-            color: black;
-        }
-
-        .search-bar {
-            padding: 8px 40px 8px 15px;
-            border: 1px solid white;
-            border-radius: 25px;
-            background: transparent;
-            color: white;
-            font-size: 0.9rem;
-            width: 200px;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            /* Fix for mobile input issues */
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            outline: none;
-            font-family: inherit;
-        }
-
-        .search-bar::placeholder {
-            color: white;
-        }
-
-        .search-bar:focus {
-            outline: none;
-            border-color: #ffff;
-            background: transparent;
-            width: 220px;
-        }
-
-        .navbar.scrolled .search-bar {
-            border-color: #999;
-            background: rgba(255, 255, 255, 0.8);
-            color: black;
-        }
-
-        .navbar.scrolled .search-bar::placeholder {
-            color: #666;
-        }
-
-        .navbar.scrolled .search-bar:focus {
-            border-color: #999;
-            background: transparent !important;
-        }
-
-        .search-icon {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: white;
-            font-size: 1rem;
-            pointer-events: none;
-        }
-
-        .navbar.scrolled .search-icon {
-            color: black;
-        }
-
         .nav-icons {
             display: flex;
             gap: 1rem;
             align-items: center;
-            margin-left: 1rem;
         }
 
         .nav-icon {
@@ -279,26 +196,6 @@
             font-weight: bold;
         }
 
-        /* Mobile Search Icon */
-        .mobile-search-icon {
-            display: none;
-            color: white;
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-
-        .navbar.scrolled .mobile-search-icon {
-            color: black;
-        }
-
-        .mobile-search-icon:hover {
-            color: #ff6b6b;
-            background: rgba(255, 107, 107, 0.1);
-        }
-
         /* Mobile Profile Icon */
         .mobile-profile-icon {
             display: none;
@@ -318,187 +215,6 @@
         .mobile-profile-icon:hover {
             color: #ff6b6b;
             background: rgba(255, 107, 107, 0.1);
-        }
-
-        /* Mobile Search Bar */
-        .mobile-search-bar {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            padding: 15px 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            border-bottom: 1px solid #eee;
-            z-index: 999;
-        }
-
-        .mobile-search-bar.show {
-            display: block;
-            animation: slideDown 0.3s ease;
-        }
-
-        .mobile-search-bar .search-container {
-            position: relative;
-        }
-
-        .mobile-search-bar .search-bar {
-            width: 100%;
-            padding: 12px 45px 12px 15px;
-            border: 2px solid #ddd;
-            border-radius: 25px;
-            background: white;
-            color: #333;
-            font-size: 1rem;
-            /* Critical fixes for mobile input */
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            outline: none;
-            font-family: inherit;
-            /* Prevent zoom on focus in iOS Safari */
-            font-size: 16px;
-            /* Ensure proper touch handling */
-            touch-action: manipulation;
-            -webkit-user-select: text;
-            -moz-user-select: text;
-            -ms-user-select: text;
-            user-select: text;
-            /* Fix for Android Chrome input issues */
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .mobile-search-bar .search-bar:focus {
-            outline: none;
-            border-color: #ff6b6b;
-            width: 100%;
-            /* Ensure focus state works on mobile */
-            -webkit-appearance: none;
-        }
-
-        .mobile-search-bar .search-bar::placeholder {
-            color: #999;
-        }
-
-        .mobile-search-bar .search-icon {
-            color: #666;
-            right: 15px;
-            cursor: pointer;
-            /* Ensure icon doesn't interfere with input */
-            pointer-events: none;
-        }
-
-        .mobile-search-bar .close-search {
-            position: absolute;
-            right: 45px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #999;
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 5px;
-            transition: all 0.3s ease;
-            /* Allow interaction with close button */
-            pointer-events: auto;
-        }
-
-        .mobile-search-bar .close-search:hover {
-            color: #ff6b6b;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Mobile Search Overlay */
-        .mobile-search-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 2000;
-            transform: translateY(-100%);
-            transition: transform 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .mobile-search-overlay.open {
-            transform: translateY(0);
-        }
-
-        .mobile-search-overlay-close {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            color: white;
-            font-size: 2rem;
-            cursor: pointer;
-            padding: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .mobile-search-overlay-close:hover {
-            color: #ff6b6b;
-            transform: scale(1.1);
-        }
-
-        .mobile-search-overlay .search-container {
-            padding: 0 2rem;
-            width: 100%;
-            max-width: 400px;
-            position: relative;
-        }
-
-        .mobile-search-overlay .search-bar {
-            width: 100%;
-            padding: 15px 50px 15px 20px;
-            font-size: 1.1rem;
-            border-radius: 30px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            /* Mobile input fixes for overlay */
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            outline: none;
-            font-family: inherit;
-            font-size: 16px;
-            touch-action: manipulation;
-            -webkit-user-select: text;
-            -moz-user-select: text;
-            -ms-user-select: text;
-            user-select: text;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .mobile-search-overlay .search-bar::placeholder {
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .mobile-search-overlay .search-icon {
-            position: absolute;
-            right: 2.5rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: white;
-            font-size: 1.2rem;
-            pointer-events: none;
         }
 
         /* Mobile Menu Overlay */
@@ -563,36 +279,6 @@
         .mobile-nav-menu a:hover {
             color: #ff6b6b;
             background: rgba(255, 107, 107, 0.1);
-        }
-
-        .mobile-search {
-            margin: 2rem 0;
-            padding: 0 2rem;
-            width: 100%;
-            max-width: 300px;
-        }
-
-        .mobile-search .search-bar {
-            width: 100%;
-            padding: 12px 15px;
-            font-size: 1rem;
-            border-radius: 25px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            /* Mobile input fixes for menu search */
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            outline: none;
-            font-family: inherit;
-            font-size: 16px;
-            touch-action: manipulation;
-            -webkit-user-select: text;
-            -moz-user-select: text;
-            -ms-user-select: text;
-            user-select: text;
-            -webkit-tap-highlight-color: transparent;
         }
 
         /* Mobile Menu Toggle */
@@ -696,14 +382,6 @@
             .logo {
                 height: 80px;
             }
-
-            .search-bar {
-                width: 180px;
-            }
-
-            .search-bar:focus {
-                width: 200px;
-            }
         }
 
         /* Tablets */
@@ -733,24 +411,15 @@
                 order: 1;
             }
 
-            .mobile-search-icon {
+            .mobile-profile-icon {
                 display: block;
                 order: 3;
             }
 
-            .mobile-profile-icon {
-                display: block;
-                order: 4;
-            }
-
             .nav-right {
-                order: 5;
+                order: 4;
                 flex: 0;
                 gap: 0.5rem;
-            }
-
-            .search-container {
-                display: none;
             }
 
             .nav-icons {
@@ -780,20 +449,14 @@
                 flex: 0;
             }
 
-            .mobile-search-icon {
+            .mobile-profile-icon {
                 font-size: 1.2rem;
                 order: 3;
                 flex: 0;
             }
 
-            .mobile-profile-icon {
-                font-size: 1.2rem;
-                order: 4;
-                flex: 0;
-            }
-
             .nav-right {
-                order: 5;
+                order: 4;
                 flex: 0;
             }
 
@@ -804,30 +467,6 @@
 
             .mobile-nav-menu a {
                 font-size: 1.3rem;
-            }
-
-            .mobile-search {
-                padding: 0 1rem;
-                max-width: 280px;
-            }
-
-            .mobile-search-bar {
-                padding: 10px 15px;
-            }
-
-            /* Additional mobile-specific input fixes */
-            .mobile-search-bar .search-bar {
-                /* Ensure minimum font size to prevent zoom on iOS */
-                font-size: 16px !important;
-                /* Better touch handling on small screens */
-                min-height: 44px;
-                /* Ensure proper focus behavior */
-                -webkit-touch-callout: none;
-                -webkit-user-select: text;
-                -khtml-user-select: text;
-                -moz-user-select: text;
-                -ms-user-select: text;
-                user-select: text;
             }
         }
 
@@ -848,31 +487,10 @@
             }
 
             .mobile-menu-toggle,
-            .mobile-search-icon,
             .mobile-profile-icon {
                 padding: 6px;
                 font-size: 1.1rem;
                 display: inline-block;
-            }
-
-            .mobile-search-bar {
-                padding: 8px 12px;
-            }
-
-            .search-container {
-                display: none;
-                /* hide search desktop di mobile */
-            }
-
-            /* Extra fixes for very small screens */
-            .mobile-search-bar .search-bar {
-                font-size: 16px !important;
-                min-height: 44px;
-                padding: 14px 45px 14px 15px;
-            }
-
-            .mobile-search {
-                max-width: 250px;
             }
         }
 
@@ -1182,18 +800,6 @@
 
 <body>
 
-    <!-- Mobile Search Overlay -->
-    <div class="mobile-search-overlay" id="mobileSearchOverlay">
-        <div class="mobile-search-overlay-close" onclick="toggleMobileSearch()">
-            <i class="bi bi-x"></i>
-        </div>
-
-        <div class="search-container">
-            <input type="text" class="search-bar" placeholder="Search products...">
-            <span class="search-icon">⌕</span>
-        </div>
-    </div>
-
     <!-- Mobile Menu Overlay -->
     <div class="mobile-menu" id="mobileMenu">
         <div class="mobile-menu-close" onclick="toggleMobileMenu()">
@@ -1244,21 +850,11 @@
                 <img src="image/maneviz.png" alt="MANEVIZ Logo Black" class="logo-black">
             </div>
 
-
-            <div class="mobile-search-icon" onclick="toggleMobileSearchBar()">
-                <i class="bi bi-search"></i>
-            </div>
-
             <a href="{{ url('/profil') }}" class="mobile-profile-icon">
                 <i class="bi bi-person-circle"></i>
             </a>
 
             <div class="nav-right">
-                {{-- <div class="search-container">
-                    <input type="text" class="search-bar" placeholder="Search products...">
-                    <span class="search-icon">⌕</span>
-                </div> --}}
-
                 @auth
                     <div class="nav-icons">
                         <a href="{{ url('/cart') }}" class="nav-icon cart-icon">
@@ -1289,17 +885,6 @@
                 @endauth
             </div>
         </div>
-
-        <!-- Mobile Search Bar (appears below navbar on mobile) -->
-        {{-- <div class="mobile-search-bar" id="mobileSearchBar">
-            <div class="search-container">
-                <input type="text" class="search-bar" placeholder="Search products..." id="mobileSearchInput">
-                <span class="search-icon">⌕</span>
-                <div class="close-search" onclick="closeMobileSearchBar()">
-                    <i class="bi bi-x"></i>
-                </div>
-            </div>
-        </div> --}}
     </nav>
 
     <main id="konten">
@@ -1379,53 +964,7 @@
         </div>
     </footer>
 
-
     <script>
-        // Mobile search bar toggle (for mobile phones)
-        function toggleMobileSearchBar() {
-            const mobileSearchBar = document.getElementById('mobileSearchBar');
-            const mobileSearchInput = document.getElementById('mobileSearchInput');
-
-            if (mobileSearchBar.classList.contains('show')) {
-                mobileSearchBar.classList.remove('show');
-            } else {
-                mobileSearchBar.classList.add('show');
-                // Focus on search input after animation with delay for better mobile experience
-                setTimeout(() => {
-                    mobileSearchInput.focus();
-                    // Additional mobile-specific focus handling
-                    mobileSearchInput.click();
-                }, 350);
-            }
-        }
-
-        // Close mobile search bar
-        function closeMobileSearchBar() {
-            const mobileSearchBar = document.getElementById('mobileSearchBar');
-            mobileSearchBar.classList.remove('show');
-        }
-
-        // Mobile search overlay toggle (legacy function - kept for compatibility)
-        function toggleMobileSearch() {
-            const mobileSearchOverlay = document.getElementById('mobileSearchOverlay');
-            mobileSearchOverlay.classList.toggle('open');
-
-            // Prevent body scroll when search overlay is open
-            if (mobileSearchOverlay.classList.contains('open')) {
-                document.body.style.overflow = 'hidden';
-                // Focus on search input with better mobile handling
-                setTimeout(() => {
-                    const searchInput = mobileSearchOverlay.querySelector('.search-bar');
-                    if (searchInput) {
-                        searchInput.focus();
-                        searchInput.click();
-                    }
-                }, 350);
-            } else {
-                document.body.style.overflow = '';
-            }
-        }
-
         // Mobile menu toggle
         function toggleMobileMenu() {
             const mobileMenu = document.getElementById('mobileMenu');
@@ -1455,30 +994,15 @@
             }
         });
 
-        // Enhanced mobile search handling
+        // Close elements when clicking outside
         document.addEventListener('click', function(event) {
-            const mobileSearchBar = document.getElementById('mobileSearchBar');
-            const mobileSearchIcon = document.querySelector('.mobile-search-icon');
             const mobileMenu = document.getElementById('mobileMenu');
             const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-            const mobileSearchOverlay = document.getElementById('mobileSearchOverlay');
-
-            // Close mobile search bar - but not when clicking inside it
-            if (mobileSearchBar && !mobileSearchBar.contains(event.target) &&
-                mobileSearchIcon && !mobileSearchIcon.contains(event.target)) {
-                mobileSearchBar.classList.remove('show');
-            }
 
             // Close mobile menu
             if (mobileMenu && !mobileMenu.contains(event.target) &&
                 mobileMenuToggle && !mobileMenuToggle.contains(event.target)) {
                 mobileMenu.classList.remove('open');
-                document.body.style.overflow = '';
-            }
-
-            // Close mobile search overlay
-            if (mobileSearchOverlay && !mobileSearchOverlay.contains(event.target)) {
-                mobileSearchOverlay.classList.remove('open');
                 document.body.style.overflow = '';
             }
         });
@@ -1534,214 +1058,6 @@
                 mobileProfileIcon.title = isAuthenticated ? 'Profile' : 'Sign In';
             }
         }
-
-        // Enhanced search functionality with better mobile support
-        document.querySelectorAll('.search-bar').forEach(searchBar => {
-            // Handle Enter key press
-            searchBar.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    const searchTerm = this.value.trim();
-                    if (searchTerm) {
-                        // Close mobile search bar if it's open
-                        const mobileSearchBar = document.getElementById('mobileSearchBar');
-                        if (mobileSearchBar && mobileSearchBar.classList.contains('show')) {
-                            mobileSearchBar.classList.remove('show');
-                        }
-
-                        // Close mobile search overlay if it's open
-                        const mobileSearchOverlay = document.getElementById('mobileSearchOverlay');
-                        if (mobileSearchOverlay && mobileSearchOverlay.classList.contains('open')) {
-                            mobileSearchOverlay.classList.remove('open');
-                            document.body.style.overflow = '';
-                        }
-
-                        // Redirect to search results page
-                        window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
-                    }
-                }
-            });
-
-            // Better mobile focus handling
-            searchBar.addEventListener('focus', function() {
-                // Prevent zoom on iOS by ensuring font-size is at least 16px
-                if (window.innerWidth <= 768) {
-                    this.style.fontSize = '16px';
-                }
-            });
-
-            // Handle touch events for better mobile experience
-            searchBar.addEventListener('touchstart', function(e) {
-                // Ensure the input is focusable on touch devices
-                this.focus();
-            });
-
-            // Input event for real-time search suggestions (optional)
-            searchBar.addEventListener('input', function() {
-                const searchTerm = this.value.trim();
-                // You can add real-time search suggestions here
-                console.log('Search term:', searchTerm);
-            });
-        });
-
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            const mobileMenu = document.getElementById('mobileMenu');
-            const mobileSearchOverlay = document.getElementById('mobileSearchOverlay');
-            const mobileSearchBar = document.getElementById('mobileSearchBar');
-            const dropdown = document.getElementById('userDropdown');
-
-            // Close mobile elements on resize
-            if (window.innerWidth > 768) {
-                if (mobileMenu) mobileMenu.classList.remove('open');
-                if (mobileSearchOverlay) mobileSearchOverlay.classList.remove('open');
-                if (mobileSearchBar) mobileSearchBar.classList.remove('show');
-                document.body.style.overflow = '';
-            }
-
-            if (dropdown) dropdown.classList.remove('show');
-        });
-
-        // Handle escape key press
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                // Close mobile search bar
-                const mobileSearchBar = document.getElementById('mobileSearchBar');
-                if (mobileSearchBar) mobileSearchBar.classList.remove('show');
-
-                // Close mobile menu
-                const mobileMenu = document.getElementById('mobileMenu');
-                if (mobileMenu) mobileMenu.classList.remove('open');
-
-                // Close mobile search overlay
-                const mobileSearchOverlay = document.getElementById('mobileSearchOverlay');
-                if (mobileSearchOverlay) mobileSearchOverlay.classList.remove('open');
-
-                // Close dropdown
-                const dropdown = document.getElementById('userDropdown');
-                if (dropdown) dropdown.classList.remove('show');
-
-                document.body.style.overflow = '';
-            }
-        });
-
-        // Add smooth scrolling and interaction effects
-        document.addEventListener('DOMContentLoaded', function() {
-            // Additional mobile-specific initialization
-            if (window.innerWidth <= 768) {
-                // Ensure all search inputs have proper mobile settings
-                document.querySelectorAll('.search-bar').forEach(input => {
-                    input.setAttribute('autocomplete', 'off');
-                    input.setAttribute('autocorrect', 'off');
-                    input.setAttribute('autocapitalize', 'off');
-                    input.setAttribute('spellcheck', 'false');
-                });
-            }
-        });
-
-        // Logout function
-        function logout() {
-            // Add your logout logic here
-            console.log('Logout clicked');
-        }
-
-        // Additional mobile keyboard handling
-        document.addEventListener('focusin', function(e) {
-            if (e.target.classList.contains('search-bar') && window.innerWidth <= 768) {
-                // Small delay to ensure the keyboard is fully shown
-                setTimeout(() => {
-                    e.target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'center'
-                    });
-                }, 300);
-            }
-        });
-
-        // Handle virtual keyboard on mobile
-        window.addEventListener('resize', function() {
-            // Detect if virtual keyboard is open (viewport height change on mobile)
-            if (window.innerWidth <= 768) {
-                const activeElement = document.activeElement;
-                if (activeElement && activeElement.classList.contains('search-bar')) {
-                    // Adjust layout when virtual keyboard appears
-                    setTimeout(() => {
-                        activeElement.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center'
-                        });
-                    }, 100);
-                }
-            }
-        });
-
-        // Animate footer elements on scroll
-        document.addEventListener('DOMContentLoaded', function() {
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -30px 0px'
-            };
-
-            const observer = new IntersectionObserver(function(entries) {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                    }
-                });
-            }, observerOptions);
-
-            // Observe footer elements
-            document.querySelectorAll('.footer-main > *').forEach(el => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(20px)';
-                el.style.transition = 'all 0.6s ease';
-                observer.observe(el);
-            });
-
-            // Add click handlers for social icons
-            document.querySelectorAll('.social-icon').forEach(icon => {
-                icon.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const platform = this.getAttribute('title');
-                    console.log(`${platform} social icon clicked`);
-                    // Add your social media redirect logic here
-
-                    // Example redirect logic (uncomment and modify as needed):
-                    // const socialUrls = {
-                    //     'WhatsApp': 'https://wa.me/your-number',
-                    //     'Instagram': 'https://instagram.com/your-account',
-                    //     'YouTube': 'https://youtube.com/your-channel',
-                    //     // Add other social media URLs
-                    // };
-                    // if (socialUrls[platform]) {
-                    //     window.open(socialUrls[platform], '_blank');
-                    // }
-                });
-            });
-        });
-
-        // Demo function to toggle between guest and logged in state
-        function toggleAuthState() {
-            const guestButtons = document.getElementById('guestButtons');
-            const loggedInButtons = document.getElementById('loggedInButtons');
-            const userName = document.getElementById('userName');
-
-            if (guestButtons.style.display !== 'none') {
-                // Switch to logged in state
-                guestButtons.style.display = 'none';
-                loggedInButtons.style.display = 'flex';
-                userName.textContent = 'John Doe'; // Replace with actual user name
-            } else {
-                // Switch to guest state
-                guestButtons.style.display = 'flex';
-                loggedInButtons.style.display = 'none';
-            }
-        }
     </script>
-
 </body>
-
 </html>
-
-{{-- zjkfbkz --}}

@@ -114,4 +114,14 @@ class Users extends Authenticatable // HARUS User, bukan Users
     {
         return $this->hasMany(Order::class)->where('status', 'delivered');
     }
+
+    public function addresses()
+    {
+        return $this->hasMany(UserAddress::class, 'user_id');
+    }
+
+    public function defaultAddress()
+    {
+        return $this->hasOne(UserAddress::class, 'user_id')->where('is_default', true);
+    }
 }

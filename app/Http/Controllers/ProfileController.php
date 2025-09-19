@@ -18,16 +18,15 @@ class ProfileController extends Controller
     // Tampilkan halaman profil
     public function index()
     {
-        $user = Auth::user();
-        
-        // Ambil semua order user (bukan hanya delivered seperti di OrderHistoryController)
-        // Karena di profil kita ingin menampilkan semua order history
+        $user = Auth::user()->load(['addresses', 'defaultAddress']);
+
+        // Ambil semua order user
         $orders = \App\Models\Order::with(['orderItems.product.images'])
             ->where('user_id', Auth::id())
             ->orderBy('created_at', 'desc')
-            ->limit(10) // Batasi 10 order terbaru untuk performa
+            ->limit(10)
             ->get();
-        
+
         return view('profil.profil', compact('user', 'orders'));
     }
 

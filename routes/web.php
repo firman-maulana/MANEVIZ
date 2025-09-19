@@ -11,6 +11,7 @@ use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\OrderHistoryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\SearchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -121,3 +122,9 @@ Route::get('/auth/google/callback', [RegisterController::class, 'handleGoogleCal
 
 Route::get('/register/google', [RegisterController::class, 'redirectToGoogle'])->name('register.google');
 Route::get('/register/google/callback', [RegisterController::class, 'handleGoogleCallback']);
+
+// Search routes
+Route::get('/search', [SearchController::class, 'searchPage'])->name('search.page');
+Route::get('/api/search', [SearchController::class, 'search'])->name('search.api');
+Route::get('/api/search/suggestions', [SearchController::class, 'suggestions'])->name('search.suggestions');
+Route::get('/api/products/filter', [SearchController::class, 'filterByCategory'])->name('products.filter');
