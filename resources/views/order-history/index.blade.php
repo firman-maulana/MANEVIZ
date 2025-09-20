@@ -169,6 +169,18 @@
             gap: 5px;
         }
 
+        .cancelled-badge {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
         .order-total {
             font-size: 1.2rem;
             font-weight: bold;
@@ -247,6 +259,11 @@
         .review-pending {
             background: #fff3cd;
             color: #856404;
+        }
+
+        .review-disabled {
+            background: #f8d7da;
+            color: #721c24;
         }
 
         .stars {
@@ -444,8 +461,8 @@
 
     <div class="container">
         <div class="page-header">
-            <h1 class="page-title">My Orders</h1>
-            <p class="page-subtitle">Track and manage all your orders</p>
+            <h1 class="page-title">Order History</h1>
+            <p class="page-subtitle">View your completed and cancelled orders</p>
         </div>
 
         <!-- Navigation Tabs -->
@@ -470,17 +487,18 @@
             </div>
             <div class="stat-card">
                 <div class="stat-number">
-                    {{ $orders->sum(function ($order) {return $order->orderItems->sum('kuantitas');}) }}</div>
-                <div class="stat-label">Items Purchased</div>
+                    {{ $orders->where('status', 'delivered')->count() }}
+                </div>
+                <div class="stat-label">Delivered Orders</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number">
-                    {{ $orders->sum(function ($order) {return $order->orderItems->where('review', '!=', null)->count();}) }}
+                    {{ $orders->where('status', 'cancelled')->count() }}
                 </div>
-                <div class="stat-label">Reviews Given</div>
+                <div class="stat-label">Cancelled Orders</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">IDR {{ number_format($orders->sum('grand_total'), 0, ',', '.') }}</div>
+                <div class="stat-number">IDR {{ number_format($orders->where('status', 'delivered')->sum('grand_total'), 0, ',', '.') }}</div>
                 <div class="stat-label">Total Spent</div>
             </div>
         </div>
@@ -488,6 +506,14 @@
         <!-- Filters -->
         <form method="GET" action="{{ route('order-history.index') }}" class="filters">
             <div class="filter-row">
+                <div class="filter-group">
+                    <label for="order_status">Order Status</label>
+                    <select name="order_status" id="order_status">
+                        <option value="">All Status</option>
+                        <option value="delivered" {{ request('order_status') == 'delivered' ? 'selected' : '' }}>Delivered</option>
+                        <option value="cancelled" {{ request('order_status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                    </select>
+                </div>
                 <div class="filter-group">
                     <label for="date_from">From Date</label>
                     <input type="date" name="date_from" id="date_from" value="{{ request('date_from') }}">
@@ -530,14 +556,24 @@
                             <div class="order-info">
                                 <h3>{{ $order->order_number }}</h3>
                                 <div class="order-meta">
-                                    <div>Delivered: {{ $order->delivered_date->format('d M Y H:i') }}</div>
+                                    @if($order->status === 'delivered')
+                                        <div>Delivered: {{ $order->delivered_date->format('d M Y H:i') }}</div>
+                                    @elseif($order->status === 'cancelled')
+                                        <div>Cancelled: {{ $order->updated_at->format('d M Y H:i') }}</div>
+                                    @endif
                                     <div>{{ $order->orderItems->sum('kuantitas') }} items</div>
                                 </div>
                             </div>
                             <div style="text-align: right;">
-                                <div class="delivery-badge">
-                                    ✓ Delivered
-                                </div>
+                                @if($order->status === 'delivered')
+                                    <div class="delivery-badge">
+                                        ✓ Delivered
+                                    </div>
+                                @elseif($order->status === 'cancelled')
+                                    <div class="cancelled-badge">
+                                        ✗ Cancelled
+                                    </div>
+                                @endif
                                 <div class="order-total">IDR {{ number_format($order->grand_total, 0, ',', '.') }}</div>
                             </div>
                         </div>
@@ -573,17 +609,24 @@
                                     </div>
 
                                     <div class="review-status">
-                                        @if ($item->review)
-                                            <div class="review-badge review-completed">Reviewed</div>
-                                            <div style="margin-top: 5px;">
-                                                <a href="{{ route('order-history.edit-review', $item->review->id) }}"
-                                                    class="btn btn-warning btn-sm">Edit Review</a>
-                                            </div>
+                                        @if($order->status === 'delivered')
+                                            @if ($item->review)
+                                                <div class="review-badge review-completed">Reviewed</div>
+                                                <div style="margin-top: 5px;">
+                                                    <a href="{{ route('order-history.edit-review', $item->review->id) }}"
+                                                        class="btn btn-warning btn-sm">Edit Review</a>
+                                                </div>
+                                            @else
+                                                <div class="review-badge review-pending">Not Reviewed</div>
+                                                <div style="margin-top: 5px;">
+                                                    <a href="{{ route('order-history.review-form', $item->id) }}"
+                                                        class="btn btn-success btn-sm">Write Review</a>
+                                                </div>
+                                            @endif
                                         @else
-                                            <div class="review-badge review-pending">Not Reviewed</div>
-                                            <div style="margin-top: 5px;">
-                                                <a href="{{ route('order-history.review-form', $item->id) }}"
-                                                    class="btn btn-success btn-sm">Write Review</a>
+                                            <div class="review-badge review-disabled">Cannot Review</div>
+                                            <div style="margin-top: 5px; font-size: 11px; color: #6c757d;">
+                                                Order was cancelled
                                             </div>
                                         @endif
                                     </div>
@@ -596,9 +639,11 @@
                             <a href="{{ route('order-history.show', $order->order_number) }}" class="btn btn-primary">
                                 View Details
                             </a>
-                            <a href="{{ route('orders.show', $order->order_number) }}" class="btn btn-primary">
-                                Order Receipt
-                            </a>
+                            @if($order->status === 'delivered')
+                                <a href="{{ route('orders.show', $order->order_number) }}" class="btn btn-primary">
+                                    Order Receipt
+                                </a>
+                            @endif
                         </div>
                     </div>
                 @endforeach
@@ -614,8 +659,7 @@
             <div class="empty-state">
                 <div class="empty-icon">📦</div>
                 <h2 class="empty-title">No Order History</h2>
-                <p class="empty-text">You don't have any delivered orders yet. Complete some orders to see your history
-                    here.</p>
+                <p class="empty-text">You don't have any completed or cancelled orders yet. Complete some orders to see your history here.</p>
                 <a href="{{ route('products.index') }}" class="btn btn-primary">Start Shopping</a>
             </div>
         @endif

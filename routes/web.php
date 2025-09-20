@@ -58,7 +58,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/profil/update', [ProfileController::class, 'updateProfile'])->name('profil.update');
     Route::put('/profil/update-password', [ProfileController::class, 'updatePassword'])->name('profil.update-password');
     
-    // Address Routes - UPDATED
+    // Address Routes
     Route::prefix('address')->name('address.')->group(function () {
         Route::get('/', [AddressController::class, 'index'])->name('index');
         Route::get('/create', [AddressController::class, 'create'])->name('create');
@@ -67,18 +67,18 @@ Route::middleware('auth')->group(function () {
         Route::put('/{address}', [AddressController::class, 'update'])->name('update');
         Route::delete('/{address}', [AddressController::class, 'destroy'])->name('destroy');
         Route::patch('/{address}/set-default', [AddressController::class, 'setDefault'])->name('set-default');
-        
-        // NEW: AJAX route for getting addresses (for checkout page refresh)
         Route::get('/ajax/list', [AddressController::class, 'getAddresses'])->name('ajax.list');
     });
     
     Route::view('/wishlist', 'wishlist')->name('wishlist');
     Route::view('/settings', 'settings')->name('settings');
     
-    // Orders Routes (Current/Active Orders)
+    // Orders Routes (Current/Active Orders) - UPDATED for proper cancel functionality
     Route::get('/orders', [OrdersController::class, 'index'])->name('orders.index');
     Route::get('/orders/{orderNumber}', [OrdersController::class, 'show'])->name('orders.show');
     Route::get('/orders/{orderNumber}/status', [OrdersController::class, 'getStatus'])->name('orders.status');
+    
+    // UPDATED: Change cancel route to use form submission instead of AJAX
     Route::post('/orders/{order}/cancel', [OrdersController::class, 'cancel'])->name('orders.cancel');
     Route::patch('/orders/{order}/status', [OrdersController::class, 'updateStatus'])->name('orders.update-status');
     
@@ -87,7 +87,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [OrderHistoryController::class, 'index'])->name('index');
         Route::get('/orders/{orderNumber}', [OrderHistoryController::class, 'show'])->name('show');
         
-        // Review Routes
+        // Review Routes (only for delivered orders)
         Route::get('/review/{orderItem}', [OrderHistoryController::class, 'showReviewForm'])->name('review-form');
         Route::post('/review/{orderItem}', [OrderHistoryController::class, 'submitReview'])->name('submit-review');
         Route::get('/review/{review}/edit', [OrderHistoryController::class, 'editReview'])->name('edit-review');
@@ -104,7 +104,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/cart/update/{id}', [CartController::class, 'updateQuantity'])->name('cart.update');
     Route::delete('/cart/remove/{id}', [CartController::class, 'removeItem'])->name('cart.remove');
     
-    // Checkout routes - UPDATED PAYMENT FLOW
+    // Checkout routes
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout/create-payment', [CheckoutController::class, 'createPayment'])->name('checkout.create-payment');
     Route::post('/checkout/handle-payment', [CheckoutController::class, 'handlePaymentSuccess'])->name('checkout.handle-payment');

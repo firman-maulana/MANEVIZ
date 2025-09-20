@@ -159,6 +159,16 @@ class Order extends Model
         return $query->where('payment_status', 'paid');
     }
 
+    public function scopeActive($query)
+    {
+        return $query->whereNotIn('status', ['delivered', 'cancelled']);
+    }
+
+    public function scopeHistory($query)
+    {
+        return $query->whereIn('status', ['delivered', 'cancelled']);
+    }
+
     // Helper methods for Midtrans
     public function isMidtransPayment()
     {
@@ -175,10 +185,36 @@ class Order extends Model
         return $this->hasMany(Review::class);
     }
 
-    // Check if order has any unreviewed items
+    // Check if order has any unreviewed items (only for delivered orders)
     public function hasUnreviewedItems()
     {
         return $this->status === 'delivered' &&
             $this->orderItems()->whereDoesntHave('review')->exists();
+    }
+
+    // Check if order can be cancelled
+    public function canBeCancelled()
+    {
+        return in_array($this->status, ['pending', 'processing']);
+    }
+
+    // Check if order is completed (delivered or cancelled)
+    public function isCompleted()
+    {
+        return in_array($this->status, ['delivered', 'cancelled']);
+    }
+
+    // Get status badge class for styling
+    public function getStatusBadgeClassAttribute()
+    {
+        $classes = [
+            'pending' => 'status-pending',
+            'processing' => 'status-processing',
+            'shipped' => 'status-shipped',
+            'delivered' => 'status-delivered',
+            'cancelled' => 'status-cancelled',
+        ];
+
+        return $classes[$this->status] ?? 'status-unknown';
     }
 }

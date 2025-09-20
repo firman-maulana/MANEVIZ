@@ -292,6 +292,10 @@
             text-decoration: none;
         }
 
+        .cancel-form {
+            display: inline-block;
+        }
+
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -365,6 +369,194 @@
             justify-content: center;
         }
 
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0 40px;
+            border-bottom: 2px solid #e1e5e9;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            text-decoration: none;
+            color: #6c757d;
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+
+        .nav-tab:hover {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .nav-tab.active {
+            color: #007bff;
+            border-bottom-color: #007bff;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .alert-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        /* Custom Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #1a1d23;
+            border-radius: 16px;
+            padding: 0;
+            max-width: 450px;
+            width: 90%;
+            position: relative;
+            animation: slideIn 0.3s ease-out;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            padding: 24px 24px 20px;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            color: #6c757d;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-icon {
+            width: 64px;
+            height: 64px;
+            background: rgba(220, 53, 69, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .modal-icon svg {
+            width: 28px;
+            height: 28px;
+            color: #dc3545;
+        }
+
+        .modal-title {
+            color: #fff;
+            font-size: 20px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .modal-message {
+            color: #9ca3af;
+            text-align: center;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .modal-footer {
+            padding: 20px 24px 24px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 80px;
+        }
+
+        .modal-btn-cancel {
+            background: #374151;
+            color: #d1d5db;
+            border: 1px solid #4b5563;
+        }
+
+        .modal-btn-cancel:hover {
+            background: #4b5563;
+            color: #fff;
+        }
+
+        .modal-btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        .modal-btn-delete:hover {
+            background: #c82333;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
@@ -397,33 +589,11 @@
                 justify-content: center;
                 min-width: auto;
             }
-        }
 
-        .nav-tabs {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0 40px;
-            border-bottom: 2px solid #e1e5e9;
-        }
-
-        .nav-tab {
-            padding: 12px 24px;
-            text-decoration: none;
-            color: #6c757d;
-            font-weight: 500;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s ease;
-            margin: 0 10px;
-        }
-
-        .nav-tab:hover {
-            color: #007bff;
-            text-decoration: none;
-        }
-
-        .nav-tab.active {
-            color: #007bff;
-            border-bottom-color: #007bff;
+            .modal-content {
+                margin: 20px;
+                width: calc(100% - 40px);
+            }
         }
     </style>
 
@@ -439,9 +609,16 @@
             <a href="{{ route('order-history.index') }}" class="nav-tab">Order History</a>
         </div>
 
+        @if (session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+
+        @if (session('error'))
+            <div class="alert alert-error">{{ session('error') }}</div>
+        @endif
+
         <!-- Info Message -->
-        <div
-            style="background: #e7f3ff; border-left: 4px solid #007bff; padding: 15px; margin-bottom: 30px; border-radius: 0 8px 8px 0;">
+        <div style="background: #e7f3ff; border-left: 4px solid #007bff; padding: 15px; margin-bottom: 30px; border-radius: 0 8px 8px 0;">
             <div style="display: flex; align-items: center; gap: 10px; color: #004085;">
                 <span style="font-size: 18px;">ℹ️</span>
                 <div>
@@ -461,24 +638,17 @@
                     <select name="status" id="status">
                         <option value="">All Status</option>
                         <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Processing
-                        </option>
+                        <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Processing</option>
                         <option value="shipped" {{ request('status') == 'shipped' ? 'selected' : '' }}>Shipped</option>
-                        <option value="delivered" {{ request('status') == 'delivered' ? 'selected' : '' }}>Delivered
-                        </option>
-                        <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled
-                        </option>
                     </select>
                 </div>
                 <div class="filter-group">
                     <label for="payment_status">Payment Status</label>
                     <select name="payment_status" id="payment_status">
                         <option value="">All Payment Status</option>
-                        <option value="pending" {{ request('payment_status') == 'pending' ? 'selected' : '' }}>Pending
-                        </option>
+                        <option value="pending" {{ request('payment_status') == 'pending' ? 'selected' : '' }}>Pending</option>
                         <option value="paid" {{ request('payment_status') == 'paid' ? 'selected' : '' }}>Paid</option>
-                        <option value="failed" {{ request('payment_status') == 'failed' ? 'selected' : '' }}>Failed
-                        </option>
+                        <option value="failed" {{ request('payment_status') == 'failed' ? 'selected' : '' }}>Failed</option>
                     </select>
                 </div>
                 <button type="submit" class="btn-filter">Filter</button>
@@ -548,23 +718,16 @@
                                     <span>Order Confirmed - {{ $order->order_date->format('d M Y H:i') }}</span>
                                 </div>
                                 <div class="timeline-item">
-                                    <div
-                                        class="timeline-dot {{ $order->status === 'processing' || $order->status === 'shipped' || $order->status === 'delivered' ? 'active' : 'inactive' }}">
-                                    </div>
+                                    <div class="timeline-dot {{ $order->status === 'processing' || $order->status === 'shipped' || $order->status === 'delivered' ? 'active' : 'inactive' }}"></div>
                                     <span>Processing</span>
                                 </div>
                                 <div class="timeline-item">
-                                    <div
-                                        class="timeline-dot {{ $order->status === 'shipped' || $order->status === 'delivered' ? 'active' : 'inactive' }}">
-                                    </div>
-                                    <span>Shipped
-                                        {{ $order->shipped_date ? '- ' . $order->shipped_date->format('d M Y H:i') : '' }}</span>
+                                    <div class="timeline-dot {{ $order->status === 'shipped' || $order->status === 'delivered' ? 'active' : 'inactive' }}"></div>
+                                    <span>Shipped {{ $order->shipped_date ? '- ' . $order->shipped_date->format('d M Y H:i') : '' }}</span>
                                 </div>
                                 <div class="timeline-item">
-                                    <div class="timeline-dot {{ $order->status === 'delivered' ? 'active' : 'inactive' }}">
-                                    </div>
-                                    <span>Delivered
-                                        {{ $order->delivered_date ? '- ' . $order->delivered_date->format('d M Y H:i') : '' }}</span>
+                                    <div class="timeline-dot {{ $order->status === 'delivered' ? 'active' : 'inactive' }}"></div>
+                                    <span>Delivered {{ $order->delivered_date ? '- ' . $order->delivered_date->format('d M Y H:i') : '' }}</span>
                                 </div>
                             </div>
                         @endif
@@ -576,16 +739,18 @@
                             </a>
 
                             @if ($order->payment_status === 'pending' && $order->payment_method !== 'cod')
-                                <a href="#" class="btn btn-warning"
-                                    onclick="completePayment('{{ $order->order_number }}')">
+                                <a href="#" class="btn btn-warning" onclick="alert('Payment feature will be implemented here for order: {{ $order->order_number }}')">
                                     Complete Payment
                                 </a>
                             @endif
 
                             @if (in_array($order->status, ['pending', 'processing']))
-                                <button class="btn btn-danger" onclick="cancelOrder('{{ $order->id }}')">
-                                    Cancel Order
-                                </button>
+                                <form action="{{ route('orders.cancel', $order) }}" method="POST" class="cancel-form" id="cancel-form-{{ $order->id }}">
+                                    @csrf
+                                    <button type="button" class="btn btn-danger" onclick="showCancelModal('{{ $order->id }}', '{{ $order->order_number }}')">
+                                        Cancel Order
+                                    </button>
+                                </form>
                             @endif
                         </div>
                     </div>
@@ -608,35 +773,60 @@
         @endif
     </div>
 
+    <!-- Custom Cancel Confirmation Modal -->
+    <div class="modal-overlay" id="cancelModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="modal-close" onclick="hideCancelModal()">&times;</button>
+                <div class="modal-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                </div>
+                <h3 class="modal-title">Cancel order</h3>
+                <p class="modal-message">Are you sure you would like to do this?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="modal-btn modal-btn-cancel" onclick="hideCancelModal()">Back</button>
+                <button type="button" class="modal-btn modal-btn-delete" onclick="confirmCancel()">Cancel Order</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        function completePayment(orderNumber) {
-            // Redirect to payment page or open payment modal
-            alert('Payment feature will be implemented here for order: ' + orderNumber);
+        let currentOrderId = null;
+
+        function showCancelModal(orderId, orderNumber) {
+            currentOrderId = orderId;
+            document.getElementById('cancelModal').classList.add('show');
+            document.body.style.overflow = 'hidden';
         }
 
-        function cancelOrder(orderId) {
-            if (confirm('Are you sure you want to cancel this order?')) {
-                fetch(`/orders/${orderId}/cancel`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            location.reload();
-                        } else {
-                            alert(data.message || 'Failed to cancel order');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Failed to cancel order');
-                    });
+        function hideCancelModal() {
+            document.getElementById('cancelModal').classList.remove('show');
+            document.body.style.overflow = 'auto';
+            currentOrderId = null;
+        }
+
+        function confirmCancel() {
+            if (currentOrderId) {
+                document.getElementById('cancel-form-' + currentOrderId).submit();
             }
         }
+
+        // Close modal on backdrop click
+        document.getElementById('cancelModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideCancelModal();
+            }
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                hideCancelModal();
+            }
+        });
 
         // Auto refresh order status every 30 seconds
         setInterval(function() {
@@ -647,12 +837,20 @@
                     fetch(`/orders/${orderNumber}/status`)
                         .then(response => response.json())
                         .then(data => {
-                            // Update status badges if they've changed
-                            const statusBadge = card.querySelector('.status-' + data.status.replace('_',
-                                '-'));
-                            if (statusBadge) {
-                                statusBadge.textContent = data.status_label;
+                            if (data.is_cancelled || data.is_delivered) {
+                                window.location.href = '/order-history';
+                                return;
                             }
+
+                            const statusElements = card.querySelectorAll('.status-badge');
+                            statusElements.forEach(element => {
+                                if (element.classList.contains('status-' + data.status)) {
+                                    element.textContent = data.status_label;
+                                }
+                                if (element.classList.contains('payment-' + data.payment_status)) {
+                                    element.textContent = data.payment_status_label;
+                                }
+                            });
                         })
                         .catch(error => console.log('Status check failed:', error));
                 }

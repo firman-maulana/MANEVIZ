@@ -17,32 +17,55 @@ class OrderHistoryController extends Controller
         $this->middleware('auth');
     }
 
-    // Display order history (delivered orders only)
+    // Display order history (delivered and cancelled orders)
     public function index(Request $request)
     {
         $query = Order::with(['orderItems.product.images', 'orderItems.review'])
             ->where('user_id', Auth::id())
-            ->where('status', 'delivered')
-            ->orderBy('delivered_date', 'desc');
+            ->whereIn('status', ['delivered', 'cancelled']) // Include both delivered and cancelled orders
+            ->orderBy('updated_at', 'desc'); // Order by updated_at for cancelled orders
 
-        // Filter by date range
+        // Filter by date range (use delivered_date for delivered orders, updated_at for cancelled)
         if ($request->has('date_from') && $request->date_from) {
-            $query->whereDate('delivered_date', '>=', $request->date_from);
+            $query->where(function($q) use ($request) {
+                $q->where(function($subQ) use ($request) {
+                    $subQ->where('status', 'delivered')
+                         ->whereDate('delivered_date', '>=', $request->date_from);
+                })->orWhere(function($subQ) use ($request) {
+                    $subQ->where('status', 'cancelled')
+                         ->whereDate('updated_at', '>=', $request->date_from);
+                });
+            });
         }
         
         if ($request->has('date_to') && $request->date_to) {
-            $query->whereDate('delivered_date', '<=', $request->date_to);
-        }
-
-        // Filter by rating (if has review)
-        if ($request->has('rating') && $request->rating) {
-            $query->whereHas('orderItems.review', function($q) use ($request) {
-                $q->where('rating', $request->rating);
+            $query->where(function($q) use ($request) {
+                $q->where(function($subQ) use ($request) {
+                    $subQ->where('status', 'delivered')
+                         ->whereDate('delivered_date', '<=', $request->date_to);
+                })->orWhere(function($subQ) use ($request) {
+                    $subQ->where('status', 'cancelled')
+                         ->whereDate('updated_at', '<=', $request->date_to);
+                });
             });
         }
 
-        // Filter by reviewed/unreviewed
-        if ($request->has('review_status')) {
+        // Filter by status (delivered or cancelled)
+        if ($request->has('order_status') && $request->order_status) {
+            $query->where('status', $request->order_status);
+        }
+
+        // Filter by rating (only for delivered orders with reviews)
+        if ($request->has('rating') && $request->rating) {
+            $query->where('status', 'delivered')
+                  ->whereHas('orderItems.review', function($q) use ($request) {
+                      $q->where('rating', $request->rating);
+                  });
+        }
+
+        // Filter by reviewed/unreviewed (only for delivered orders)
+        if ($request->has('review_status') && $request->review_status) {
+            $query->where('status', 'delivered');
             if ($request->review_status === 'reviewed') {
                 $query->whereHas('orderItems.review');
             } elseif ($request->review_status === 'unreviewed') {
@@ -61,19 +84,19 @@ class OrderHistoryController extends Controller
         $order = Order::with(['orderItems.product.images', 'orderItems.review'])
             ->where('order_number', $orderNumber)
             ->where('user_id', Auth::id())
-            ->where('status', 'delivered')
+            ->whereIn('status', ['delivered', 'cancelled']) // Allow both delivered and cancelled orders
             ->firstOrFail();
 
         return view('order-history.show', compact('order'));
     }
 
-    // Show review form
+    // Show review form (only for delivered orders)
     public function showReviewForm($orderItemId)
     {
         $orderItem = \App\Models\OrderItem::with(['order', 'product.images'])
             ->whereHas('order', function($query) {
                 $query->where('user_id', Auth::id())
-                      ->where('status', 'delivered');
+                      ->where('status', 'delivered'); // Only delivered orders can be reviewed
             })
             ->where('id', $orderItemId)
             ->firstOrFail();
@@ -88,7 +111,7 @@ class OrderHistoryController extends Controller
         return view('order-history.review-form', compact('orderItem'));
     }
 
-    // Submit review
+    // Submit review (only for delivered orders)
     public function submitReview(Request $request, $orderItemId)
     {
         $request->validate([
@@ -101,7 +124,7 @@ class OrderHistoryController extends Controller
         $orderItem = \App\Models\OrderItem::with('order')
             ->whereHas('order', function($query) {
                 $query->where('user_id', Auth::id())
-                      ->where('status', 'delivered');
+                      ->where('status', 'delivered'); // Only delivered orders can be reviewed
             })
             ->where('id', $orderItemId)
             ->firstOrFail();
