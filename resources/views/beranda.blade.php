@@ -327,6 +327,105 @@
             margin-bottom: 80px;
         }
 
+        /* No products message */
+        .no-products {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .no-products h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .no-products p {
+            font-size: 14px;
+        }
+
+        /* Badges */
+        .sale-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #dc3545;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            z-index: 2;
+            text-transform: uppercase;
+        }
+
+        .bestseller-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #ffc107;
+            color: #000;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            z-index: 2;
+            text-transform: uppercase;
+        }
+
+        /* Product pricing with original price */
+        .product-pricing {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .product-price-original {
+            color: #999;
+            font-size: 10px;
+            font-weight: 400;
+            text-decoration: line-through;
+            margin: 0;
+        }
+
+        .product-name {
+            color: #000;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 3px;
+            line-height: 1.2;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Sales count */
+        .product-sales {
+            color: #28a745;
+            font-size: 10px;
+            font-weight: 500;
+            margin: 2px 0 0 0;
+        }
+
+        /* Rating stars */
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 3px;
+        }
+
+        .rating-stars {
+            color: #ffc107;
+            font-size: 12px;
+            line-height: 1;
+        }
+
+        .rating-value {
+            color: #666;
+            font-size: 10px;
+            font-weight: 400;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .product-grid-horizontal {
@@ -361,6 +460,41 @@
                 width: 26px;
                 height: 26px;
             }
+
+            .sale-badge,
+            .bestseller-badge {
+                top: 8px;
+                padding: 3px 6px;
+                font-size: 9px;
+            }
+
+            .sale-badge {
+                left: 8px;
+            }
+
+            .bestseller-badge {
+                right: 8px;
+            }
+
+            .product-name {
+                font-size: 13px;
+            }
+
+            .product-price-original {
+                font-size: 9px;
+            }
+
+            .product-sales {
+                font-size: 9px;
+            }
+
+            .rating-stars {
+                font-size: 11px;
+            }
+
+            .rating-value {
+                font-size: 9px;
+            }
         }
 
         @media (max-width: 576px) {
@@ -383,6 +517,41 @@
             .product-arrow {
                 width: 24px;
                 height: 24px;
+            }
+
+            .sale-badge,
+            .bestseller-badge {
+                top: 6px;
+                padding: 2px 5px;
+                font-size: 8px;
+            }
+
+            .sale-badge {
+                left: 6px;
+            }
+
+            .bestseller-badge {
+                right: 6px;
+            }
+
+            .product-name {
+                font-size: 12px;
+            }
+
+            .product-price-original {
+                font-size: 8px;
+            }
+
+            .product-sales {
+                font-size: 8px;
+            }
+
+            .rating-stars {
+                font-size: 10px;
+            }
+
+            .rating-value {
+                font-size: 8px;
             }
         }
     </style>
@@ -409,87 +578,85 @@
 
         <div class="container">
             <div class="product-grid-horizontal">
+                @if($latestProducts->count() > 0)
+                    @foreach($latestProducts as $product)
+                        <a href="{{ route('products.show', $product->slug) }}" class="product-card">
+                            <div class="product-image">
+                                @if($product->primaryImage)
+                                    <img src="{{ asset('storage/' . $product->primaryImage->image_path) }}" 
+                                         alt="{{ $product->primaryImage->alt_text ?: $product->name }}">
+                                @elseif($product->images->isNotEmpty())
+                                    <img src="{{ asset('storage/' . $product->images->first()->image_path) }}" 
+                                         alt="{{ $product->name }}">
+                                @else
+                                    <img src="{{ asset('images/no-image.png') }}"
+                                         onerror="this.onerror=null;this.src='https://via.placeholder.com/300x300?text=No+Image';"
+                                         alt="No Image">
+                                @endif
 
-                <!-- Card 1 - Updated with new design -->
-                <div class="product-card">
-                    <div class="product-image">
-                        <img src="https://via.placeholder.com/400x500" alt="Kaos Kokushibou">
-                    </div>
-                    <div class="product-info">
-                        <div class="product-content">
-                            <div class="product-details">
-                                <h4>Kaos Kokushibou</h4>
-                                <p>IDR 95.399</p>
-                            </div>
-                            <div class="product-arrow">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M5 12h14m-7-7 7 7-7 7" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                                <!-- Sale Badge (if product is on sale) -->
+                                @if($product->is_on_sale)
+                                    <div class="sale-badge">
+                                        Sale
+                                    </div>
+                                @endif
 
-                <!-- Card 2 - Updated with new design -->
-                <div class="product-card">
-                    <div class="product-image">
-                        <img src="https://via.placeholder.com/400x500" alt="Kaos Kenjaku">
-                    </div>
-                    <div class="product-info">
-                        <div class="product-content">
-                            <div class="product-details">
-                                <h4>Kaos Kenjaku</h4>
-                                <p>IDR 89.000</p>
+                                <!-- Just In Badge for latest products -->
+                                <div class="bestseller-badge" style="background-color: #3498db;">
+                                    Just In
+                                </div>
                             </div>
-                            <div class="product-arrow">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M5 12h14m-7-7 7 7-7 7" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                            <div class="product-info">
+                                <div class="product-content">
+                                    <div class="product-details">
+                                        <h4 class="product-name">{{ $product->name }}</h4>
+                                        <div class="product-pricing">
+                                            @if($product->is_on_sale)
+                                                <span class="product-price-original">IDR {{ number_format($product->harga, 0, ',', '.') }}</span>
+                                                <span class="product-price">IDR {{ number_format($product->harga_jual, 0, ',', '.') }}</span>
+                                            @else
+                                                <span class="product-price">IDR {{ number_format($product->final_price, 0, ',', '.') }}</span>
+                                            @endif
+                                        </div>
 
-                <!-- Card 3 - Additional product card -->
-                <div class="product-card">
-                    <div class="product-image">
-                        <img src="https://via.placeholder.com/400x500" alt="Hoodie Chaos">
-                    </div>
-                    <div class="product-info">
-                        <div class="product-content">
-                            <div class="product-details">
-                                <h4>Hoodie Chaos</h4>
-                                <p>IDR 125.000</p>
-                            </div>
-                            <div class="product-arrow">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M5 12h14m-7-7 7 7-7 7" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                                        <!-- Sales count (if available) -->
+                                        @if($product->total_penjualan > 0)
+                                            <p class="product-sales">{{ $product->total_penjualan }} sold</p>
+                                        @endif
 
-                <!-- Card 4 - Additional product card -->
-                <div class="product-card">
-                    <div class="product-image">
-                        <img src="https://via.placeholder.com/400x500" alt="T-Shirt Grind">
-                    </div>
-                    <div class="product-info">
-                        <div class="product-content">
-                            <div class="product-details">
-                                <h4>T-Shirt Grind</h4>
-                                <p>IDR 75.000</p>
+                                        <!-- Rating (if available) -->
+                                        @if($product->rating_rata > 0)
+                                            <div class="product-rating">
+                                                <span class="rating-stars">
+                                                    @for($i = 1; $i <= 5; $i++)
+                                                        @if($i <= floor($product->rating_rata))
+                                                            ★
+                                                        @elseif($i - 0.5 <= $product->rating_rata)
+                                                            ☆
+                                                        @else
+                                                            ☆
+                                                        @endif
+                                                    @endfor
+                                                </span>
+                                                <span class="rating-value">({{ number_format($product->rating_rata, 1) }})</span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div class="product-arrow">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M5 12h14m-7-7 7 7-7 7" />
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="product-arrow">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M5 12h14m-7-7 7 7-7 7" />
-                                </svg>
-                            </div>
-                        </div>
+                        </a>
+                    @endforeach
+                @else
+                    <div class="no-products">
+                        <h3>No Latest Products</h3>
+                        <p>There are no products available at the moment. Check back later!</p>
                     </div>
-                </div>
-
+                @endif
             </div>
         </div>
 
@@ -526,12 +693,11 @@
             });
         });
 
-        // Product card click handler
+        // Product card click handler (optional - cards already have proper links)
         document.querySelectorAll('.product-card').forEach(card => {
-            card.addEventListener('click', function() {
-                const productName = this.querySelector('h4').textContent;
-                console.log('Product clicked:', productName);
-                // Add your product click logic here
+            card.addEventListener('click', function(e) {
+                // Let the default link behavior handle navigation
+                console.log('Product clicked:', this.querySelector('h4').textContent);
             });
         });
     </script>

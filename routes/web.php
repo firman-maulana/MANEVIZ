@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
@@ -22,7 +23,8 @@ use App\Http\Controllers\SearchController;
 // ====================
 // Halaman Umum (Public)
 // ====================
-Route::view('/', 'beranda')->name('home');
+// UPDATED: Changed from static view to dynamic controller
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/allProduct', [ProductController::class, 'index'])->name('products.index');
 Route::view('/about', 'about')->name('about');
 Route::view('/contact', 'contact')->name('contact');
