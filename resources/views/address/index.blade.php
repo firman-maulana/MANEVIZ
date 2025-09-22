@@ -7,10 +7,10 @@
         margin-bottom: 20px;
         min-height: 100vh;
         /* background-color: #f8f9fa; */
-        padding: 2rem 0;
+        padding: 2rem 1rem; /* Reduced horizontal padding */
     }
     .address-wrapper {
-        max-width: 1024px;
+        max-width: 1150px; /* Increased max-width */
         margin: 0 auto;
         /* padding: 0 1rem; */
     }
@@ -199,6 +199,33 @@
     }
     .back-link:hover {
         color: #495057;
+    }
+
+    /* Mobile responsive adjustments */
+    @media (max-width: 768px) {
+        .address-container {
+            padding: 1rem 0.5rem; /* Even less padding on mobile */
+        }
+        .address-wrapper {
+            max-width: 100%; /* Full width on mobile */
+        }
+        .header-flex {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: stretch;
+        }
+        .add-address-btn {
+            justify-content: center;
+        }
+        .address-content {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .address-actions {
+            margin-left: 0;
+            flex-direction: row;
+            gap: 1rem;
+        }
     }
 </style>
 

@@ -109,7 +109,7 @@
     /* Product Grid Horizontal Scroll - Desktop Default */
     .product-grid-horizontal {
         display: flex;
-        gap: 75px;
+        gap: 70px;
         overflow-x: auto;
         padding: 20px;
         scroll-snap-type: x mandatory;

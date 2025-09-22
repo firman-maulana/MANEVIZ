@@ -26,7 +26,8 @@
     .header {
         text-align: left;
         margin-bottom: 30px;
-        margin-top: 20px;
+        margin-top: 75px;
+        margin-left: 25px;
     }
 
     .header h1 {

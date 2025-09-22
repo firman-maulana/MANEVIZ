@@ -1334,12 +1334,11 @@
 
 /* Enhanced Search Bar Focus States */
 .search-container:focus-within .search-bar {
-    border-color: #ff6b6b;
     box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
 }
 
 .navbar.scrolled .search-container:focus-within .search-bar {
-    border-color: #ff6b6b;
+    border-color: black;
     box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
 }
 

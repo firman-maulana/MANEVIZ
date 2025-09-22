@@ -1448,7 +1448,8 @@ use App\Models\Product;
 
             <!-- Filter Buttons -->
             <div class="filter-container">
-                <button class="filter-btn active" data-filter="all" data-category-id="">T-Shirt</button>
+            <button class="filter-btn active" data-filter="all" data-category-id="">All</button>
+                <button class="filter-btn" data-filter="all" data-category-id="">T-Shirt</button>
                 <button class="filter-btn" data-filter="hoodie" data-category-id="1">Hoodie</button>
                 <button class="filter-btn" data-filter="shoes" data-category-id="2">Shoes</button>
             </div>

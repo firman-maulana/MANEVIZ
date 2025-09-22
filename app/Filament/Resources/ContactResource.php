@@ -13,7 +13,6 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Support\Enums\FontWeight;
 use Filament\Forms\Components\Grid;
 use Filament\Tables\Actions\ActionGroup;
 
@@ -96,7 +95,7 @@ class ContactResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable()
-                    ->weight(fn (Contact $record) => $record->isUnread() ? FontWeight::Bold : FontWeight::Normal)
+                    ->weight(fn (Contact $record) => $record->isUnread() ? 'bold' : 'normal')
                     ->description(fn (Contact $record) => $record->phone)
                     ->icon(fn (Contact $record) => $record->isUnread() ? 'heroicon-s-envelope' : 'heroicon-o-envelope-open'),
 

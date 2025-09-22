@@ -228,7 +228,7 @@
 
         .btn-header {
             padding: 12px 24px;
-            border-radius: 25px;
+            border-radius: 10px;
             font-size: 14px;
             font-weight: 500;
             border: none;
@@ -323,7 +323,7 @@
 
         .order-status {
             padding: 6px 16px;
-            border-radius: 20px;
+            border-radius: 10px;
             font-size: 12px;
             font-weight: 500;
             text-transform: capitalize;

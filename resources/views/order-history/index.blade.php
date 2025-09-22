@@ -122,18 +122,23 @@
             gap: 20px;
         }
 
+        /* Modern Order Card Design - matching active orders */
         .order-card {
             background: white;
-            border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 20px;
             border: 1px solid #f0f0f0;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
         }
 
         .order-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+            border-color: #e0e0e0;
+        }
+
+        .order-main {
+            padding: 24px;
         }
 
         .order-header {
@@ -141,99 +146,126 @@
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 15px;
+            gap: 16px;
         }
 
         .order-info h3 {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 5px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+            letter-spacing: -0.01em;
         }
 
         .order-meta {
-            font-size: 14px;
-            color: #6c757d;
+            font-size: 13px;
+            color: #666;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
         }
 
-        .delivery-badge {
-            background: #d4edda;
-            color: #155724;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
+        .order-status {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
         }
 
-        .cancelled-badge {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
+        .status-badges {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-delivered {
+            background: #f0fdf4;
+            color: #16a34a;
+        }
+
+        .status-cancelled {
+            background: #fef2f2;
+            color: #dc2626;
         }
 
         .order-total {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #333;
-            text-align: right;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-top: 4px;
         }
 
         .order-items {
-            margin: 15px 0;
+            margin: 16px 0;
+            border-top: 1px solid #f5f5f5;
+            padding-top: 16px;
         }
 
         .item-row {
             display: flex;
             align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid #f0f0f0;
+            padding: 8px 0;
+            gap: 12px;
             position: relative;
         }
 
-        .item-row:last-child {
-            border-bottom: none;
+        .item-row:not(:last-child) {
+            border-bottom: 1px solid #f8f8f8;
+            padding-bottom: 12px;
         }
 
         .item-image {
-            width: 60px;
-            height: 60px;
-            border-radius: 8px;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
             object-fit: cover;
-            margin-right: 15px;
-            background: #f8f9fa;
+            background: #f8f8f8;
+            flex-shrink: 0;
         }
 
         .item-details {
             flex: 1;
+            min-width: 0;
         }
 
         .item-name {
             font-weight: 600;
-            color: #333;
-            margin-bottom: 3px;
-            font-size: 15px;
+            color: #1a1a1a;
+            margin-bottom: 2px;
+            font-size: 14px;
+            line-height: 1.3;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .item-info {
-            font-size: 13px;
-            color: #6c757d;
-            margin-bottom: 5px;
+            font-size: 12px;
+            color: #666;
+            line-height: 1.2;
+            margin-bottom: 4px;
         }
 
         .item-price {
-            font-weight: bold;
-            color: #333;
+            font-weight: 600;
+            color: #1a1a1a;
             font-size: 14px;
+        }
+
+        .stars {
+            color: #ffc107;
+            font-size: 12px;
+            margin-top: 2px;
         }
 
         .review-status {
@@ -241,41 +273,42 @@
             right: 0;
             top: 50%;
             transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
         }
 
         .review-badge {
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 10px;
             font-weight: 500;
             text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
         .review-completed {
-            background: #d4edda;
-            color: #155724;
+            background: #f0fdf4;
+            color: #16a34a;
         }
 
         .review-pending {
-            background: #fff3cd;
-            color: #856404;
+            background: #fff4e6;
+            color: #d97706;
         }
 
         .review-disabled {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .stars {
-            color: #ffc107;
-            font-size: 14px;
-            margin-top: 3px;
+            background: #fef2f2;
+            color: #dc2626;
         }
 
         .order-actions {
+            padding: 20px 24px;
+            background: white;
+            border-top: 1px solid #f0f0f0;
             display: flex;
-            gap: 10px;
-            margin-top: 20px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
@@ -328,7 +361,8 @@
 
         .btn-sm {
             padding: 6px 12px;
-            font-size: 12px;
+            font-size: 11px;
+            border-radius: 6px;
         }
 
         .empty-state {
@@ -368,48 +402,6 @@
             margin-top: 40px;
             display: flex;
             justify-content: center;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-
-            .page-title {
-                font-size: 2rem;
-            }
-
-            .stats-cards {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .filter-row {
-                grid-template-columns: 1fr;
-            }
-
-            .order-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .order-actions {
-                justify-content: flex-start;
-            }
-
-            .btn {
-                flex: 1;
-                justify-content: center;
-            }
-
-            .item-row {
-                flex-wrap: wrap;
-            }
-
-            .review-status {
-                position: static;
-                transform: none;
-                margin-top: 10px;
-            }
         }
 
         .alert {
@@ -456,6 +448,79 @@
         .nav-tab.active {
             color: #007bff;
             border-bottom-color: #007bff;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .stats-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .filter-row {
+                grid-template-columns: 1fr;
+            }
+
+            .order-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .order-status {
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .status-badges {
+                justify-content: flex-start;
+            }
+
+            .order-actions {
+                flex-direction: column;
+                padding: 16px 20px;
+            }
+
+            .btn {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .order-main {
+                padding: 20px;
+            }
+
+            .review-status {
+                position: static;
+                transform: none;
+                margin-top: 8px;
+                align-items: flex-start;
+            }
+
+            .item-row {
+                flex-wrap: wrap;
+                padding-bottom: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .item-name {
+                font-size: 13px;
+            }
+            
+            .item-info, .item-price {
+                font-size: 12px;
+            }
+            
+            .order-meta {
+                font-size: 12px;
+            }
         }
     </style>
 
@@ -552,91 +617,91 @@
             <div class="orders-grid">
                 @foreach ($orders as $order)
                     <div class="order-card">
-                        <div class="order-header">
-                            <div class="order-info">
-                                <h3>{{ $order->order_number }}</h3>
-                                <div class="order-meta">
-                                    @if($order->status === 'delivered')
-                                        <div>Delivered: {{ $order->delivered_date->format('d M Y H:i') }}</div>
-                                    @elseif($order->status === 'cancelled')
-                                        <div>Cancelled: {{ $order->updated_at->format('d M Y H:i') }}</div>
-                                    @endif
-                                    <div>{{ $order->orderItems->sum('kuantitas') }} items</div>
+                        <div class="order-main">
+                            <div class="order-header">
+                                <div class="order-info">
+                                    <h3>{{ $order->order_number }}</h3>
+                                    <div class="order-meta">
+                                        @if($order->status === 'delivered')
+                                            <div>Delivered: {{ $order->delivered_date->format('d M Y H:i') }}</div>
+                                        @elseif($order->status === 'cancelled')
+                                            <div>Cancelled: {{ $order->updated_at->format('d M Y H:i') }}</div>
+                                        @endif
+                                        <div>{{ $order->orderItems->sum('kuantitas') }} items</div>
+                                    </div>
+                                </div>
+                                <div class="order-status">
+                                    <div class="status-badges">
+                                        @if($order->status === 'delivered')
+                                            <span class="status-badge status-delivered">
+                                                Delivered
+                                            </span>
+                                        @elseif($order->status === 'cancelled')
+                                            <span class="status-badge status-cancelled">
+                                                Cancelled
+                                            </span>
+                                        @endif
+                                    </div>
+                                    <div class="order-total">IDR {{ number_format($order->grand_total, 0, ',', '.') }}</div>
                                 </div>
                             </div>
-                            <div style="text-align: right;">
-                                @if($order->status === 'delivered')
-                                    <div class="delivery-badge">
-                                        ✓ Delivered
-                                    </div>
-                                @elseif($order->status === 'cancelled')
-                                    <div class="cancelled-badge">
-                                        ✗ Cancelled
-                                    </div>
-                                @endif
-                                <div class="order-total">IDR {{ number_format($order->grand_total, 0, ',', '.') }}</div>
-                            </div>
-                        </div>
 
-                        <!-- Order Items with Reviews -->
-                        <div class="order-items">
-                            @foreach ($order->orderItems as $item)
-                                <div class="item-row">
-                                    @if ($item->product && $item->product->images->isNotEmpty())
-                                        <img src="{{ asset('storage/' . $item->product->images->first()->image_path) }}"
-                                            alt="{{ $item->product_name }}" class="item-image">
-                                    @else
-                                        <div class="item-image"
-                                            style="background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #999; font-size: 12px;">
-                                            No Image</div>
-                                    @endif
+                            <!-- Order Items with Reviews -->
+                            <div class="order-items">
+                                @foreach ($order->orderItems as $item)
+                                    <div class="item-row">
+                                        @if ($item->product && $item->product->images->isNotEmpty())
+                                            <img src="{{ asset('storage/' . $item->product->images->first()->image_path) }}"
+                                                alt="{{ $item->product_name }}" class="item-image">
+                                        @else
+                                            <div class="item-image"
+                                                style="background: #f5f5f5; display: flex; align-items: center; justify-content: center; color: #999; font-size: 10px;">
+                                                No Image</div>
+                                        @endif
 
-                                    <div class="item-details">
-                                        <div class="item-name">{{ $item->product_name }}</div>
-                                        <div class="item-info">
-                                            Qty: {{ $item->kuantitas }}
-                                            @if ($item->size)
-                                                | Size: {{ $item->size }}
+                                        <div class="item-details">
+                                            <div class="item-name">{{ $item->product_name }}</div>
+                                            <div class="item-info">
+                                                Qty: {{ $item->kuantitas }}
+                                                @if ($item->size)
+                                                    • Size: {{ $item->size }}
+                                                @endif
+                                            </div>
+                                            <div class="item-price">IDR {{ number_format($item->subtotal, 0, ',', '.') }}</div>
+
+                                            @if ($item->review)
+                                                <div class="stars">
+                                                    {{ str_repeat('★', $item->review->rating) }}{{ str_repeat('☆', 5 - $item->review->rating) }}
+                                                </div>
                                             @endif
                                         </div>
-                                        <div class="item-price">IDR {{ number_format($item->subtotal, 0, ',', '.') }}</div>
 
-                                        @if ($item->review)
-                                            <div class="stars">
-                                                {{ str_repeat('★', $item->review->rating) }}{{ str_repeat('☆', 5 - $item->review->rating) }}
-                                            </div>
-                                        @endif
-                                    </div>
-
-                                    <div class="review-status">
-                                        @if($order->status === 'delivered')
-                                            @if ($item->review)
-                                                <div class="review-badge review-completed">Reviewed</div>
-                                                <div style="margin-top: 5px;">
+                                        <div class="review-status">
+                                            @if($order->status === 'delivered')
+                                                @if ($item->review)
+                                                    <div class="review-badge review-completed">Reviewed</div>
                                                     <a href="{{ route('order-history.edit-review', $item->review->id) }}"
                                                         class="btn btn-warning btn-sm">Edit Review</a>
-                                                </div>
-                                            @else
-                                                <div class="review-badge review-pending">Not Reviewed</div>
-                                                <div style="margin-top: 5px;">
+                                                @else
+                                                    <div class="review-badge review-pending">Not Reviewed</div>
                                                     <a href="{{ route('order-history.review-form', $item->id) }}"
                                                         class="btn btn-success btn-sm">Write Review</a>
+                                                @endif
+                                            @else
+                                                <div class="review-badge review-disabled">Cannot Review</div>
+                                                <div style="font-size: 9px; color: #666; margin-top: 2px; text-align: right;">
+                                                    Order was cancelled
                                                 </div>
                                             @endif
-                                        @else
-                                            <div class="review-badge review-disabled">Cannot Review</div>
-                                            <div style="margin-top: 5px; font-size: 11px; color: #6c757d;">
-                                                Order was cancelled
-                                            </div>
-                                        @endif
+                                        </div>
                                     </div>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            </div>
                         </div>
 
                         <!-- Actions -->
                         <div class="order-actions">
-                            <a href="{{ route('order-history.show', $order->order_number) }}" class="btn btn-primary">
+                            <a href="{{ route('orders.show', $order->order_number) }}" class="btn btn-primary">
                                 View Details
                             </a>
                             @if($order->status === 'delivered')

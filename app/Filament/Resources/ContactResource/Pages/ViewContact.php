@@ -9,7 +9,6 @@ use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\Section;
-use Filament\Support\Enums\FontWeight;
 
 class ViewContact extends ViewRecord
 {
@@ -25,7 +24,8 @@ class ViewContact extends ViewRecord
                 ->color('success')
                 ->action(function (Contact $record) {
                     $record->markAsRead();
-                    $this->refreshFormData(['read_at']);
+                    // Refresh the page to show updated status
+                    return redirect()->to(static::getUrl(['record' => $record]));
                 })
                 ->visible(fn (Contact $record) => $record->isUnread()),
         ];
@@ -38,7 +38,6 @@ class ViewContact extends ViewRecord
                 Section::make('Contact Information')
                     ->schema([
                         TextEntry::make('name')
-                            ->weight(FontWeight::Bold)
                             ->icon('heroicon-o-user'),
                         
                         TextEntry::make('phone')

@@ -470,11 +470,17 @@
         width: 90%;
         max-height: 90vh;
         overflow-y: auto;
+        position: relative;
     }
 
     .loading-content {
         text-align: center;
         padding: 40px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 200px;
     }
 
     .loading-spinner {
@@ -485,6 +491,185 @@
         border-radius: 50%;
         animation: spin 1s linear infinite;
         margin: 0 auto 20px;
+    }
+
+    .loading-dots {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 10px;
+    }
+
+    .loading-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #007bff;
+        animation: loading-dot 1.4s infinite ease-in-out both;
+    }
+
+    .loading-dot:nth-child(1) { animation-delay: -0.32s; }
+    .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+    .loading-dot:nth-child(3) { animation-delay: 0s; }
+
+    @keyframes loading-dot {
+        0%, 80%, 100% {
+            transform: scale(0);
+            opacity: 0.5;
+        }
+        40% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .success-animation {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: #28a745;
+        position: relative;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .success-checkmark {
+        width: 30px;
+        height: 30px;
+        position: relative;
+    }
+
+    .success-checkmark:before {
+        content: '';
+        position: absolute;
+        width: 3px;
+        height: 9px;
+        background: white;
+        left: 11px;
+        top: 6px;
+        border-radius: 2px;
+        transform: rotate(45deg);
+        animation: checkmark 0.8s ease-in-out;
+    }
+
+    .success-checkmark:after {
+        content: '';
+        position: absolute;
+        width: 3px;
+        height: 5px;
+        background: white;
+        left: 6px;
+        top: 10px;
+        border-radius: 2px;
+        transform: rotate(-45deg);
+        animation: checkmark 0.8s ease-in-out 0.3s both;
+    }
+
+    @keyframes checkmark {
+        0% {
+            height: 0;
+            width: 0;
+            opacity: 1;
+        }
+        20% {
+            height: 0;
+            width: 3px;
+            opacity: 1;
+        }
+        40% {
+            height: 5px;
+            width: 3px;
+            opacity: 1;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .pulse-animation {
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        50% {
+            transform: scale(1.05);
+            opacity: 0.8;
+        }
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        border-radius: 12px;
+        color: white;
+        z-index: 10001;
+        font-weight: 500;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        transform: translateX(400px);
+        transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        max-width: 350px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        backdrop-filter: blur(10px);
+    }
+
+    .notification.success {
+        background: linear-gradient(135deg, #28a745, #20c997);
+    }
+
+    .notification.error {
+        background: linear-gradient(135deg, #dc3545, #e74c3c);
+    }
+
+    .notification.info {
+        background: linear-gradient(135deg, #17a2b8, #20c997);
+    }
+
+    .notification-icon {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .notification.show {
+        transform: translateX(0);
+    }
+
+    .pay-now-btn.loading {
+        background: #6c757d;
+        cursor: not-allowed;
+        position: relative;
+        color: transparent;
+    }
+
+    .pay-now-btn.loading:before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-top: 2px solid white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
     }
 
     /* Responsive */
@@ -946,6 +1131,8 @@
 
     // Payment button click handler
     document.getElementById('payNowBtn').addEventListener('click', function() {
+        const btn = this;
+        
         // Check if address is selected
         const selectedAddress = document.querySelector('input[name="selected_address"]:checked');
         if (!selectedAddress) {
@@ -962,20 +1149,23 @@
             }
         }
 
-        // Show modal and loading
-        const modal = document.getElementById('paymentModal');
-        modal.classList.add('show');
+        // Add loading state to button
+        btn.classList.add('loading');
+        btn.disabled = true;
+
+        // Show modal with enhanced loading
+        showPaymentModal();
         
         // Prepare form data
         const formData = new FormData(document.getElementById('checkoutForm'));
         
         // If a saved address is selected, get address data
         if (selectedAddress.value !== 'manual') {
-            const addresses = @json($userAddresses);
+            const addresses = @json($userAddresses ?? []);
             const address = addresses.find(addr => addr.id == selectedAddress.value);
             if (address) {
                 formData.set('shipping_name', address.recipient_name);
-                formData.set('shipping_email', '{{ auth()->user()->email }}');
+                formData.set('shipping_email', '{{ auth()->user()->email ?? "" }}');
                 formData.set('shipping_phone', '{{ auth()->user()->phone ?? "" }}');
                 formData.set('shipping_address', address.address);
                 formData.set('shipping_city', address.city);
@@ -994,47 +1184,108 @@
         })
         .then(response => response.json())
         .then(data => {
+            // Remove button loading state
+            btn.classList.remove('loading');
+            btn.disabled = false;
+            
             if (data.success) {
-                // Hide loading and show payment
-                document.getElementById('loadingContent').style.display = 'none';
-                document.getElementById('paymentContent').style.display = 'block';
+                // Show payment ready state
+                showPaymentReady();
                 
                 // Trigger Midtrans Snap
                 snap.pay(data.snap_token, {
                     onSuccess: function(result) {
-                        // Handle successful payment
                         handlePaymentSuccess(result, data.order_number);
                     },
                     onPending: function(result) {
-                        // Handle pending payment
                         showNotification('info', 'Payment is being processed...');
-                        modal.classList.remove('show');
+                        hidePaymentModal();
                     },
                     onError: function(result) {
-                        // Handle payment error
                         showNotification('error', 'Payment failed. Please try again.');
-                        modal.classList.remove('show');
+                        hidePaymentModal();
                     },
                     onClose: function() {
-                        // Handle when user closes payment popup
-                        modal.classList.remove('show');
+                        hidePaymentModal();
                     }
                 });
             } else {
-                // Handle error
                 showNotification('error', data.message || 'Failed to create payment. Please try again.');
-                modal.classList.remove('show');
+                hidePaymentModal();
             }
         })
         .catch(error => {
             console.error('Error:', error);
+            btn.classList.remove('loading');
+            btn.disabled = false;
             showNotification('error', 'An error occurred. Please try again.');
-            modal.classList.remove('show');
+            hidePaymentModal();
         });
     });
 
-    // Handle successful payment
+    // Enhanced modal functions
+    function showPaymentModal() {
+        const modal = document.getElementById('paymentModal');
+        const loadingContent = document.getElementById('loadingContent');
+        const paymentContent = document.getElementById('paymentContent');
+        
+        // Reset modal state
+        loadingContent.style.display = 'flex';
+        paymentContent.style.display = 'none';
+        
+        // Update loading content
+        loadingContent.innerHTML = `
+            <div class="loading-spinner pulse-animation"></div>
+            <h3 style="color: #333; margin-bottom: 10px;">Preparing Payment...</h3>
+            <p style="color: #666; margin-bottom: 15px;">Please wait while we set up your secure payment.</p>
+            <div class="loading-dots">
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+            </div>
+        `;
+        
+        modal.classList.add('show');
+    }
+
+    function showPaymentReady() {
+        const loadingContent = document.getElementById('loadingContent');
+        loadingContent.innerHTML = `
+            <div style="width: 50px; height: 50px; border-radius: 50%; background: #28a745; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                    <polyline points="20,6 9,17 4,12"></polyline>
+                </svg>
+            </div>
+            <h3 style="color: #333; margin-bottom: 10px;">Payment Ready!</h3>
+            <p style="color: #666;">Choose your preferred payment method in the popup window.</p>
+        `;
+    }
+
+    function hidePaymentModal() {
+        const modal = document.getElementById('paymentModal');
+        modal.classList.remove('show');
+    }
+
+    // Enhanced payment success handler
     function handlePaymentSuccess(result, orderNumber) {
+        const loadingContent = document.getElementById('loadingContent');
+        
+        // Show success animation
+        loadingContent.innerHTML = `
+            <div class="success-animation">
+                <div class="success-checkmark"></div>
+            </div>
+            <h3 style="color: #28a745; margin-bottom: 10px;">Payment Successful!</h3>
+            <p style="color: #666; margin-bottom: 15px;">Processing your order...</p>
+            <div class="loading-dots">
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+            </div>
+        `;
+        
+        loadingContent.style.display = 'flex';
+
         fetch('{{ route("checkout.handle-payment") }}', {
             method: 'POST',
             body: JSON.stringify({
@@ -1049,45 +1300,71 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+                // Show final success state
+                loadingContent.innerHTML = `
+                    <div class="success-animation">
+                        <div class="success-checkmark"></div>
+                    </div>
+                    <h3 style="color: #28a745; margin-bottom: 10px;">Order Complete!</h3>
+                    <p style="color: #666;">Redirecting to your order details...</p>
+                `;
+                
                 showNotification('success', 'Payment successful! Redirecting...');
                 setTimeout(() => {
                     window.location.href = data.redirect_url;
                 }, 2000);
             } else {
                 showNotification('error', data.message || 'Failed to process payment. Please contact support.');
+                hidePaymentModal();
             }
         })
         .catch(error => {
             console.error('Error:', error);
             showNotification('error', 'An error occurred. Please contact support.');
+            hidePaymentModal();
         });
     }
 
-    // Show notification function
+    // Enhanced notification function
     function showNotification(type, message) {
+        // Remove any existing notifications
+        const existingNotifications = document.querySelectorAll('.notification');
+        existingNotifications.forEach(notification => {
+            if (document.body.contains(notification)) {
+                document.body.removeChild(notification);
+            }
+        });
+
         const notification = document.createElement('div');
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 20px;
-            border-radius: 8px;
-            color: white;
-            z-index: 10001;
-            font-weight: 500;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transform: translateX(400px);
-            transition: transform 0.3s ease;
-            max-width: 350px;
-            ${type === 'success' ? 'background: #28a745;' : 
-              type === 'info' ? 'background: #17a2b8;' : 'background: #dc3545;'}
+        notification.className = `notification ${type}`;
+        
+        // Add appropriate icon
+        let icon = '';
+        switch(type) {
+            case 'success':
+                icon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20,6 9,17 4,12"></polyline></svg>';
+                break;
+            case 'error':
+                icon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+                break;
+            case 'info':
+                icon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
+                break;
+        }
+        
+        notification.innerHTML = `
+            <div class="notification-icon">${icon}</div>
+            <span>${message}</span>
         `;
-        notification.textContent = message;
+        
         document.body.appendChild(notification);
 
-        setTimeout(() => notification.style.transform = 'translateX(0)', 100);
+        // Trigger entrance animation
+        setTimeout(() => notification.classList.add('show'), 100);
+        
+        // Auto remove after 4 seconds
         setTimeout(() => {
-            notification.style.transform = 'translateX(400px)';
+            notification.classList.remove('show');
             setTimeout(() => {
                 if (document.body.contains(notification)) {
                     document.body.removeChild(notification);
@@ -1099,7 +1376,7 @@
     // Close modal when clicking outside
     document.getElementById('paymentModal').addEventListener('click', function(e) {
         if (e.target === this) {
-            this.classList.remove('show');
+            hidePaymentModal();
         }
     });
 

@@ -79,11 +79,12 @@
             color: white;
             border: none;
             padding: 10px 20px;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
             font-weight: 500;
             transition: background 0.3s ease;
+            margin-top: 30px;
         }
 
         .btn-filter:hover {
@@ -97,16 +98,20 @@
 
         .order-card {
             background: white;
-            border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 20px;
             border: 1px solid #f0f0f0;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
         }
 
         .order-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+            border-color: #e0e0e0;
+        }
+
+        .order-main {
+            padding: 24px;
         }
 
         .order-header {
@@ -114,134 +119,201 @@
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 15px;
+            gap: 16px;
         }
 
         .order-info h3 {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 5px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+            letter-spacing: -0.01em;
         }
 
         .order-meta {
-            font-size: 14px;
-            color: #6c757d;
+            font-size: 13px;
+            color: #666;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
         }
 
         .order-status {
             display: flex;
             flex-direction: column;
             align-items: flex-end;
-            gap: 10px;
+            gap: 8px;
+        }
+
+        .status-badges {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
         }
 
         .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
             text-transform: uppercase;
-            display: inline-block;
+            letter-spacing: 0.5px;
         }
 
         .status-pending {
-            background: #fff3cd;
-            color: #856404;
+            background: #fff4e6;
+            color: #d97706;
         }
 
         .status-processing {
-            background: #cce5ff;
-            color: #004085;
+            background: #eff6ff;
+            color: #2563eb;
         }
 
         .status-shipped {
-            background: #d4edda;
-            color: #155724;
+            background: #f0fdf4;
+            color: #16a34a;
         }
 
         .status-delivered {
-            background: #d1ecf1;
-            color: #0c5460;
+            background: #ecfeff;
+            color: #0891b2;
         }
 
         .status-cancelled {
-            background: #f8d7da;
-            color: #721c24;
+            background: #fef2f2;
+            color: #dc2626;
         }
 
         .payment-paid {
-            background: #d4edda;
-            color: #155724;
+            background: #f0fdf4;
+            color: #16a34a;
         }
 
         .payment-pending {
-            background: #fff3cd;
-            color: #856404;
+            background: #fff4e6;
+            color: #d97706;
         }
 
         .payment-failed {
-            background: #f8d7da;
-            color: #721c24;
+            background: #fef2f2;
+            color: #dc2626;
         }
 
         .order-total {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #333;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-top: 4px;
         }
 
         .order-items {
-            margin: 15px 0;
+            margin: 16px 0;
+            border-top: 1px solid #f5f5f5;
+            padding-top: 16px;
         }
 
         .item-row {
             display: flex;
             align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #f0f0f0;
+            padding: 8px 0;
+            gap: 12px;
         }
 
-        .item-row:last-child {
-            border-bottom: none;
+        .item-row:not(:last-child) {
+            border-bottom: 1px solid #f8f8f8;
+            padding-bottom: 12px;
         }
 
         .item-image {
-            width: 50px;
-            height: 50px;
-            border-radius: 8px;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
             object-fit: cover;
-            margin-right: 15px;
-            background: #f8f9fa;
+            background: #f8f8f8;
+            flex-shrink: 0;
         }
 
         .item-details {
             flex: 1;
+            min-width: 0;
         }
 
         .item-name {
             font-weight: 600;
-            color: #333;
-            margin-bottom: 3px;
+            color: #1a1a1a;
+            margin-bottom: 2px;
             font-size: 14px;
+            line-height: 1.3;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .item-info {
             font-size: 12px;
-            color: #6c757d;
+            color: #666;
+            line-height: 1.2;
         }
 
         .item-price {
-            font-weight: bold;
-            color: #333;
+            font-weight: 600;
+            color: #1a1a1a;
             font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .items-more {
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            padding-top: 8px;
+            font-weight: 500;
+        }
+
+        .tracking-timeline {
+            margin: 16px 0;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #f1f5f9;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: #475569;
+        }
+
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .timeline-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .timeline-dot.active {
+            background: #22c55e;
+        }
+
+        .timeline-dot.inactive {
+            background: #cbd5e1;
         }
 
         .order-actions {
+            padding: 20px 24px;
+            background: white;
+            border-top: 1px solid #f0f0f0;
             display: flex;
-            gap: 10px;
-            margin-top: 20px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
@@ -272,7 +344,7 @@
 
         .btn-danger {
             background: #dc3545;
-            color: white;
+            color: white;   
         }
 
         .btn-danger:hover {
@@ -329,40 +401,6 @@
             margin-bottom: 30px;
         }
 
-        .tracking-timeline {
-            margin: 20px 0;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 12px;
-        }
-
-        .timeline-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            font-size: 13px;
-        }
-
-        .timeline-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .timeline-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 10px;
-            flex-shrink: 0;
-        }
-
-        .timeline-dot.active {
-            background: #28a745;
-        }
-
-        .timeline-dot.inactive {
-            background: #dee2e6;
-        }
-
         .pagination-wrapper {
             margin-top: 40px;
             display: flex;
@@ -416,6 +454,38 @@
             border-color: #f5c6cb;
         }
 
+        .info-banner {
+            background: #e7f3ff;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .info-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #004085;
+        }
+
+        .info-content .icon {
+            font-size: 18px;
+        }
+
+        .info-content strong {
+            display: block;
+        }
+
+        .info-content small {
+            font-size: 12px;
+        }
+
+        .info-content a {
+            color: #007bff;
+            text-decoration: underline;
+        }
+
         /* Custom Modal Styles */
         .modal-overlay {
             position: fixed;
@@ -424,7 +494,7 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(8px);
             z-index: 1000;
             display: none;
             align-items: center;
@@ -437,44 +507,51 @@
         }
 
         .modal-content {
-            background: #1a1d23;
-            border-radius: 16px;
+            background: white;
+            border-radius: 20px;
             padding: 0;
-            max-width: 450px;
+            max-width: 400px;
             width: 90%;
             position: relative;
-            animation: slideIn 0.3s ease-out;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            border: 1px solid #f0f0f0;
         }
 
         .modal-header {
-            padding: 24px 24px 20px;
+            padding: 28px 28px 20px;
             position: relative;
+            text-align: center;
         }
 
         .modal-close {
             position: absolute;
-            top: 16px;
-            right: 16px;
+            top: 20px;
+            right: 20px;
             background: none;
             border: none;
-            color: #6c757d;
+            color: #666;
             font-size: 20px;
             cursor: pointer;
             padding: 4px;
-            border-radius: 4px;
+            border-radius: 8px;
             transition: all 0.2s ease;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .modal-close:hover {
-            color: #fff;
-            background-color: rgba(255, 255, 255, 0.1);
+            color: #1a1a1a;
+            background-color: #f5f5f5;
         }
 
         .modal-icon {
-            width: 64px;
-            height: 64px;
-            background: rgba(220, 53, 69, 0.15);
+            width: 56px;
+            height: 56px;
+            background: #fef2f2;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -483,62 +560,62 @@
         }
 
         .modal-icon svg {
-            width: 28px;
-            height: 28px;
-            color: #dc3545;
+            width: 24px;
+            height: 24px;
+            color: #dc2626;
         }
 
         .modal-title {
-            color: #fff;
-            font-size: 20px;
-            font-weight: 600;
-            text-align: center;
+            color: #1a1a1a;
+            font-size: 18px;
+            font-weight: 700;
             margin-bottom: 8px;
         }
 
         .modal-message {
-            color: #9ca3af;
-            text-align: center;
+            color: #666;
             font-size: 14px;
-            line-height: 1.5;
+            line-height: 1.4;
         }
 
         .modal-footer {
-            padding: 20px 24px 24px;
+            padding: 20px 28px 28px;
             display: flex;
             gap: 12px;
             justify-content: center;
         }
 
         .modal-btn {
-            padding: 10px 24px;
+            padding: 12px 20px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
             min-width: 80px;
         }
 
         .modal-btn-cancel {
-            background: #374151;
-            color: #d1d5db;
-            border: 1px solid #4b5563;
+            background: #f5f5f5;
+            color: #666;
+            border: 1px solid #e0e0e0;
         }
 
         .modal-btn-cancel:hover {
-            background: #4b5563;
-            color: #fff;
+            background: #e8e8e8;
+            color: #1a1a1a;
+            transform: translateY(-1px);
         }
 
         .modal-btn-delete {
-            background: #dc3545;
+            background: #dc2626;
             color: white;
         }
 
         .modal-btn-delete:hover {
-            background: #c82333;
+            background: #b91c1c;
+            transform: translateY(-1px);
         }
 
         @keyframes fadeIn {
@@ -549,7 +626,7 @@
         @keyframes slideIn {
             from {
                 opacity: 0;
-                transform: translateY(-20px) scale(0.95);
+                transform: translateY(-30px) scale(0.9);
             }
             to {
                 opacity: 1;
@@ -559,11 +636,11 @@
 
         @media (max-width: 768px) {
             .container {
-                padding: 15px;
+                padding: 16px;
             }
 
             .page-title {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
 
             .filter-row {
@@ -574,25 +651,52 @@
             .order-header {
                 flex-direction: column;
                 align-items: flex-start;
+                gap: 12px;
             }
 
             .order-status {
                 align-items: flex-start;
+                width: 100%;
+            }
+
+            .status-badges {
+                justify-content: flex-start;
             }
 
             .order-actions {
-                justify-content: flex-start;
+                flex-direction: column;
             }
 
             .btn {
                 flex: 1;
                 justify-content: center;
-                min-width: auto;
             }
 
             .modal-content {
                 margin: 20px;
                 width: calc(100% - 40px);
+            }
+
+            .order-main {
+                padding: 20px;
+            }
+
+            .order-actions {
+                padding: 16px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .item-name {
+                font-size: 13px;
+            }
+            
+            .item-info, .item-price {
+                font-size: 12px;
+            }
+            
+            .order-meta {
+                font-size: 12px;
             }
         }
     </style>
@@ -618,14 +722,12 @@
         @endif
 
         <!-- Info Message -->
-        <div style="background: #e7f3ff; border-left: 4px solid #007bff; padding: 15px; margin-bottom: 30px; border-radius: 0 8px 8px 0;">
-            <div style="display: flex; align-items: center; gap: 10px; color: #004085;">
-                <span style="font-size: 18px;">ℹ️</span>
+        <div class="info-banner">
+            <div class="info-content">
+                <span class="icon">ℹ️</span>
                 <div>
-                    <strong>Looking for completed orders?</strong><br>
-                    <small>Delivered orders have been moved to <a href="{{ route('order-history.index') }}"
-                            style="color: #007bff; text-decoration: underline;">Order History</a> where you can leave
-                        reviews.</small>
+                    <strong>Looking for completed orders?</strong>
+                    <small>Delivered orders have been moved to <a href="{{ route('order-history.index') }}">Order History</a> where you can leave reviews.</small>
                 </div>
             </div>
         </div>
@@ -660,77 +762,81 @@
             <div class="orders-grid">
                 @foreach ($orders as $order)
                     <div class="order-card">
-                        <div class="order-header">
-                            <div class="order-info">
-                                <h3>{{ $order->order_number }}</h3>
-                                <div class="order-meta">
-                                    <div>Order Date: {{ $order->order_date->format('d M Y H:i') }}</div>
-                                    <div>{{ $order->orderItems->sum('kuantitas') }} items</div>
-                                </div>
-                            </div>
-                            <div class="order-status">
-                                <span class="status-badge status-{{ $order->status }}">
-                                    {{ $order->getStatusLabelAttribute() }}
-                                </span>
-                                <span class="status-badge payment-{{ $order->payment_status }}">
-                                    {{ $order->getPaymentStatusLabelAttribute() }}
-                                </span>
-                                <div class="order-total">IDR {{ number_format($order->grand_total, 0, ',', '.') }}</div>
-                            </div>
-                        </div>
-
-                        <!-- Order Items Preview -->
-                        <div class="order-items">
-                            @foreach ($order->orderItems->take(2) as $item)
-                                <div class="item-row">
-                                    @if ($item->product && $item->product->images->isNotEmpty())
-                                        <img src="{{ asset('storage/' . $item->product->images->first()->image_path) }}"
-                                            alt="{{ $item->product_name }}" class="item-image">
-                                    @else
-                                        <div class="item-image"
-                                            style="background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #999; font-size: 12px;">
-                                            No Image</div>
-                                    @endif
-                                    <div class="item-details">
-                                        <div class="item-name">{{ $item->product_name }}</div>
-                                        <div class="item-info">
-                                            Qty: {{ $item->kuantitas }}
-                                            @if ($item->size)
-                                                | Size: {{ $item->size }}
-                                            @endif
-                                        </div>
+                        <div class="order-main">
+                            <div class="order-header">
+                                <div class="order-info">
+                                    <h3>{{ $order->order_number }}</h3>
+                                    <div class="order-meta">
+                                        <div>{{ $order->order_date->format('d M Y H:i') }}</div>
+                                        <div>{{ $order->orderItems->sum('kuantitas') }} items</div>
                                     </div>
-                                    <div class="item-price">IDR {{ number_format($item->subtotal, 0, ',', '.') }}</div>
                                 </div>
-                            @endforeach
-                            @if ($order->orderItems->count() > 2)
-                                <div style="text-align: center; color: #6c757d; font-size: 13px; margin-top: 10px;">
-                                    +{{ $order->orderItems->count() - 2 }} more items
+                                <div class="order-status">
+                                    <div class="status-badges">
+                                        <span class="status-badge status-{{ $order->status }}">
+                                            {{ $order->getStatusLabelAttribute() }}
+                                        </span>
+                                        <span class="status-badge payment-{{ $order->payment_status }}">
+                                            {{ $order->getPaymentStatusLabelAttribute() }}
+                                        </span>
+                                    </div>
+                                    <div class="order-total">IDR {{ number_format($order->grand_total, 0, ',', '.') }}</div>
+                                </div>
+                            </div>
+
+                            <!-- Order Items Preview -->
+                            <div class="order-items">
+                                @foreach ($order->orderItems->take(2) as $item)
+                                    <div class="item-row">
+                                        @if ($item->product && $item->product->images->isNotEmpty())
+                                            <img src="{{ asset('storage/' . $item->product->images->first()->image_path) }}"
+                                                alt="{{ $item->product_name }}" class="item-image">
+                                        @else
+                                            <div class="item-image"
+                                                style="background: #f5f5f5; display: flex; align-items: center; justify-content: center; color: #999; font-size: 10px;">
+                                                No Image</div>
+                                        @endif
+                                        <div class="item-details">
+                                            <div class="item-name">{{ $item->product_name }}</div>
+                                            <div class="item-info">
+                                                Qty: {{ $item->kuantitas }}
+                                                @if ($item->size)
+                                                    • Size: {{ $item->size }}
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="item-price">IDR {{ number_format($item->subtotal, 0, ',', '.') }}</div>
+                                    </div>
+                                @endforeach
+                                @if ($order->orderItems->count() > 2)
+                                    <div class="items-more">
+                                        +{{ $order->orderItems->count() - 2 }} more items
+                                    </div>
+                                @endif
+                            </div>
+
+                            <!-- Tracking Timeline -->
+                            @if (in_array($order->status, ['processing', 'shipped', 'delivered']))
+                                <div class="tracking-timeline">
+                                    <div class="timeline-item">
+                                        <div class="timeline-dot active"></div>
+                                        <span>Confirmed - {{ $order->order_date->format('d M Y') }}</span>
+                                    </div>
+                                    <div class="timeline-item">
+                                        <div class="timeline-dot {{ $order->status === 'processing' || $order->status === 'shipped' || $order->status === 'delivered' ? 'active' : 'inactive' }}"></div>
+                                        <span>Processing</span>
+                                    </div>
+                                    <div class="timeline-item">
+                                        <div class="timeline-dot {{ $order->status === 'shipped' || $order->status === 'delivered' ? 'active' : 'inactive' }}"></div>
+                                        <span>Shipped {{ $order->shipped_date ? '- ' . $order->shipped_date->format('d M Y') : '' }}</span>
+                                    </div>
+                                    <div class="timeline-item">
+                                        <div class="timeline-dot {{ $order->status === 'delivered' ? 'active' : 'inactive' }}"></div>
+                                        <span>Delivered {{ $order->delivered_date ? '- ' . $order->delivered_date->format('d M Y') : '' }}</span>
+                                    </div>
                                 </div>
                             @endif
                         </div>
-
-                        <!-- Tracking Timeline -->
-                        @if (in_array($order->status, ['processing', 'shipped', 'delivered']))
-                            <div class="tracking-timeline">
-                                <div class="timeline-item">
-                                    <div class="timeline-dot active"></div>
-                                    <span>Order Confirmed - {{ $order->order_date->format('d M Y H:i') }}</span>
-                                </div>
-                                <div class="timeline-item">
-                                    <div class="timeline-dot {{ $order->status === 'processing' || $order->status === 'shipped' || $order->status === 'delivered' ? 'active' : 'inactive' }}"></div>
-                                    <span>Processing</span>
-                                </div>
-                                <div class="timeline-item">
-                                    <div class="timeline-dot {{ $order->status === 'shipped' || $order->status === 'delivered' ? 'active' : 'inactive' }}"></div>
-                                    <span>Shipped {{ $order->shipped_date ? '- ' . $order->shipped_date->format('d M Y H:i') : '' }}</span>
-                                </div>
-                                <div class="timeline-item">
-                                    <div class="timeline-dot {{ $order->status === 'delivered' ? 'active' : 'inactive' }}"></div>
-                                    <span>Delivered {{ $order->delivered_date ? '- ' . $order->delivered_date->format('d M Y H:i') : '' }}</span>
-                                </div>
-                            </div>
-                        @endif
 
                         <!-- Actions -->
                         <div class="order-actions">
@@ -856,5 +962,33 @@
                 }
             });
         }, 30000);
+
+        // Smooth scroll behavior for internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add loading state for buttons
+        document.querySelectorAll('.btn').forEach(button => {
+            if (button.type !== 'button') {
+                button.addEventListener('click', function() {
+                    this.disabled = true;
+                    this.innerHTML = '<span>Loading...</span>';
+                    setTimeout(() => {
+                        this.disabled = false;
+                        this.innerHTML = this.dataset.originalText || 'Submit';
+                    }, 3000);
+                });
+            }
+        });
     </script>
 @endsection
