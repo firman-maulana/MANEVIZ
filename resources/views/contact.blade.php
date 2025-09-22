@@ -42,11 +42,11 @@ body {
     justify-self: center;
 }
 
-.form-section h1 {
-    font-size: 2.5rem;
+.form-section h3 {
+    font-size: 2.0rem;
     font-weight: 600;
     margin-bottom: 20px;
-    margin-top: 30px;
+    margin-top: 60px;
     color: #000;
 }
 
@@ -128,11 +128,11 @@ body {
     padding-top: 60px;
 }
 
-.social-section h2 {
-    font-size: 1.5rem;
+.social-section h4 {
+    font-size: 1rem;
     font-weight: 600;
     margin-bottom: 15px;
-    margin-top: 40px;
+    margin-top: 23px;
     color: #000;
 }
 
@@ -222,8 +222,8 @@ body {
         gap: 50px;
     }
 
-    .form-section h1 {
-        font-size: 2.8rem;
+    .form-section h3 {
+        font-size: 2.3rem;
     }
 
     .divider {
@@ -242,8 +242,8 @@ body {
         gap: 45px;
     }
 
-    .form-section h1 {
-        font-size: 2.6rem;
+    .form-section h3 {
+        font-size: 2.1rem;
     }
 
     .divider {
@@ -263,8 +263,8 @@ body {
         gap: 35px;
     }
 
-    .form-section h1 {
-        font-size: 2.4rem;
+    .form-section h3 {
+        font-size: 1.9rem;
     }
 
     .divider {
@@ -283,8 +283,8 @@ body {
         gap: 30px;
     }
 
-    .form-section h1 {
-        font-size: 2.2rem;
+    .form-section h3 {
+        font-size: 1.7rem;
         margin-top: 25px;
     }
 
@@ -308,9 +308,9 @@ body {
         padding-top: 50px;
     }
 
-    .social-section h2 {
+    .social-section h4 {
         margin-top: 35px;
-        font-size: 1.4rem;
+        font-size: 0.9rem;
     }
 }
 
@@ -324,8 +324,8 @@ body {
         gap: 25px;
     }
 
-    .form-section h1 {
-        font-size: 2.1rem;
+    .form-section h3 {
+        font-size: 1.6rem;
         margin-top: 20px;
     }
 
@@ -342,9 +342,9 @@ body {
         padding-top: 40px;
     }
 
-    .social-section h2 {
+    .social-section h4 {
         margin-top: 30px;
-        font-size: 1.35rem;
+        font-size: 0.75rem;
     }
 
     .social-links {
@@ -367,8 +367,8 @@ body {
         display: none;
     }
     
-    .form-section h1 {
-        font-size: 2rem;
+    .form-section h3 {
+        font-size: 1.5rem;
         margin-top: 15px;
         text-align: center;
     }
@@ -379,10 +379,10 @@ body {
         margin-top: 20px;
     }
 
-    .social-section h2 {
+    .social-section h4 {
         margin-top: 20px;
         text-align: center;
-        font-size: 1.4rem;
+        font-size: 0.9rem;
     }
 
     .social-links {
@@ -414,8 +414,8 @@ body {
         padding: 20px 12px;
     }
 
-    .form-section h1 {
-        font-size: 1.9rem;
+    .form-section h3 {
+        font-size: 1.4rem;
         margin-bottom: 18px;
         margin-top: 12px;
     }
@@ -445,8 +445,8 @@ body {
         padding-right: 38px;
     }
 
-    .social-section h2 {
-        font-size: 1.3rem;
+    .social-section h4 {
+        font-size: 0.7rem;
         margin-bottom: 12px;
     }
 
@@ -471,8 +471,8 @@ body {
         padding: 15px 10px;
     }
 
-    .form-section h1 {
-        font-size: 1.7rem;
+    .form-section h3 {
+        font-size: 1.2rem;
         margin-top: 10px;
         margin-bottom: 16px;
     }
@@ -512,8 +512,8 @@ body {
         padding-top: 18px;
     }
 
-    .social-section h2 {
-        font-size: 1.25rem;
+    .social-section h4 {
+        font-size: 0.65rem;
         margin-top: 15px;
         margin-bottom: 12px;
     }
@@ -540,9 +540,9 @@ body {
         padding: 12px 8px;
     }
 
-    .form-section h1 {
-        font-size: 1.5rem;
-        margin-top: 8px;
+    .form-section h3 {
+        font-size: 1rem;
+        margin-top: 70px;
         margin-bottom: 14px;
     }
 
@@ -576,8 +576,8 @@ body {
         font-size: 0.95rem;
     }
 
-    .social-section h2 {
-        font-size: 1.2rem;
+    .social-section h4 {
+        font-size: 0.7rem;
         margin-bottom: 10px;
     }
 
@@ -602,8 +602,8 @@ body {
         padding: 10px 6px;
     }
 
-    .form-section h1 {
-        font-size: 1.4rem;
+    .form-section h3 {
+        font-size: 0.9rem;
         margin-top: 90px;
         margin-bottom: 12px;
     }
@@ -644,8 +644,8 @@ body {
         margin-bottom: 40px;
     }
 
-    .social-section h2 {
-        font-size: 1.15rem;
+    .social-section h4 {
+        font-size: 0.55rem;
         margin-top: 12px;
         margin-bottom: 10px;
     }
@@ -671,8 +671,8 @@ body {
         padding: 8px 4px;
     }
 
-    .form-section h1 {
-        font-size: 1.3rem;
+    .form-section h3 {
+        font-size: 0.8rem;
         margin-top: 5px;
         margin-bottom: 10px;
     }
@@ -707,8 +707,8 @@ body {
         font-size: 0.9rem;
     }
 
-    .social-section h2 {
-        font-size: 1.1rem;
+    .social-section h4 {
+        font-size: 0.6rem;
     }
 
     .social-link {
@@ -732,8 +732,8 @@ body {
         padding: 15px 20px;
     }
     
-    .form-section h1 {
-        font-size: 1.6rem;
+    .form-section h3 {
+        font-size: 1.1rem;
         margin-top: 8px;
         margin-bottom: 12px;
     }
@@ -763,10 +763,10 @@ body {
         margin-top: 12px;
     }
 
-    .social-section h2 {
+    .social-section h4 {
         margin-top: 8px;
         margin-bottom: 8px;
-        font-size: 1.2rem;
+        font-size: 0.7rem;
     }
 
     .social-link {
@@ -790,8 +790,8 @@ body {
     .form-group select,
     .form-group textarea,
     .form-group label,
-    .form-section h1,
-    .social-section h2 {
+    .form-section h3,
+    .social-section h4 {
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
     }
@@ -853,7 +853,7 @@ body {
 
     <div class="contact-section">
         <div class="form-section">
-            <h1>Contact Us</h1>
+            <h3>Contact Us</h3>
             <form id="contact-form" action="{{ route('contact.store') }}" method="POST">
                 @csrf
                 <div class="form-group">
@@ -904,7 +904,7 @@ body {
         <div class="divider"></div>
 
         <div class="social-section">
-            <h2>Find Us On</h2>
+            <h4>Find Us On</h4>
             <div class="social-links">
                 <a href="#" class="social-link" title="WhatsApp">
                     <svg viewBox="0 0 24 24" fill="currentColor">
@@ -913,7 +913,7 @@ body {
                 </a>
                 <a href="#" class="social-link" title="Website">
                     <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h4c.55 0 1-.45 1-1V7h4c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
                     </svg>
                 </a>
                 <a href="#" class="social-link" title="Instagram">
@@ -933,7 +933,7 @@ body {
                 </a>
                 <a href="#" class="social-link" title="Twitter/X">
                     <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h36.17l-5.214-6.817L4.99 21.75h3.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h3.833L7.084 4.126H5.117z"/>
                     </svg>
                 </a>
                 <a href="#" class="social-link" title="YouTube">

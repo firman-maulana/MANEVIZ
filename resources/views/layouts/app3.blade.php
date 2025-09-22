@@ -71,6 +71,14 @@
             position: relative;
         }
 
+        
+        .nav-menu .nav-link {
+            text-decoration: none;
+            font-weight: bold;
+            color: black;
+            transition: color 0.3s ease;
+        }
+
         .navbar.scrolled .nav-menu a {
             color: #333;
         }

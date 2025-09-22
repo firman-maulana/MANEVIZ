@@ -24,6 +24,7 @@
             gap: 20px;
             align-items: start;
             padding-top: 90px;
+            padding-bottom: 30px;
         }
 
         /* Left Sidebar */
@@ -66,7 +67,7 @@
             font-size: 18px;
             font-weight: 600;
             margin-bottom: 50px;
-            color: #1d1d1f;
+            color: black;
         }
 
         .profile-greeting {
@@ -216,7 +217,7 @@
         .main-header-greeting {
             font-size: 20px;
             font-weight: 600;
-            color: #1d1d1f;
+            color: black;
             margin-bottom: 20px;
         }
 
@@ -230,37 +231,21 @@
             padding: 12px 24px;
             border-radius: 10px;
             font-size: 14px;
-            font-weight: 500;
             border: none;
             cursor: pointer;
             transition: all 0.2s;
             text-decoration: none;
             display: inline-block;
             white-space: nowrap;
-        }
-
-        .btn-header:first-child {
-            background: #ff6b6b;
+            background-color: black;
             color: white;
-        }
-
-        .btn-header:first-child:hover {
-            background: #ff5252;
-        }
-
-        .btn-header:last-child {
-            background: #ff6b6b;
-            color: white;
-        }
-
-        .btn-header:last-child:hover {
-            background: #ff5252;
+            font-weight: 600;
         }
 
         .main-title {
             font-size: 18px;
             font-weight: 600;
-            color: #1d1d1f;
+            color: black;
         }
 
         .order-list {

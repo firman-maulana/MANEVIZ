@@ -74,7 +74,7 @@
 
         .nav-menu .nav-link {
             text-decoration: none;
-            font-weight: 500;
+            font-weight: bold;
             color: white;
             transition: color 0.3s ease;
         }

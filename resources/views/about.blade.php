@@ -30,10 +30,10 @@
         margin-left: 25px;
     }
 
-    .header h1 {
-        font-size: 2.5em;
+    .header h3 {
+        font-size: 2.0em;
         font-weight: bold;
-        color: #333;
+        color: black;
         margin-bottom: 20px;
     }
 
@@ -156,8 +156,8 @@
             max-width: 320px;
         }
 
-        .header h1 {
-            font-size: 2.2em;
+        .header h3 {
+            font-size: 1.7em;
         }
 
         .text-content,
@@ -186,8 +186,8 @@
             max-width: 300px;
         }
 
-        .header h1 {
-            font-size: 2.1em;
+        .header h3 {
+            font-size: 1.6em;
         }
 
         .text-content,
@@ -230,8 +230,8 @@
             text-align: center;
         }
 
-        .header h1 {
-            font-size: 2em;
+        .header h3 {
+            font-size: 1.5em;
         }
 
         .text-content,
@@ -252,8 +252,8 @@
             padding: 12px 8px;
         }
 
-        .header h1 {
-            font-size: 1.8em;
+        .header h3 {
+            font-size: 1.3em;
             margin-bottom: 15px;
         }
 
@@ -284,8 +284,8 @@
             padding: 10px 8px;
         }
 
-        .header h1 {
-            font-size: 1.6em;
+        .header h3 {
+            font-size: 1.1em;
             margin-bottom: 15px;
         }
 
@@ -320,8 +320,8 @@
             padding: 8px 6px;
         }
 
-        .header h1 {
-            font-size: 1.4em;
+        .header h3 {
+            font-size: 0.9em;
             margin-bottom: 12px;
             margin-top: 90px;
         }
@@ -353,8 +353,8 @@
             padding: 6px 4px;
         }
 
-        .header h1 {
-            font-size: 1.3em;
+        .header h3 {
+            font-size: 0.8em;
             margin-bottom: 10px;
         }
 
@@ -390,8 +390,8 @@
             margin-bottom: 15px;
         }
 
-        .header h1 {
-            font-size: 1.6em;
+        .header h3 {
+            font-size: 1.1em;
             margin-bottom: 10px;
         }
 
@@ -456,7 +456,7 @@
 
 <div class="container">
     <div class="header">
-        <h1>About Us</h1>
+        <h3>About Us</h3>
     </div>
 
     <div class="content-wrapper">
