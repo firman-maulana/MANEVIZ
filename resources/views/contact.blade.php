@@ -1,6 +1,7 @@
 @extends ('layouts.app2')
 
 @section('content')
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
 <style>
 /* Reset dan Base Styles */
@@ -118,6 +119,11 @@ body {
     background-color: #333;
 }
 
+.submit-btn:disabled {
+    background-color: #666;
+    cursor: not-allowed;
+}
+
 .social-section {
     padding-top: 60px;
 }
@@ -159,6 +165,50 @@ body {
 .social-link svg {
     width: 20px;
     height: 20px;
+}
+
+/* Alert Styles */
+.alert {
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.input-error {
+    border-color: #e74c3c !important;
+}
+
+.input-success {
+    border-color: #28a745 !important;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 8px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
 /* Extra Large Desktop */
@@ -788,38 +838,66 @@ body {
 </style>
 
 <div class="container">
+    <!-- Flash Messages -->
+    @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-error">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <div class="contact-section">
         <div class="form-section">
             <h1>Contact Us</h1>
-            <form>
+            <form id="contact-form" action="{{ route('contact.store') }}" method="POST">
+                @csrf
                 <div class="form-group">
                     <label for="name">Name<span class="required">*</span></label>
-                    <input type="text" id="name" name="name" required>
+                    <input type="text" id="name" name="name" value="{{ old('name') }}" required>
+                    @error('name')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="form-group">
                     <label for="phone">Phone<span class="required">*</span></label>
-                    <input type="tel" id="phone" name="phone" required>
+                    <input type="tel" id="phone" name="phone" value="{{ old('phone') }}" required>
+                    @error('phone')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="form-group">
                     <label for="subject">Subject<span class="required">*</span></label>
                     <select id="subject" name="subject" required>
                         <option value="">Select a subject</option>
-                        <option value="general">General Inquiry</option>
-                        <option value="support">Customer Support</option>
-                        <option value="sales">Sales Question</option>
-                        <option value="partnership">Partnership</option>
-                        <option value="other">Other</option>
+                        <option value="general" {{ old('subject') == 'general' ? 'selected' : '' }}>General Inquiry</option>
+                        <option value="support" {{ old('subject') == 'support' ? 'selected' : '' }}>Customer Support</option>
+                        <option value="sales" {{ old('subject') == 'sales' ? 'selected' : '' }}>Sales Question</option>
+                        <option value="partnership" {{ old('subject') == 'partnership' ? 'selected' : '' }}>Partnership</option>
+                        <option value="other" {{ old('subject') == 'other' ? 'selected' : '' }}>Other</option>
                     </select>
+                    @error('subject')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="form-group">
                     <label for="message">Message<span class="required">*</span></label>
-                    <textarea id="message" name="message" placeholder="Your message here..." required></textarea>
+                    <textarea id="message" name="message" placeholder="Your message here..." required>{{ old('message') }}</textarea>
+                    @error('message')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
                 </div>
 
-                <button type="submit" class="submit-btn">Submit</button>
+                <button type="submit" class="submit-btn" id="submit-button">
+                    Submit
+                </button>
             </form>
         </div>
 
@@ -869,40 +947,134 @@ body {
 </div>
 
 <script>
-    document.querySelector('form').addEventListener('submit', function(e) {
+    document.getElementById('contact-form').addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // Simple form validation
-        const name = document.getElementById('name').value.trim();
-        const phone = document.getElementById('phone').value.trim();
-        const subject = document.getElementById('subject').value;
-        const message = document.getElementById('message').value.trim();
+        const submitButton = document.getElementById('submit-button');
+        const originalText = submitButton.innerHTML;
+        
+        // Show loading state
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<span class="loading-spinner"></span>Sending...';
+        
+        // Get form data
+        const formData = new FormData(this);
+        
+        // Simple client-side validation
+        const name = formData.get('name').trim();
+        const phone = formData.get('phone').trim();
+        const subject = formData.get('subject');
+        const message = formData.get('message').trim();
         
         if (!name || !phone || !subject || !message) {
-            alert('Please fill in all required fields.');
+            showAlert('Please fill in all required fields.', 'error');
+            resetSubmitButton();
             return;
         }
         
-        alert('Form submitted successfully!');
+        // Submit via AJAX
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert(data.message, 'success');
+                this.reset();
+                clearValidationStyles();
+            } else {
+                showAlert(data.message || 'An error occurred. Please try again.', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('An error occurred. Please try again.', 'error');
+        })
+        .finally(() => {
+            resetSubmitButton();
+        });
         
-        // Reset form after successful submission
-        this.reset();
+        function resetSubmitButton() {
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalText;
+        }
     });
 
     // Add input validation feedback
     document.querySelectorAll('input, select, textarea').forEach(input => {
         input.addEventListener('blur', function() {
             if (this.hasAttribute('required') && !this.value.trim()) {
-                this.style.borderColor = '#e74c3c';
+                this.classList.add('input-error');
+                this.classList.remove('input-success');
             } else {
-                this.style.borderColor = '#000000ff';
+                this.classList.remove('input-error');
+                this.classList.add('input-success');
             }
         });
         
         input.addEventListener('input', function() {
             if (this.hasAttribute('required') && this.value.trim()) {
-                this.style.borderColor = '#28a745';
+                this.classList.remove('input-error');
+                this.classList.add('input-success');
             }
+        });
+    });
+
+    // Phone number formatting (optional)
+    document.getElementById('phone').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 0) {
+            if (value.length <= 4) {
+                value = value;
+            } else if (value.length <= 8) {
+                value = value.slice(0, 4) + '-' + value.slice(4);
+            } else {
+                value = value.slice(0, 4) + '-' + value.slice(4, 8) + '-' + value.slice(8, 12);
+            }
+        }
+        e.target.value = value;
+    });
+
+    // Alert function
+    function showAlert(message, type) {
+        // Remove existing alerts
+        document.querySelectorAll('.alert').forEach(alert => alert.remove());
+        
+        // Create new alert
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type}`;
+        alertDiv.textContent = message;
+        
+        // Insert at the top of the container
+        const container = document.querySelector('.container');
+        container.insertBefore(alertDiv, container.firstChild);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 5000);
+    }
+
+    // Clear validation styles
+    function clearValidationStyles() {
+        document.querySelectorAll('input, select, textarea').forEach(input => {
+            input.classList.remove('input-error', 'input-success');
+        });
+    }
+
+    // Auto-hide flash messages
+    document.addEventListener('DOMContentLoaded', function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                alert.style.opacity = '0';
+                alert.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => alert.remove(), 500);
+            }, 5000);
         });
     });
 </script>

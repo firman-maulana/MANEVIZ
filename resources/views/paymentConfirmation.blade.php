@@ -1,6 +1,7 @@
 @extends('layouts.app2')
 
 @section('content')
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
     <style>
         .container {
@@ -135,6 +136,12 @@
             transform: translateY(1px);
         }
 
+        .submit-btn:disabled {
+            background: #ccc;
+            border-color: #ccc;
+            cursor: not-allowed;
+        }
+
         .input-with-prefix {
             display: flex;
             align-items: center;
@@ -184,8 +191,29 @@
             margin-bottom: 20px;
             display: none;
         }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
-     <div class="container">
+
+    <div class="container">
         <div class="header">
             <h1 class="title">PAYMENT CONFIRMATION</h1>
         </div>
@@ -198,15 +226,16 @@
             Please fill in all required fields correctly.
         </div>
 
-        <div class="form-container">
+        <form id="payment-confirmation-form" class="form-container">
+            @csrf
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label" for="name">Name <span class="required">*</span></label>
-                    <input type="text" id="name" class="form-input" required>
+                    <input type="text" id="name" name="name" class="form-input" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="email">Email <span class="required">*</span></label>
-                    <input type="email" id="email" class="form-input" required>
+                    <input type="email" id="email" name="email" class="form-input" required>
                 </div>
             </div>
 
@@ -215,14 +244,14 @@
                     <label class="form-label" for="order-id">Order ID <span class="required">*</span></label>
                     <div class="input-with-prefix">
                         <span class="input-prefix">#</span>
-                        <input type="text" id="order-id" required>
+                        <input type="text" id="order-id" name="order_id" required>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="total-transfer">Total Transfer <span class="required">*</span></label>
                     <div class="input-with-prefix">
                         <span class="input-prefix">Rp.</span>
-                        <input type="text" id="total-transfer" required>
+                        <input type="text" id="total-transfer" name="total_transfer" required>
                     </div>
                 </div>
             </div>
@@ -230,7 +259,7 @@
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label" for="transfer-to">Transfer To <span class="required">*</span></label>
-                    <select id="transfer-to" class="form-select" required>
+                    <select id="transfer-to" name="transfer_to" class="form-select" required>
                         <option value="">Select Bank</option>
                         <option value="bca-449-008-1777">BCA 449-008-1777 a/n Anggullo Agrisbo</option>
                         <option value="mandiri">Mandiri</option>
@@ -240,100 +269,38 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="account-holder">Bank Account Holder <span class="required">*</span></label>
-                    <input type="text" id="account-holder" class="form-input" required>
+                    <input type="text" id="account-holder" name="account_holder" class="form-input" required>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group full-width">
                     <label class="form-label" for="notes">Notes</label>
-                    <textarea id="notes" class="form-textarea" placeholder="Add notes or special message..."></textarea>
+                    <textarea id="notes" name="notes" class="form-textarea" placeholder="Add notes or special message..."></textarea>
                 </div>
             </div>
 
-            <button type="submit" class="submit-btn" onclick="submitForm()">Send</button>
-        </div>
+            <button type="submit" class="submit-btn" id="submit-btn">
+                <span class="btn-text">Send</span>
+            </button>
+        </form>
     </div>
 
     <script>
-        function submitForm() {
-            // Get form elements
-            const nameField = document.getElementById('name');
-            const emailField = document.getElementById('email');
-            const orderIdField = document.getElementById('order-id');
-            const totalTransferField = document.getElementById('total-transfer');
-            const transferToField = document.getElementById('transfer-to');
-            const accountHolderField = document.getElementById('account-holder');
-            const notesField = document.getElementById('notes');
-
-            // Hide previous messages
-            document.getElementById('success-message').style.display = 'none';
-            document.getElementById('error-message').style.display = 'none';
-
-            // Basic validation
-            const requiredFields = [nameField, emailField, orderIdField, totalTransferField, transferToField, accountHolderField];
-            let isValid = true;
-
-            // Reset border colors
-            requiredFields.forEach(field => {
-                if (field.parentElement.classList.contains('input-with-prefix')) {
-                    field.parentElement.style.borderColor = '#ccc';
-                } else {
-                    field.style.borderColor = '#ccc';
-                }
-            });
-
-            // Validate each field
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    if (field.parentElement.classList.contains('input-with-prefix')) {
-                        field.parentElement.style.borderColor = '#e74c3c';
-                    } else {
-                        field.style.borderColor = '#e74c3c';
-                    }
-                    isValid = false;
-                }
-            });
-
-            // Email validation
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (emailField.value.trim() && !emailRegex.test(emailField.value)) {
-                emailField.style.borderColor = '#e74c3c';
-                isValid = false;
-            }
-
-            if (isValid) {
-                // Show success message
-                document.getElementById('success-message').style.display = 'block';
-                
-                // Reset form
-                requiredFields.forEach(field => {
-                    field.value = '';
-                });
-                notesField.value = '';
-
-                // Scroll to top to show success message
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            } else {
-                // Show error message
-                document.getElementById('error-message').style.display = 'block';
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }
-
-        // Add number formatting for total transfer
         document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('payment-confirmation-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const successMessage = document.getElementById('success-message');
+            const errorMessage = document.getElementById('error-message');
             const totalTransferField = document.getElementById('total-transfer');
-            
+
+            // Format number input for total transfer
             totalTransferField.addEventListener('input', function(e) {
-                // Remove non-numeric characters
                 let value = this.value.replace(/[^0-9]/g, '');
-                
-                // Add thousand separators
                 if (value) {
                     value = parseInt(value).toLocaleString('id-ID');
                 }
-                
                 this.value = value;
             });
 
@@ -343,6 +310,101 @@
                     e.preventDefault();
                 }
             });
+
+            // Form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                submitForm();
+            });
+
+            function submitForm() {
+                // Hide previous messages
+                successMessage.style.display = 'none';
+                errorMessage.style.display = 'none';
+
+                // Show loading state
+                submitBtn.disabled = true;
+                btnText.innerHTML = '<span class="spinner"></span>Sending...';
+                form.classList.add('loading');
+
+                // Prepare form data
+                const formData = new FormData(form);
+
+                // Convert total_transfer to number
+                const totalTransfer = formData.get('total_transfer').replace(/[^0-9]/g, '');
+                formData.set('total_transfer', totalTransfer);
+
+                // Submit via AJAX
+                fetch('{{ route("payment.confirmation.store") }}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Show success message
+                        successMessage.style.display = 'block';
+                        successMessage.textContent = data.message;
+
+                        // Reset form
+                        form.reset();
+
+                        // Scroll to top
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    } else {
+                        // Show error message
+                        errorMessage.style.display = 'block';
+                        errorMessage.textContent = data.message || 'Please fill in all required fields correctly.';
+
+                        // Highlight invalid fields if errors provided
+                        if (data.errors) {
+                            highlightErrors(data.errors);
+                        }
+
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    errorMessage.style.display = 'block';
+                    errorMessage.textContent = 'An error occurred while submitting the form. Please try again.';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                })
+                .finally(() => {
+                    // Reset loading state
+                    submitBtn.disabled = false;
+                    btnText.innerHTML = 'Send';
+                    form.classList.remove('loading');
+                });
+            }
+
+            function highlightErrors(errors) {
+                // Reset all field borders
+                const allFields = form.querySelectorAll('.form-input, .form-select, .input-with-prefix');
+                allFields.forEach(field => {
+                    if (field.classList.contains('input-with-prefix')) {
+                        field.style.borderColor = '#ccc';
+                    } else {
+                        field.style.borderColor = '#ccc';
+                    }
+                });
+
+                // Highlight fields with errors
+                Object.keys(errors).forEach(fieldName => {
+                    const field = form.querySelector(`[name="${fieldName}"]`);
+                    if (field) {
+                        if (field.parentElement.classList.contains('input-with-prefix')) {
+                            field.parentElement.style.borderColor = '#e74c3c';
+                        } else {
+                            field.style.borderColor = '#e74c3c';
+                        }
+                    }
+                });
+            }
         });
     </script>
 

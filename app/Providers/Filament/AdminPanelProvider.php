@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Resources\ContactResource\Widgets\ContactStatsOverview;
 use App\Filament\Widgets\StatsOverviewWidget;
 use App\Filament\Widgets\OrdersOverviewWidget;
 use App\Filament\Widgets\RevenueWidget;
@@ -56,6 +57,7 @@ class AdminPanelProvider extends PanelProvider
                 ReviewsStatsWidget::class,
                 TopProductsWidget::class,
                 RecentOrdersWidget::class,
+                ContactStatsOverview::class
             ])
             ->middleware([
                 EncryptCookies::class,

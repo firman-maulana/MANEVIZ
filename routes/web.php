@@ -13,6 +13,8 @@ use App\Http\Controllers\OrderHistoryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\PaymentConfirmationController; // ADDED: Payment Confirmation Controller
 
 /*
 |--------------------------------------------------------------------------
@@ -27,10 +29,20 @@ use App\Http\Controllers\SearchController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/allProduct', [ProductController::class, 'index'])->name('products.index');
 Route::view('/about', 'about')->name('about');
-Route::view('/contact', 'contact')->name('contact');
+
+// UPDATED: Contact routes - changed from static view to dynamic controller with CRUD
+Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
 Route::view('/refundPolicy', 'refundPolicy')->name('refund.policy');
 Route::view('/howToOrder', 'howToOrder')->name('how.to.order');
-Route::view('/paymentConfirmation', 'paymentConfirmation')->name('payment.confirmation');
+
+// UPDATED: Payment Confirmation routes - changed from static view to dynamic controller with CRUD
+Route::get('/paymentConfirmation', [PaymentConfirmationController::class, 'index'])->name('payment.confirmation');
+Route::post('/paymentConfirmation', [PaymentConfirmationController::class, 'store'])->name('payment.confirmation.store');
+
+// API route for checking payment confirmation status (optional)
+Route::get('/api/payment-confirmation/status', [PaymentConfirmationController::class, 'checkStatus'])->name('payment.confirmation.status');
 
 // Detail Produk (ambil dari database lewat ProductController)
 Route::get('/produk/{slug}', [ProductController::class, 'show'])->name('products.show');
@@ -125,7 +137,9 @@ Route::get('/auth/google/callback', [RegisterController::class, 'handleGoogleCal
 Route::get('/register/google', [RegisterController::class, 'redirectToGoogle'])->name('register.google');
 Route::get('/register/google/callback', [RegisterController::class, 'handleGoogleCallback']);
 
-// Search routes
+// =====================
+// Search Routes
+// =====================
 Route::get('/search', [SearchController::class, 'searchPage'])->name('search.page');
 Route::get('/api/search', [SearchController::class, 'search'])->name('search.api');
 Route::get('/api/search/suggestions', [SearchController::class, 'suggestions'])->name('search.suggestions');
