@@ -328,11 +328,6 @@
             color: #dc3545;
         }
 
-        .dropdown-item.logout:hover {
-            background: #dc3545;
-            color: white;
-        }
-
         /* Responsive Design */
 
         /* Large tablets and small desktops */
