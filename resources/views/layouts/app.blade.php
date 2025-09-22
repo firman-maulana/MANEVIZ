@@ -932,10 +932,6 @@
                             <div style="text-align: left; color: rgba(255, 255, 255, 0.8); font-size: 0.9rem;">
                                 Selamat datang, <strong>{{ Auth::user()->name }}</strong>!
                             </div>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="auth-btn sign-in">Logout</button>
-                            </form>
                         </div>
                     @endguest
                 </div>
