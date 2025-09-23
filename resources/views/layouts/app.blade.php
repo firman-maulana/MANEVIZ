@@ -33,7 +33,7 @@
             position: fixed;
             top: 0;
             width: 100%;
-            padding: 12px 20px;
+            padding: 15px 0;
             background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0));
             transition: all 0.3s ease;
             z-index: 1000;
@@ -74,7 +74,7 @@
 
         .nav-menu .nav-link {
             text-decoration: none;
-            font-weight: bold;
+            /* font-weight: bold; */
             color: white;
             transition: color 0.3s ease;
         }
