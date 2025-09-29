@@ -144,3 +144,8 @@ Route::get('/search', [SearchController::class, 'searchPage'])->name('search.pag
 Route::get('/api/search', [SearchController::class, 'search'])->name('search.api');
 Route::get('/api/search/suggestions', [SearchController::class, 'suggestions'])->name('search.suggestions');
 Route::get('/api/products/filter', [SearchController::class, 'filterByCategory'])->name('products.filter');
+
+Route::get('/tes', [App\Http\Controllers\RajaOngkirController::class, 'index']);
+Route::get('/cities/{provinceId}', [App\Http\Controllers\RajaOngkirController::class, 'getCities']);
+Route::get('/districts/{cityId}', [App\Http\Controllers\RajaOngkirController::class, 'getDistricts']);
+Route::post('/check-ongkir', [App\Http\Controllers\RajaOngkirController::class, 'checkOngkir']);
