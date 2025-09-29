@@ -13,9 +13,6 @@ class AddressController extends Controller
         $this->middleware('auth');
     }
 
-    /**
-     * Display listing of user addresses
-     */
     public function index()
     {
         $addresses = UserAddress::where('user_id', Auth::id())
@@ -26,27 +23,22 @@ class AddressController extends Controller
         return view('address.index', compact('addresses'));
     }
 
-    /**
-     * Show form for creating new address
-     */
     public function create()
     {
         return view('address.create');
     }
 
-    /**
-     * Store new address
-     */
     public function store(Request $request)
     {
         $request->validate([
             'label' => 'nullable|string|max:50',
             'recipient_name' => 'required|string|max:255',
-            // 'phone' => 'required|string|max:20', // Dihapus - menggunakan phone dari user
             'address' => 'required|string|max:500',
             'city' => 'required|string|max:100',
             'province' => 'required|string|max:100',
             'postal_code' => 'required|string|max:10',
+            'district_id' => 'nullable|integer',
+            'district_name' => 'nullable|string|max:100',
             'notes' => 'nullable|string|max:255',
             'is_default' => 'boolean',
         ]);
@@ -79,6 +71,8 @@ class AddressController extends Controller
                     'city' => $address->city,
                     'province' => $address->province,
                     'postal_code' => $address->postal_code,
+                    'district_id' => $address->district_id,
+                    'district_name' => $address->district_name,
                     'is_default' => $address->is_default,
                     'full_address' => $address->full_address
                 ]
@@ -89,9 +83,6 @@ class AddressController extends Controller
             ->with('success', 'Alamat berhasil ditambahkan!');
     }
 
-    /**
-     * Show form for editing address
-     */
     public function edit(UserAddress $address)
     {
         // Ensure user can only edit their own address
@@ -102,9 +93,6 @@ class AddressController extends Controller
         return view('address.edit', compact('address'));
     }
 
-    /**
-     * Update address
-     */
     public function update(Request $request, UserAddress $address)
     {
         // Ensure user can only update their own address
@@ -115,11 +103,12 @@ class AddressController extends Controller
         $request->validate([
             'label' => 'nullable|string|max:50',
             'recipient_name' => 'required|string|max:255',
-            // 'phone' => 'required|string|max:20', // Dihapus
             'address' => 'required|string|max:500',
             'city' => 'required|string|max:100',
             'province' => 'required|string|max:100',
             'postal_code' => 'required|string|max:10',
+            'district_id' => 'nullable|integer',
+            'district_name' => 'nullable|string|max:100',
             'notes' => 'nullable|string|max:255',
             'is_default' => 'boolean',
         ]);
@@ -144,6 +133,8 @@ class AddressController extends Controller
                     'city' => $address->city,
                     'province' => $address->province,
                     'postal_code' => $address->postal_code,
+                    'district_id' => $address->district_id,
+                    'district_name' => $address->district_name,
                     'is_default' => $address->is_default,
                     'full_address' => $address->full_address
                 ]
@@ -154,9 +145,6 @@ class AddressController extends Controller
             ->with('success', 'Alamat berhasil diperbarui!');
     }
 
-    /**
-     * Delete address
-     */
     public function destroy(UserAddress $address)
     {
         // Ensure user can only delete their own address
@@ -189,9 +177,6 @@ class AddressController extends Controller
             ->with('success', 'Alamat berhasil dihapus!');
     }
 
-    /**
-     * Set address as default
-     */
     public function setDefault(UserAddress $address)
     {
         // Ensure user can only modify their own address
@@ -213,9 +198,6 @@ class AddressController extends Controller
             ->with('success', 'Alamat utama berhasil diperbarui!');
     }
 
-    /**
-     * Get addresses for AJAX requests (for checkout page)
-     */
     public function getAddresses()
     {
         $addresses = UserAddress::where('user_id', Auth::id())
@@ -234,6 +216,8 @@ class AddressController extends Controller
                     'city' => $address->city,
                     'province' => $address->province,
                     'postal_code' => $address->postal_code,
+                    'district_id' => $address->district_id,
+                    'district_name' => $address->district_name,
                     'is_default' => $address->is_default,
                     'full_address' => $address->full_address,
                     'phone' => $address->phone

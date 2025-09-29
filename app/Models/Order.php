@@ -19,11 +19,15 @@ class Order extends Model
         'total_amount',
         'shipping_cost',
         'grand_total',
+        'courier_code',
+        'courier_service',
+        'shipping_district_id',
+        'total_weight',
         'payment_method',
         'payment_status',
-        'transaction_id',      // Midtrans transaction ID
-        'snap_token',         // Midtrans snap token
-        'payment_type',       // Payment type (midtrans, cod, etc)
+        'transaction_id',
+        'snap_token',
+        'payment_type',
         'shipping_name',
         'shipping_phone',
         'shipping_email',
@@ -42,8 +46,7 @@ class Order extends Model
         'order_date',
         'shipped_date',
         'delivered_date',
-        // New field for address reference
-        'address_id', // Reference to UserAddress if used
+        'address_id',
     ];
 
     protected $casts = [
@@ -57,21 +60,17 @@ class Order extends Model
         $prefix = 'ORD';
         $date = now()->format('Ymd');
 
-        // Cari order terakhir hari ini
         $lastOrder = self::where('order_number', 'like', $prefix . $date . '%')
             ->orderBy('order_number', 'desc')
             ->first();
 
         if ($lastOrder) {
-            // Ambil 3 digit terakhir dan tambah 1
             $lastNumber = intval(substr($lastOrder->order_number, -3));
             $newNumber = $lastNumber + 1;
         } else {
-            // Jika belum ada order hari ini, mulai dari 1
             $newNumber = 1;
         }
 
-        // Format: ORD20250911001, ORD20250911002, dst.
         return $prefix . $date . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
     }
 
@@ -86,13 +85,11 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-    // Alias untuk items (compatibility)
     public function items()
     {
         return $this->hasMany(OrderItem::class);
     }
 
-    // New relationship to UserAddress
     public function userAddress()
     {
         return $this->belongsTo(UserAddress::class, 'address_id');
@@ -136,13 +133,25 @@ class Order extends Model
         return $labels[$this->payment_method] ?? 'Unknown';
     }
 
-    // Get full shipping address
+    public function getCourierLabelAttribute()
+    {
+        $couriers = [
+            'jne' => 'JNE',
+            'tiki' => 'TIKI',
+            'pos' => 'POS Indonesia',
+            'jnt' => 'J&T Express',
+            'sicepat' => 'SiCepat',
+            'anteraja' => 'AnterAja',
+        ];
+
+        return $couriers[$this->courier_code] ?? strtoupper($this->courier_code);
+    }
+
     public function getFullShippingAddressAttribute()
     {
         return $this->shipping_address . ', ' . $this->shipping_city . ', ' . $this->shipping_province . ' ' . $this->shipping_postal_code;
     }
 
-    // Get full billing address
     public function getFullBillingAddressAttribute()
     {
         return $this->billing_address . ', ' . $this->billing_city . ', ' . $this->billing_province . ' ' . $this->billing_postal_code;
@@ -169,7 +178,6 @@ class Order extends Model
         return $query->whereIn('status', ['delivered', 'cancelled']);
     }
 
-    // Helper methods for Midtrans
     public function isMidtransPayment()
     {
         return in_array($this->payment_method, ['bank_transfer', 'credit_card', 'ewallet']) && $this->payment_type === 'midtrans';
@@ -185,26 +193,22 @@ class Order extends Model
         return $this->hasMany(Review::class);
     }
 
-    // Check if order has any unreviewed items (only for delivered orders)
     public function hasUnreviewedItems()
     {
         return $this->status === 'delivered' &&
             $this->orderItems()->whereDoesntHave('review')->exists();
     }
 
-    // Check if order can be cancelled
     public function canBeCancelled()
     {
         return in_array($this->status, ['pending', 'processing']);
     }
 
-    // Check if order is completed (delivered or cancelled)
     public function isCompleted()
     {
         return in_array($this->status, ['delivered', 'cancelled']);
     }
 
-    // Get status badge class for styling
     public function getStatusBadgeClassAttribute()
     {
         $classes = [

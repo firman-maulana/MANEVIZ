@@ -94,7 +94,6 @@
     }
 
     .form-container {
-        /* Form container will naturally follow the same width as alert */
     }
 
     .form-group {
@@ -121,6 +120,7 @@
     }
 
     .form-input,
+    .form-select,
     .form-textarea {
         width: 100%;
         padding: 10px 12px;
@@ -134,6 +134,7 @@
     }
 
     .form-input:focus,
+    .form-select:focus,
     .form-textarea:focus {
         border-color: #2563eb;
         outline: none;
@@ -235,7 +236,6 @@
         border-color: #1d4ed8;
     }
 
-    /* Responsive Design */
     @media (max-width: 768px) {
         .container {
             padding: 16px 16px 60px;
@@ -250,10 +250,6 @@
 
         .page-title {
             font-size: 1.75rem;
-        }
-
-        .alert {
-            /* Alert maintains its natural width on mobile */
         }
 
         .form-grid {
@@ -271,14 +267,12 @@
         }
     }
 
-    /* Smooth transitions */
     * {
         transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
     }
 </style>
 
 <div class="container">
-    <!-- Header -->
     <div class="page-header">
         <div class="header-content">
             <h1 class="page-title">Edit Alamat</h1>
@@ -286,7 +280,6 @@
         </div>
     </div>
 
-    <!-- Phone Alert -->
     @if($address->user->phone)
     <div class="alert alert-info">
         <svg class="alert-icon" fill="currentColor" viewBox="0 0 20 20">
@@ -307,11 +300,13 @@
     </div>
     @endif
 
-    <!-- Form -->
     <div class="form-container">
-        <form method="POST" action="{{ route('address.update', $address) }}">
+        <form method="POST" action="{{ route('address.update', $address) }}" id="addressForm">
             @csrf
             @method('PUT')
+
+            <input type="hidden" name="district_id" id="districtIdInput" value="{{ old('district_id', $address->district_id) }}">
+            <input type="hidden" name="district_name" id="districtNameInput" value="{{ old('district_name', $address->district_name) }}">
 
             <div class="form-grid">
                 <div class="form-group">
@@ -352,7 +347,7 @@
                 <textarea name="address"
                     id="address"
                     required
-                    placeholder="Jalan, RT/RW, Kelurahan, Kecamatan..."
+                    placeholder="Jalan, RT/RW, Kelurahan..."
                     class="form-textarea">{{ old('address', $address->address) }}</textarea>
                 @error('address')
                 <div class="error-message">{{ $message }}</div>
@@ -361,50 +356,60 @@
 
             <div class="form-grid">
                 <div class="form-group">
-                    <label for="city" class="form-label">
-                        Kota/Kabupaten <span class="required">*</span>
+                    <label for="province" class="form-label">
+                        Provinsi <span class="required">*</span>
                     </label>
-                    <input type="text"
-                        name="city"
-                        id="city"
-                        value="{{ old('city', $address->city) }}"
-                        required
-                        class="form-input">
-                    @error('city')
+                    <select name="province_id" id="provinceSelect" class="form-select" required>
+                        <option value="">Pilih Provinsi</option>
+                    </select>
+                    <input type="hidden" name="province" id="provinceName" value="{{ old('province', $address->province) }}">
+                    @error('province')
                     <div class="error-message">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label for="province" class="form-label">
-                        Provinsi <span class="required">*</span>
+                    <label for="city" class="form-label">
+                        Kota/Kabupaten <span class="required">*</span>
                     </label>
-                    <input type="text"
-                        name="province"
-                        id="province"
-                        value="{{ old('province', $address->province) }}"
-                        required
-                        class="form-input">
-                    @error('province')
+                    <select name="city_id" id="citySelect" class="form-select" required disabled>
+                        <option value="">Pilih Kota/Kabupaten</option>
+                    </select>
+                    <input type="hidden" name="city" id="cityName" value="{{ old('city', $address->city) }}">
+                    @error('city')
                     <div class="error-message">{{ $message }}</div>
                     @enderror
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="postal_code" class="form-label">
-                    Kode Pos <span class="required">*</span>
-                </label>
-                <input type="text"
-                    name="postal_code"
-                    id="postal_code"
-                    value="{{ old('postal_code', $address->postal_code) }}"
-                    required
-                    maxlength="10"
-                    class="form-input">
-                @error('postal_code')
-                <div class="error-message">{{ $message }}</div>
-                @enderror
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="district" class="form-label">
+                        Kecamatan <span class="required">*</span>
+                    </label>
+                    <select name="district_select" id="districtSelect" class="form-select" required disabled>
+                        <option value="">Pilih Kecamatan</option>
+                    </select>
+                    @error('district_id')
+                    <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="postal_code" class="form-label">
+                        Kode Pos <span class="required">*</span>
+                    </label>
+                    <input type="text"
+                        name="postal_code"
+                        id="postal_code"
+                        value="{{ old('postal_code', $address->postal_code) }}"
+                        required
+                        maxlength="10"
+                        class="form-input">
+                    @error('postal_code')
+                    <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
             </div>
 
             <div class="form-group">
@@ -445,4 +450,138 @@
         </form>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const existingProvince = "{{ $address->province }}";
+    const existingCity = "{{ $address->city }}";
+    const existingDistrictId = "{{ $address->district_id }}";
+    const existingDistrictName = "{{ $address->district_name }}";
+
+    loadProvinces(existingProvince, existingCity, existingDistrictId, existingDistrictName);
+});
+
+function loadProvinces(selectProvince = null, selectCity = null, selectDistrict = null, districtName = null) {
+    fetch('/api/rajaongkir/provinces')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const select = document.getElementById('provinceSelect');
+                data.data.forEach(province => {
+                    const option = new Option(province.province, province.province_id);
+                    option.setAttribute('data-name', province.province);
+                    if (selectProvince && province.province === selectProvince) {
+                        option.selected = true;
+                    }
+                    select.add(option);
+                });
+                
+                if (selectProvince) {
+                    const selectedOption = select.options[select.selectedIndex];
+                    const provinceId = selectedOption.value;
+                    document.getElementById('provinceName').value = selectProvince;
+                    loadCities(provinceId, selectCity, selectDistrict, districtName);
+                }
+            }
+        })
+        .catch(error => console.error('Failed to load provinces:', error));
+}
+
+function loadCities(provinceId, selectCity = null, selectDistrict = null, districtName = null) {
+    const citySelect = document.getElementById('citySelect');
+    citySelect.innerHTML = '<option value="">Pilih Kota/Kabupaten</option>';
+    citySelect.disabled = true;
+    
+    fetch(`/api/rajaongkir/cities/${provinceId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                citySelect.disabled = false;
+                data.data.forEach(city => {
+                    const option = new Option(city.city_name, city.city_id);
+                    option.setAttribute('data-name', city.city_name);
+                    if (selectCity && city.city_name === selectCity) {
+                        option.selected = true;
+                    }
+                    citySelect.add(option);
+                });
+                
+                if (selectCity) {
+                    const selectedOption = citySelect.options[citySelect.selectedIndex];
+                    const cityId = selectedOption.value;
+                    document.getElementById('cityName').value = selectCity;
+                    loadDistricts(cityId, selectDistrict, districtName);
+                }
+            }
+        })
+        .catch(error => console.error('Failed to load cities:', error));
+}
+
+function loadDistricts(cityId, selectDistrict = null, districtName = null) {
+    const districtSelect = document.getElementById('districtSelect');
+    districtSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
+    districtSelect.disabled = true;
+    
+    fetch(`/api/rajaongkir/districts/${cityId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                districtSelect.disabled = false;
+                data.data.forEach(district => {
+                    const option = new Option(district.subdistrict_name, district.subdistrict_id);
+                    option.setAttribute('data-name', district.subdistrict_name);
+                    if (selectDistrict && district.subdistrict_id == selectDistrict) {
+                        option.selected = true;
+                    }
+                    districtSelect.add(option);
+                });
+                
+                if (selectDistrict) {
+                    document.getElementById('districtIdInput').value = selectDistrict;
+                    document.getElementById('districtNameInput').value = districtName;
+                }
+            }
+        })
+        .catch(error => console.error('Failed to load districts:', error));
+}
+
+document.getElementById('provinceSelect').addEventListener('change', function() {
+    const provinceId = this.value;
+    const provinceName = this.options[this.selectedIndex].getAttribute('data-name');
+    document.getElementById('provinceName').value = provinceName;
+    
+    document.getElementById('citySelect').innerHTML = '<option value="">Pilih Kota/Kabupaten</option>';
+    document.getElementById('citySelect').disabled = !provinceId;
+    document.getElementById('districtSelect').innerHTML = '<option value="">Pilih Kecamatan</option>';
+    document.getElementById('districtSelect').disabled = true;
+    document.getElementById('districtIdInput').value = '';
+    document.getElementById('districtNameInput').value = '';
+    
+    if (provinceId) {
+        loadCities(provinceId);
+    }
+});
+
+document.getElementById('citySelect').addEventListener('change', function() {
+    const cityId = this.value;
+    const cityName = this.options[this.selectedIndex].getAttribute('data-name');
+    document.getElementById('cityName').value = cityName;
+    
+    document.getElementById('districtSelect').innerHTML = '<option value="">Pilih Kecamatan</option>';
+    document.getElementById('districtSelect').disabled = !cityId;
+    document.getElementById('districtIdInput').value = '';
+    document.getElementById('districtNameInput').value = '';
+    
+    if (cityId) {
+        loadDistricts(cityId);
+    }
+});
+
+document.getElementById('districtSelect').addEventListener('change', function() {
+    const districtId = this.value;
+    const districtName = this.options[this.selectedIndex].getAttribute('data-name');
+    document.getElementById('districtIdInput').value = districtId;
+    document.getElementById('districtNameInput').value = districtName;
+});
+</script>
 @endsection

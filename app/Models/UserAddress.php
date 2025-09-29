@@ -13,11 +13,12 @@ class UserAddress extends Model
         'user_id',
         'label',
         'recipient_name',
-        // 'phone', // Dihapus - menggunakan phone dari user
         'address',
         'city',
         'province',
         'postal_code',
+        'district_id',        // RajaOngkir district ID
+        'district_name',      // RajaOngkir district name
         'notes',
         'is_default',
     ];
@@ -31,7 +32,7 @@ class UserAddress extends Model
      */
     public function user()
     {
-        return $this->belongsTo(Users::class); // Fixed: changed from Users to User
+        return $this->belongsTo(Users::class);
     }
 
     /**
@@ -47,7 +48,15 @@ class UserAddress extends Model
      */
     public function getFullAddressAttribute()
     {
-        return $this->address . ', ' . $this->city . ', ' . $this->province . ' ' . $this->postal_code;
+        $address = $this->address . ', ';
+        
+        if ($this->district_name) {
+            $address .= $this->district_name . ', ';
+        }
+        
+        $address .= $this->city . ', ' . $this->province . ' ' . $this->postal_code;
+        
+        return $address;
     }
 
     /**
@@ -84,6 +93,8 @@ class UserAddress extends Model
             'city' => $this->city,
             'province' => $this->province,
             'postal_code' => $this->postal_code,
+            'district_id' => $this->district_id,
+            'district_name' => $this->district_name,
             'full_address' => $this->full_address
         ];
     }

@@ -14,7 +14,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\PaymentConfirmationController; // ADDED: Payment Confirmation Controller
+use App\Http\Controllers\PaymentConfirmationController; 
+use App\Http\Controllers\RajaOngkirController;// ADDED: Payment Confirmation Controller
 
 /*
 |--------------------------------------------------------------------------
@@ -145,7 +146,11 @@ Route::get('/api/search', [SearchController::class, 'search'])->name('search.api
 Route::get('/api/search/suggestions', [SearchController::class, 'suggestions'])->name('search.suggestions');
 Route::get('/api/products/filter', [SearchController::class, 'filterByCategory'])->name('products.filter');
 
-Route::get('/tes', [App\Http\Controllers\RajaOngkirController::class, 'index']);
-Route::get('/cities/{provinceId}', [App\Http\Controllers\RajaOngkirController::class, 'getCities']);
-Route::get('/districts/{cityId}', [App\Http\Controllers\RajaOngkirController::class, 'getDistricts']);
-Route::post('/check-ongkir', [App\Http\Controllers\RajaOngkirController::class, 'checkOngkir']);
+// RajaOngkir API Routes
+Route::prefix('api/rajaongkir')->name('rajaongkir.')->group(function () {
+    Route::get('/provinces', [RajaOngkirController::class, 'getProvinces'])->name('provinces');
+    Route::get('/cities/{provinceId}', [RajaOngkirController::class, 'getCities'])->name('cities');
+    Route::get('/districts/{cityId}', [RajaOngkirController::class, 'getDistricts'])->name('districts');
+    Route::post('/calculate-cost', [RajaOngkirController::class, 'calculateShippingCost'])->name('calculate-cost');
+    Route::get('/couriers', [RajaOngkirController::class, 'getAvailableCouriers'])->name('couriers');
+});

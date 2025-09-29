@@ -11,6 +11,7 @@ use App\Services\MidtransService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class CheckoutController extends Controller
 {
@@ -22,20 +23,17 @@ class CheckoutController extends Controller
         $this->middleware('auth');
     }
 
-    // Menampilkan halaman checkout
     public function index(Request $request)
     {
         $selectedItems = [];
         
         if ($request->has('items')) {
-            // Jika ada items yang dipilih dari cart
             $itemIds = explode(',', $request->get('items'));
             $selectedItems = Cart::with('product.images')
                 ->whereIn('id', $itemIds)
                 ->where('user_id', Auth::id())
                 ->get();
         } else {
-            // Jika tidak ada, ambil semua item di cart
             $selectedItems = Cart::with('product.images')
                 ->where('user_id', Auth::id())
                 ->get();
@@ -51,7 +49,6 @@ class CheckoutController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Get default address
         $defaultAddress = $userAddresses->where('is_default', true)->first();
 
         // Calculate totals
@@ -59,19 +56,34 @@ class CheckoutController extends Controller
             return ($item->product->harga_jual ?? $item->product->harga) * $item->kuantitas;
         });
 
-        $tax = $subtotal * 0.025; // 2.5%
-        $shipping = 15; // IDR 15,000 flat shipping
+        // Calculate total weight from cart items
+        $totalWeight = $selectedItems->sum(function ($item) {
+            return ($item->product->berat ?? 1000) * $item->kuantitas; // Default 1000g if no weight
+        });
+
+        $tax = $subtotal * 0.025;
+        
+        // Initial shipping will be calculated dynamically by RajaOngkir
+        $shipping = 0; 
         $total = $subtotal + $tax + $shipping;
 
-        return view('checkout', compact('selectedItems', 'subtotal', 'tax', 'shipping', 'total', 'userAddresses', 'defaultAddress'));
+        return view('checkout', compact(
+            'selectedItems', 
+            'subtotal', 
+            'tax', 
+            'shipping', 
+            'total', 
+            'userAddresses', 
+            'defaultAddress',
+            'totalWeight'
+        ));
     }
 
-    // Create Midtrans payment token
     public function createPayment(Request $request)
     {
         $request->validate([
             'items' => 'required|string',
-            'selected_address' => 'required', // NEW: validate address selection
+            'selected_address' => 'required',
             'shipping_name' => 'required_if:selected_address,manual|string|max:255',
             'shipping_email' => 'required_if:selected_address,manual|email|max:255',
             'shipping_phone' => 'required_if:selected_address,manual|string|max:20',
@@ -79,11 +91,14 @@ class CheckoutController extends Controller
             'shipping_city' => 'required_if:selected_address,manual|string|max:255',
             'shipping_province' => 'required_if:selected_address,manual|string|max:255',
             'shipping_postal_code' => 'required_if:selected_address,manual|string|max:10',
+            'shipping_district_id' => 'required|integer', // RajaOngkir district ID
+            'courier_code' => 'required|string', // JNE, TIKI, POS, etc
+            'courier_service' => 'required|string', // REG, YES, OKE, etc
+            'shipping_cost' => 'required|numeric|min:0',
             'notes' => 'nullable|string|max:500',
             'same_as_shipping' => 'nullable|boolean',
         ]);
 
-        // Validate billing address if different from shipping
         if (!$request->same_as_shipping) {
             $request->validate([
                 'billing_name' => 'required|string|max:255',
@@ -97,7 +112,6 @@ class CheckoutController extends Controller
         }
 
         try {
-            // Get selected cart items
             $itemIds = explode(',', $request->items);
             $cartItems = Cart::with('product')
                 ->whereIn('id', $itemIds)
@@ -120,7 +134,6 @@ class CheckoutController extends Controller
             $shippingData = [];
             
             if ($request->selected_address !== 'manual') {
-                // Using saved address
                 $selectedAddressId = $request->selected_address;
                 $address = UserAddress::where('id', $selectedAddressId)
                     ->where('user_id', Auth::id())
@@ -138,9 +151,9 @@ class CheckoutController extends Controller
                     'city' => $address->city,
                     'province' => $address->province,
                     'postal_code' => $address->postal_code,
+                    'district_id' => $request->shipping_district_id,
                 ];
             } else {
-                // Using manual address
                 $shippingData = [
                     'name' => $request->shipping_name,
                     'email' => $request->shipping_email,
@@ -149,6 +162,7 @@ class CheckoutController extends Controller
                     'city' => $request->shipping_city,
                     'province' => $request->shipping_province,
                     'postal_code' => $request->shipping_postal_code,
+                    'district_id' => $request->shipping_district_id,
                 ];
             }
 
@@ -158,10 +172,9 @@ class CheckoutController extends Controller
             });
 
             $tax = $subtotal * 0.025;
-            $shippingCost = 15;
+            $shippingCost = $request->shipping_cost; // From RajaOngkir
             $grandTotal = $subtotal + $tax + $shippingCost;
 
-            // Create temporary order data for Midtrans
             $orderNumber = 'TEMP-' . time() . '-' . Auth::id();
             
             // Create order data for payment
@@ -172,8 +185,10 @@ class CheckoutController extends Controller
                 'subtotal' => $subtotal,
                 'tax' => $tax,
                 'shipping_cost' => $shippingCost,
+                'courier_code' => $request->courier_code,
+                'courier_service' => $request->courier_service,
                 'items' => $cartItems,
-                'selected_address_id' => $selectedAddressId, // NEW: store selected address ID
+                'selected_address_id' => $selectedAddressId,
                 'customer' => [
                     'name' => $shippingData['name'],
                     'email' => $shippingData['email'],
@@ -192,10 +207,7 @@ class CheckoutController extends Controller
                 'notes' => $request->notes,
             ];
 
-            // Create Midtrans Snap Token
             $snapToken = $this->midtransService->createSnapTokenFromData($orderData);
-
-            // Store order data in session for later use
             session(['pending_order_data' => $orderData]);
 
             return response()->json([
@@ -212,7 +224,6 @@ class CheckoutController extends Controller
         }
     }
 
-    // Handle successful payment and create order
     public function handlePaymentSuccess(Request $request)
     {
         $request->validate([
@@ -221,15 +232,12 @@ class CheckoutController extends Controller
         ]);
 
         try {
-            // Get order data from session
             $orderData = session('pending_order_data');
             if (!$orderData) {
                 throw new \Exception('Order data not found');
             }
 
-            // Verify payment status with Midtrans
             $transactionStatus = $this->midtransService->getTransactionStatus($request->transaction_id);
-            
             $status = is_object($transactionStatus) ? $transactionStatus->transaction_status : $transactionStatus['transaction_status'];
             
             if (!in_array($status, ['capture', 'settlement'])) {
@@ -238,7 +246,6 @@ class CheckoutController extends Controller
 
             DB::beginTransaction();
 
-            // Get cart items again to ensure they still exist
             $itemIds = $orderData['items']->pluck('id');
             $cartItems = Cart::with('product')
                 ->whereIn('id', $itemIds)
@@ -249,21 +256,21 @@ class CheckoutController extends Controller
                 throw new \Exception('Cart items no longer available');
             }
 
-            // Create real order number
             $realOrderNumber = Order::generateOrderNumber();
 
-            // Create order
             $order = Order::create([
                 'order_number' => $realOrderNumber,
                 'user_id' => Auth::id(),
-                'address_id' => $orderData['selected_address_id'], // NEW: store address reference
+                'address_id' => $orderData['selected_address_id'],
                 'status' => 'processing',
                 'subtotal' => $orderData['subtotal'],
                 'tax' => $orderData['tax'],
                 'total' => $orderData['total'],
-                'total_amount' => $orderData['subtotal'],        
-                'shipping_cost' => $orderData['shipping_cost'],     
-                'grand_total' => $orderData['total'],       
+                'total_amount' => $orderData['subtotal'],
+                'shipping_cost' => $orderData['shipping_cost'],
+                'grand_total' => $orderData['total'],
+                'courier_code' => $orderData['courier_code'],
+                'courier_service' => $orderData['courier_service'],
                 'shipping_name' => $orderData['shipping']['name'],
                 'shipping_email' => $orderData['shipping']['email'],
                 'shipping_phone' => $orderData['shipping']['phone'],
@@ -271,6 +278,7 @@ class CheckoutController extends Controller
                 'shipping_city' => $orderData['shipping']['city'],
                 'shipping_province' => $orderData['shipping']['province'],
                 'shipping_postal_code' => $orderData['shipping']['postal_code'],
+                'shipping_district_id' => $orderData['shipping']['district_id'] ?? null,
                 'billing_name' => $orderData['billing']['name'],
                 'billing_email' => $orderData['billing']['email'],
                 'billing_phone' => $orderData['billing']['phone'],
@@ -286,7 +294,6 @@ class CheckoutController extends Controller
                 'order_date' => now(),
             ]);
 
-            // Create order items
             foreach ($cartItems as $item) {
                 $productPrice = $item->product->harga_jual ?? $item->product->harga;
                 
@@ -300,14 +307,10 @@ class CheckoutController extends Controller
                     'subtotal' => $productPrice * $item->kuantitas,
                 ]);
 
-                // Update product stock
                 $item->product->decrement('stock_kuantitas', $item->kuantitas);
             }
 
-            // Remove items from cart
             $cartItems->each->delete();
-
-            // Clear session data
             session()->forget('pending_order_data');
 
             DB::commit();
@@ -327,7 +330,6 @@ class CheckoutController extends Controller
         }
     }
 
-    // Show order success page
     public function success($orderNumber)
     {
         $order = Order::with('orderItems.product')
