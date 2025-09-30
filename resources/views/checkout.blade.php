@@ -726,6 +726,29 @@
         <div class="order-summary">
             <h3 class="summary-title">Order Summary</h3>
             
+            <!-- Weight Information Box -->
+            <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 12px; padding: 16px; margin-bottom: 20px; border-left: 4px solid #0284c7;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.5">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                    </svg>
+                    <span style="font-weight: 700; color: #0c4a6e; font-size: 15px;">Total Weight</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px;">
+                    <span style="color: #0369a1; font-size: 13px; font-weight: 500;">Total berat pesanan</span>
+                    <div style="text-align: right;">
+                        <div style="font-weight: 800; color: #0284c7; font-size: 20px; line-height: 1.2;">
+                            {{ number_format($totalWeightKg, 2) }} kg
+                        </div>
+                        <div style="color: #0369a1; font-size: 11px; margin-top: 2px;">
+                            ({{ number_format($totalWeight) }} gram)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Items List -->
             @foreach($selectedItems as $item)
                 <div class="order-item">
                     <div class="item-image">
@@ -741,6 +764,24 @@
                             @if($item->size)
                                 <span>Size: {{ $item->size }}</span>
                             @endif
+                            @php
+                                $itemWeight = $item->product->berat ?? 1000;
+                                // Auto-convert if stored in kg
+                                if ($itemWeight > 0 && $itemWeight < 100) {
+                                    $itemWeight = $itemWeight * 1000;
+                                }
+                                $itemWeightKg = $itemWeight / 1000;
+                                $totalItemWeight = $itemWeight * $item->kuantitas;
+                                $totalItemWeightKg = $totalItemWeight / 1000;
+                            @endphp
+                            <span style="color: #6b7280;">
+                                • {{ number_format($itemWeightKg, 2) }} kg
+                                @if($item->kuantitas > 1)
+                                    <span style="font-size: 11px; color: #9ca3af;">
+                                        ({{ number_format($totalItemWeightKg, 2) }} kg total)
+                                    </span>
+                                @endif
+                            </span>
                         </div>
                         <div class="item-price">
                             <span>Qty: {{ $item->kuantitas }}</span>
@@ -749,7 +790,8 @@
                     </div>
                 </div>
             @endforeach
-
+        
+            <!-- Summary Totals -->
             <div class="summary-row">
                 <span>Subtotal</span>
                 <span>IDR {{ number_format($subtotal, 0, ',', '.') }}</span>
@@ -766,12 +808,12 @@
                 <span>Total</span>
                 <span id="grandTotalDisplay">IDR {{ number_format($subtotal + $tax, 0, ',', '.') }}</span>
             </div>
-
+        
             <div class="payment-info">
                 <h5>Secure Payment</h5>
                 <p>Choose from various payment methods after confirming your order.</p>
             </div>
-
+        
             <button type="button" id="payNowBtn" class="pay-now-btn" disabled>
                 <span class="btn-text">Select Shipping First</span>
             </button>

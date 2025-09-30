@@ -56,10 +56,23 @@ class CheckoutController extends Controller
             return ($item->product->harga_jual ?? $item->product->harga) * $item->kuantitas;
         });
 
-        // Calculate total weight from cart items
+        // Calculate total weight in GRAMS
         $totalWeight = $selectedItems->sum(function ($item) {
-            return ($item->product->berat ?? 1000) * $item->kuantitas; // Default 1000g if no weight
+            $weight = $item->product->berat ?? 1000; // Default 1kg jika null
+            
+            // Auto-convert: jika < 100, anggap dalam kg, konversi ke gram
+            if ($weight > 0 && $weight < 100) {
+                $weight = $weight * 1000;
+            }
+            
+            return $weight * $item->kuantitas;
         });
+        
+        // Round to nearest gram
+        $totalWeight = round($totalWeight);
+        
+        // Format untuk display (dalam kg)
+        $totalWeightKg = $totalWeight / 1000;
 
         $tax = $subtotal * 0.025;
         
@@ -75,7 +88,8 @@ class CheckoutController extends Controller
             'total', 
             'userAddresses', 
             'defaultAddress',
-            'totalWeight'
+            'totalWeight',      // dalam gram (untuk API RajaOngkir)
+            'totalWeightKg'     // dalam kg (untuk display)
         ));
     }
 
@@ -91,9 +105,9 @@ class CheckoutController extends Controller
             'shipping_city' => 'required_if:selected_address,manual|string|max:255',
             'shipping_province' => 'required_if:selected_address,manual|string|max:255',
             'shipping_postal_code' => 'required_if:selected_address,manual|string|max:10',
-            'shipping_district_id' => 'required|integer', // RajaOngkir district ID
-            'courier_code' => 'required|string', // JNE, TIKI, POS, etc
-            'courier_service' => 'required|string', // REG, YES, OKE, etc
+            'shipping_district_id' => 'required|integer',
+            'courier_code' => 'required|string',
+            'courier_service' => 'required|string',
             'shipping_cost' => 'required|numeric|min:0',
             'notes' => 'nullable|string|max:500',
             'same_as_shipping' => 'nullable|boolean',
@@ -128,6 +142,20 @@ class CheckoutController extends Controller
                     throw new \Exception("Stok {$item->product->name} tidak mencukupi");
                 }
             }
+
+            // Calculate total weight in GRAMS
+            $totalWeight = $cartItems->sum(function ($item) {
+                $weight = $item->product->berat ?? 1000;
+                
+                // Auto-convert: jika < 100, anggap dalam kg
+                if ($weight > 0 && $weight < 100) {
+                    $weight = $weight * 1000;
+                }
+                
+                return $weight * $item->kuantitas;
+            });
+            
+            $totalWeight = round($totalWeight);
 
             // Get shipping address data
             $selectedAddressId = null;
@@ -172,7 +200,7 @@ class CheckoutController extends Controller
             });
 
             $tax = $subtotal * 0.025;
-            $shippingCost = $request->shipping_cost; // From RajaOngkir
+            $shippingCost = $request->shipping_cost;
             $grandTotal = $subtotal + $tax + $shippingCost;
 
             $orderNumber = 'TEMP-' . time() . '-' . Auth::id();
@@ -185,6 +213,7 @@ class CheckoutController extends Controller
                 'subtotal' => $subtotal,
                 'tax' => $tax,
                 'shipping_cost' => $shippingCost,
+                'total_weight' => $totalWeight, // Save weight in grams
                 'courier_code' => $request->courier_code,
                 'courier_service' => $request->courier_service,
                 'items' => $cartItems,
@@ -269,6 +298,7 @@ class CheckoutController extends Controller
                 'total_amount' => $orderData['subtotal'],
                 'shipping_cost' => $orderData['shipping_cost'],
                 'grand_total' => $orderData['total'],
+                'total_weight' => $orderData['total_weight'], // Save weight in grams
                 'courier_code' => $orderData['courier_code'],
                 'courier_service' => $orderData['courier_service'],
                 'shipping_name' => $orderData['shipping']['name'],

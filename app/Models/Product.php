@@ -97,18 +97,18 @@ class Product extends Model
     {
         $distribution = $this->ratingDistribution();
         $total = $this->totalReviews();
-        
+
         $breakdown = [];
         for ($i = 5; $i >= 1; $i--) {
             $count = $distribution[$i] ?? 0;
             $percentage = $total > 0 ? ($count / $total) * 100 : 0;
-            
+
             $breakdown[$i] = [
                 'count' => $count,
                 'percentage' => round($percentage, 1)
             ];
         }
-        
+
         return $breakdown;
     }
 
@@ -116,13 +116,13 @@ class Product extends Model
     public function getRecommendationPercentage()
     {
         $totalReviews = $this->reviews()->count();
-        
+
         if ($totalReviews === 0) {
             return 0;
         }
-        
+
         $recommendedCount = $this->reviews()->where('is_recommended', true)->count();
-        
+
         return round(($recommendedCount / $totalReviews) * 100);
     }
 
@@ -167,5 +167,27 @@ class Product extends Model
     public function getFinalPriceAttribute()
     {
         return $this->harga_jual ?: $this->harga;
+    }
+
+    public function getWeightInGrams()
+    {
+        $weight = $this->berat ?? 1000;
+
+        if ($weight > 0 && $weight < 100) {
+            $weight = $weight * 1000;
+        }
+
+        return (int) $weight;
+    }
+
+    public function getFormattedWeightAttribute()
+    {
+        $grams = $this->getWeightInGrams();
+
+        if ($grams >= 1000) {
+            return number_format($grams / 1000, 2, ',', '.') . ' kg';
+        }
+
+        return number_format($grams, 0, ',', '.') . ' g';
     }
 }
