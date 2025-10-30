@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class CheckoutController extends Controller
 {
@@ -26,7 +27,7 @@ class CheckoutController extends Controller
     public function index(Request $request)
     {
         $selectedItems = [];
-        
+
         if ($request->has('items')) {
             $itemIds = explode(',', $request->get('items'));
             $selectedItems = Cart::with('product.images')
@@ -59,34 +60,34 @@ class CheckoutController extends Controller
         // Calculate total weight in GRAMS
         $totalWeight = $selectedItems->sum(function ($item) {
             $weight = $item->product->berat ?? 1000; // Default 1kg jika null
-            
+
             // Auto-convert: jika < 100, anggap dalam kg, konversi ke gram
             if ($weight > 0 && $weight < 100) {
                 $weight = $weight * 1000;
             }
-            
+
             return $weight * $item->kuantitas;
         });
-        
+
         // Round to nearest gram
         $totalWeight = round($totalWeight);
-        
+
         // Format untuk display (dalam kg)
         $totalWeightKg = $totalWeight / 1000;
 
         $tax = $subtotal * 0.025;
-        
+
         // Initial shipping will be calculated dynamically by RajaOngkir
-        $shipping = 0; 
+        $shipping = 0;
         $total = $subtotal + $tax + $shipping;
 
         return view('checkout', compact(
-            'selectedItems', 
-            'subtotal', 
-            'tax', 
-            'shipping', 
-            'total', 
-            'userAddresses', 
+            'selectedItems',
+            'subtotal',
+            'tax',
+            'shipping',
+            'total',
+            'userAddresses',
             'defaultAddress',
             'totalWeight',      // dalam gram (untuk API RajaOngkir)
             'totalWeightKg'     // dalam kg (untuk display)
@@ -95,6 +96,9 @@ class CheckoutController extends Controller
 
     public function createPayment(Request $request)
     {
+        // Log incoming request for debugging
+        Log::info('Create Payment Request:', $request->all());
+
         $request->validate([
             'items' => 'required|string',
             'selected_address' => 'required',
@@ -113,6 +117,7 @@ class CheckoutController extends Controller
             'same_as_shipping' => 'nullable|boolean',
         ]);
 
+        // Validate billing info if not same as shipping
         if (!$request->same_as_shipping) {
             $request->validate([
                 'billing_name' => 'required|string|max:255',
@@ -146,35 +151,35 @@ class CheckoutController extends Controller
             // Calculate total weight in GRAMS
             $totalWeight = $cartItems->sum(function ($item) {
                 $weight = $item->product->berat ?? 1000;
-                
+
                 // Auto-convert: jika < 100, anggap dalam kg
                 if ($weight > 0 && $weight < 100) {
                     $weight = $weight * 1000;
                 }
-                
+
                 return $weight * $item->kuantitas;
             });
-            
+
             $totalWeight = round($totalWeight);
 
             // Get shipping address data
             $selectedAddressId = null;
             $shippingData = [];
-            
+
             if ($request->selected_address !== 'manual') {
                 $selectedAddressId = $request->selected_address;
                 $address = UserAddress::where('id', $selectedAddressId)
                     ->where('user_id', Auth::id())
                     ->first();
-                
+
                 if (!$address) {
                     throw new \Exception('Selected address not found');
                 }
-                
+
                 $shippingData = [
                     'name' => $address->recipient_name,
                     'email' => Auth::user()->email,
-                    'phone' => Auth::user()->phone ?? '',
+                    'phone' => $address->phone_number ?? Auth::user()->phone ?? '',
                     'address' => $address->address,
                     'city' => $address->city,
                     'province' => $address->province,
@@ -182,6 +187,7 @@ class CheckoutController extends Controller
                     'district_id' => $request->shipping_district_id,
                 ];
             } else {
+                // Manual address
                 $shippingData = [
                     'name' => $request->shipping_name,
                     'email' => $request->shipping_email,
@@ -200,11 +206,11 @@ class CheckoutController extends Controller
             });
 
             $tax = $subtotal * 0.025;
-            $shippingCost = $request->shipping_cost;
+            $shippingCost = floatval($request->shipping_cost);
             $grandTotal = $subtotal + $tax + $shippingCost;
 
             $orderNumber = 'TEMP-' . time() . '-' . Auth::id();
-            
+
             // Create order data for payment
             $orderData = [
                 'order_number' => $orderNumber,
@@ -214,7 +220,7 @@ class CheckoutController extends Controller
                 'tax' => $tax,
                 'shipping_cost' => $shippingCost,
                 'total_weight' => $totalWeight, // Save weight in grams
-                'courier_code' => $request->courier_code,
+                'courier_code' => strtoupper($request->courier_code),
                 'courier_service' => $request->courier_service,
                 'items' => $cartItems,
                 'selected_address_id' => $selectedAddressId,
@@ -236,7 +242,15 @@ class CheckoutController extends Controller
                 'notes' => $request->notes,
             ];
 
+            // Log order data before creating snap token
+            Log::info('Order Data for Snap Token:', $orderData);
+
             $snapToken = $this->midtransService->createSnapTokenFromData($orderData);
+
+            if (!$snapToken) {
+                throw new \Exception('Failed to create payment token');
+            }
+
             session(['pending_order_data' => $orderData]);
 
             return response()->json([
@@ -245,7 +259,18 @@ class CheckoutController extends Controller
                 'order_number' => $orderNumber
             ]);
 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Validation Error:', $e->errors());
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
         } catch (\Exception $e) {
+            Log::error('Payment Creation Error:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()
@@ -268,7 +293,7 @@ class CheckoutController extends Controller
 
             $transactionStatus = $this->midtransService->getTransactionStatus($request->transaction_id);
             $status = is_object($transactionStatus) ? $transactionStatus->transaction_status : $transactionStatus['transaction_status'];
-            
+
             if (!in_array($status, ['capture', 'settlement'])) {
                 throw new \Exception('Payment not completed');
             }
@@ -326,7 +351,7 @@ class CheckoutController extends Controller
 
             foreach ($cartItems as $item) {
                 $productPrice = $item->product->harga_jual ?? $item->product->harga;
-                
+
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $item->product_id,
@@ -353,6 +378,10 @@ class CheckoutController extends Controller
 
         } catch (\Exception $e) {
             DB::rollback();
+            Log::error('Payment Success Handler Error:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()

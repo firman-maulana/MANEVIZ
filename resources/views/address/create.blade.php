@@ -55,7 +55,8 @@
         color: #dc2626;
     }
 
-    .form-input, .form-select {
+    .form-input,
+    .form-select {
         width: 100%;
         padding: 10px 12px;
         border: 1px solid #d1d5db;
@@ -63,7 +64,8 @@
         font-size: 14px;
     }
 
-    .form-input:focus, .form-select:focus {
+    .form-input:focus,
+    .form-select:focus {
         border-color: #2563eb;
         outline: none;
     }
@@ -134,17 +136,17 @@
         <div class="form-grid">
             <div class="form-group">
                 <label for="label" class="form-label">Label Alamat</label>
-                <input type="text" name="label" id="label" value="{{ old('label') }}" 
-                       placeholder="Rumah, Kantor, Kos..." class="form-input">
+                <input type="text" name="label" id="label" value="{{ old('label') }}"
+                    placeholder="Rumah, Kantor, Kos..." class="form-input">
             </div>
 
             <div class="form-group">
                 <label for="recipient_name" class="form-label">
                     Nama Penerima <span class="required">*</span>
                 </label>
-                <input type="text" name="recipient_name" id="recipient_name" 
-                       value="{{ old('recipient_name', auth()->user()->name) }}" 
-                       required class="form-input">
+                <input type="text" name="recipient_name" id="recipient_name"
+                    value="{{ old('recipient_name', auth()->user()->name) }}"
+                    required class="form-input">
             </div>
         </div>
 
@@ -182,29 +184,29 @@
             <label for="address" class="form-label">
                 Alamat Lengkap <span class="required">*</span>
             </label>
-            <textarea name="address" id="address" required class="form-input" 
-                      style="min-height: 100px;" 
-                      placeholder="Jalan, RT/RW, Kelurahan...">{{ old('address') }}</textarea>
+            <textarea name="address" id="address" required class="form-input"
+                style="min-height: 100px;"
+                placeholder="Jalan, RT/RW, Kelurahan...">{{ old('address') }}</textarea>
         </div>
 
         <div class="form-group">
             <label for="postal_code" class="form-label">
                 Kode Pos <span class="required">*</span>
             </label>
-            <input type="text" name="postal_code" id="postal_code" 
-                   value="{{ old('postal_code') }}" required class="form-input">
+            <input type="text" name="postal_code" id="postal_code"
+                value="{{ old('postal_code') }}" required class="form-input">
         </div>
 
         <div class="form-group">
             <label for="notes" class="form-label">Catatan (Opsional)</label>
-            <textarea name="notes" id="notes" class="form-input" style="min-height: 80px;" 
-                      placeholder="Patokan atau petunjuk untuk kurir...">{{ old('notes') }}</textarea>
+            <textarea name="notes" id="notes" class="form-input" style="min-height: 80px;"
+                placeholder="Patokan atau petunjuk untuk kurir...">{{ old('notes') }}</textarea>
         </div>
 
         <div style="margin: 20px 0;">
             <label style="display: flex; align-items: center; gap: 8px;">
-                <input type="checkbox" name="is_default" value="1" 
-                       {{ old('is_default') ? 'checked' : '' }}>
+                <input type="checkbox" name="is_default" value="1"
+                    {{ old('is_default') ? 'checked' : '' }}>
                 <span>Jadikan sebagai alamat utama</span>
             </label>
         </div>
@@ -233,24 +235,27 @@
                         option.dataset.provinceId = province.id;
                         select.add(option);
                     });
+                } else {
+                    console.error('Failed to load provinces:', data.message);
                 }
             })
             .catch(err => console.error('Error loading provinces:', err));
     }
 
+
     // Province change
     document.getElementById('province_select').addEventListener('change', function() {
         const selectedOption = this.options[this.selectedIndex];
         const provinceId = selectedOption.dataset.provinceId;
-        
+
         const citySelect = document.getElementById('city_select');
         const districtSelect = document.getElementById('district_select');
-        
+
         citySelect.innerHTML = '<option value="">Pilih Kota</option>';
         districtSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
         citySelect.disabled = true;
         districtSelect.disabled = true;
-        
+
         if (provinceId) {
             fetch(`/api/rajaongkir/cities/${provinceId}`)
                 .then(res => res.json())
@@ -271,11 +276,11 @@
     document.getElementById('city_select').addEventListener('change', function() {
         const selectedOption = this.options[this.selectedIndex];
         const cityId = selectedOption.dataset.cityId;
-        
+
         const districtSelect = document.getElementById('district_select');
         districtSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
         districtSelect.disabled = true;
-        
+
         if (cityId) {
             fetch(`/api/rajaongkir/districts/${cityId}`)
                 .then(res => res.json())
@@ -297,7 +302,7 @@
         const selectedOption = this.options[this.selectedIndex];
         const districtId = selectedOption.dataset.districtId;
         const districtName = selectedOption.text;
-        
+
         document.getElementById('district_id').value = districtId;
         document.getElementById('district_name').value = districtName;
     });
@@ -305,7 +310,7 @@
     // Form validation
     document.getElementById('addressForm').addEventListener('submit', function(e) {
         const districtId = document.getElementById('district_id').value;
-        
+
         if (!districtId) {
             e.preventDefault();
             alert('Mohon pilih kecamatan terlebih dahulu');

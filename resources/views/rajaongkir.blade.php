@@ -56,7 +56,7 @@
         <div class="mb-8">
             <label class="block text-sm font-medium text-gray-700 mb-2">Pilih Kurir</label>
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                
+
                 <div class="flex items-center">
                     <input type="radio" name="courier" id="courier-1" value="sicepat" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
                     <label for="courier-1" class="ml-2 block text-sm text-gray-900">SICEPAT</label>
@@ -194,7 +194,7 @@
                     }
 
                     isProcessing = true;
-                    
+
                     // Tampilkan loading indicator
                     $('#loading-indicator').show();
                     $('.btn-check').prop('disabled', true);
@@ -237,7 +237,7 @@
                             $('#loading-indicator').hide();
                             $('.btn-check').prop('disabled', false);
                             $('.btn-check').text('Hitung Ongkos Kirim');
-                            
+
                             // pastikan tombol bisa diklik kembali
                             isProcessing = false;
                         }

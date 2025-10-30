@@ -52,7 +52,7 @@
         background: white;
         border-radius: 16px;
         padding: 30px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     }
 
     .form-section {
@@ -85,7 +85,8 @@
         margin-bottom: 8px;
     }
 
-    .form-input, .form-select {
+    .form-input,
+    .form-select {
         width: 100%;
         padding: 12px 16px;
         border: 2px solid #e9ecef;
@@ -94,7 +95,8 @@
         transition: border-color 0.3s ease;
     }
 
-    .form-input:focus, .form-select:focus {
+    .form-input:focus,
+    .form-select:focus {
         outline: none;
         border-color: #333;
     }
@@ -146,7 +148,7 @@
 
     .address-option:hover {
         border-color: #333;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
     .address-option.selected {
@@ -296,7 +298,7 @@
         background: white;
         border-radius: 16px;
         padding: 25px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         height: fit-content;
         position: sticky;
         top: 20px;
@@ -389,12 +391,12 @@
         cursor: pointer;
         transition: all 0.3s ease;
         margin-top: 20px;
-        box-shadow: 0 4px 15px rgba(0,123,255,0.3);
+        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
     }
 
     .pay-now-btn:hover:not(:disabled) {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0,123,255,0.4);
+        box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
     }
 
     .pay-now-btn:disabled {
@@ -501,7 +503,7 @@
         color: white;
         z-index: 10001;
         font-weight: 500;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         transform: translateX(400px);
         transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         max-width: 350px;
@@ -523,7 +525,9 @@
     }
 
     @keyframes spin {
-        to { transform: rotate(360deg); }
+        to {
+            transform: rotate(360deg);
+        }
     }
 
     @media (max-width: 768px) {
@@ -546,27 +550,27 @@
 
     <a href="{{ route('cart.index') }}" class="back-to-cart">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="m12 19-7-7 7-7"/>
+            <path d="m12 19-7-7 7-7" />
         </svg>
         Back to Cart
     </a>
 
     @if ($errors->any())
-        <div class="alert alert-danger">
-            <strong>Please correct the following errors:</strong>
-            <ul style="margin: 10px 0 0 20px;">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
+    <div class="alert alert-danger">
+        <strong>Please correct the following errors:</strong>
+        <ul style="margin: 10px 0 0 20px;">
+            @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
     @endif
 
     <div class="checkout-content">
         <div class="checkout-form">
             <form id="checkoutForm">
                 @csrf
-                
+
                 <input type="hidden" name="items" value="{{ $selectedItems->pluck('id')->implode(',') }}">
                 <input type="hidden" name="shipping_district_id" id="shippingDistrictId">
                 <input type="hidden" name="courier_code" id="courierCode">
@@ -575,112 +579,112 @@
 
                 <div class="form-section">
                     <h3 class="section-title">Shipping Information</h3>
-                    
+
                     <div class="address-section">
                         @if($userAddresses->count() > 0)
-                            <div class="address-selector">
-                                <label class="form-label">Select Address</label>
-                                @foreach($userAddresses as $address)
-                                    <div class="address-option {{ $defaultAddress && $defaultAddress->id === $address->id ? 'selected' : '' }}" 
-                                         onclick="selectAddress({{ $address->id }}, {{ $address->district_id ?? 'null' }})">
-                                        <input type="radio" name="selected_address" value="{{ $address->id }}" 
-                                               {{ $defaultAddress && $defaultAddress->id === $address->id ? 'checked' : '' }}
-                                               data-district-id="{{ $address->district_id }}">
-                                        
-                                        <div class="address-name">
-                                            {{ $address->recipient_name }}
-                                            @if($address->label)
-                                                <span class="address-label">{{ $address->label }}</span>
-                                            @endif
-                                            @if($address->is_default)
-                                                <span class="address-label" style="background-color: #28a745;">Default</span>
-                                            @endif
-                                        </div>
-                                        
-                                        <div class="address-details">
-                                            {{ $address->address }}<br>
-                                            {{ $address->district_name ?? '' }}{{ $address->district_name ? ', ' : '' }}{{ $address->city }}, {{ $address->province }} {{ $address->postal_code }}<br>
-                                            Phone: {{ $address->user->phone ?? 'No phone' }}
-                                        </div>
-                                    </div>
-                                @endforeach
-                                
-                                <div class="address-option" onclick="selectManualAddress()">
-                                    <input type="radio" name="selected_address" value="manual" id="manualAddressRadio">
-                                    <div class="address-name">Use different address</div>
-                                    <div class="address-details">Enter a new address for this order</div>
+                        <div class="address-selector">
+                            <label class="form-label">Select Address</label>
+                            @foreach($userAddresses as $address)
+                            <div class="address-option {{ $defaultAddress && $defaultAddress->id === $address->id ? 'selected' : '' }}"
+                                onclick="selectAddress({{ $address->id }}, {{ $address->district_id ?? 'null' }})">
+                                <input type="radio" name="selected_address" value="{{ $address->id }}"
+                                    {{ $defaultAddress && $defaultAddress->id === $address->id ? 'checked' : '' }}
+                                    data-district-id="{{ $address->district_id }}">
+
+                                <div class="address-name">
+                                    {{ $address->recipient_name }}
+                                    @if($address->label)
+                                    <span class="address-label">{{ $address->label }}</span>
+                                    @endif
+                                    @if($address->is_default)
+                                    <span class="address-label" style="background-color: #28a745;">Default</span>
+                                    @endif
+                                </div>
+
+                                <div class="address-details">
+                                    {{ $address->address }}<br>
+                                    {{ $address->district_name ?? '' }}{{ $address->district_name ? ', ' : '' }}{{ $address->city }}, {{ $address->province }} {{ $address->postal_code }}<br>
+                                    Phone: {{ $address->user->phone ?? 'No phone' }}
                                 </div>
                             </div>
+                            @endforeach
+
+                            <div class="address-option" onclick="selectManualAddress()">
+                                <input type="radio" name="selected_address" value="manual" id="manualAddressRadio">
+                                <div class="address-name">Use different address</div>
+                                <div class="address-details">Enter a new address for this order</div>
+                            </div>
+                        </div>
                         @else
-                            <p style="color: #6c757d; margin-bottom: 20px;">
-                                You don't have any saved addresses. Please add an address first.
-                            </p>
-                            <a href="{{ route('address.create') }}" class="add-address-btn">
-                                Add Your First Address
-                            </a>
+                        <p style="color: #6c757d; margin-bottom: 20px;">
+                            You don't have any saved addresses. Please add an address first.
+                        </p>
+                        <a href="{{ route('address.create') }}" class="add-address-btn">
+                            Add Your First Address
+                        </a>
                         @endif
-                        
+
                         <div class="manual-address-form" id="manualAddressForm">
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="form-label">Full Name *</label>
-                                    <input type="text" name="shipping_name" class="form-input" 
-                                           value="{{ old('shipping_name', auth()->user()->name) }}">
+                                    <input type="text" name="shipping_name" class="form-input"
+                                        value="{{ old('shipping_name', auth()->user()->name) }}">
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Email *</label>
-                                    <input type="email" name="shipping_email" class="form-input" 
-                                           value="{{ old('shipping_email', auth()->user()->email) }}">
+                                    <input type="email" name="shipping_email" class="form-input"
+                                        value="{{ old('shipping_email', auth()->user()->email) }}">
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label">Phone Number *</label>
-                                <input type="tel" name="shipping_phone" class="form-input" 
-                                       value="{{ old('shipping_phone', auth()->user()->phone ?? '') }}" placeholder="08xxxxxxxxxx">
+                                <input type="tel" name="shipping_phone" class="form-input"
+                                    value="{{ old('shipping_phone', auth()->user()->phone ?? '') }}" placeholder="08xxxxxxxxxx">
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label">Province *</label>
-                                <select name="shipping_province_id" id="provinceSelect" class="form-select">
+                                <select name="shipping_province_id" id="provinceSelectManual" class="form-select">
                                     <option value="">Select Province</option>
                                 </select>
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label">City *</label>
-                                <select name="shipping_city_id" id="citySelect" class="form-select" disabled>
+                                <select name="shipping_city_id" id="citySelectManual" class="form-select" disabled>
                                     <option value="">Select City</option>
                                 </select>
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label">District *</label>
-                                <select name="shipping_district_id_select" id="districtSelect" class="form-select" disabled>
+                                <select name="shipping_district_id_select" id="districtSelectManual" class="form-select" disabled>
                                     <option value="">Select District</option>
                                 </select>
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label">Address *</label>
-                                <textarea name="shipping_address" class="form-input form-textarea" 
-                                          placeholder="Street address, building, apartment, etc.">{{ old('shipping_address') }}</textarea>
+                                <textarea name="shipping_address" class="form-input form-textarea"
+                                    placeholder="Street address, building, apartment, etc.">{{ old('shipping_address') }}</textarea>
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label">Postal Code *</label>
-                                <input type="text" name="shipping_postal_code" class="form-input" 
-                                       value="{{ old('shipping_postal_code') }}" maxlength="10">
+                                <input type="text" name="shipping_postal_code" class="form-input"
+                                    value="{{ old('shipping_postal_code') }}" maxlength="10">
                             </div>
 
-                            <input type="hidden" name="shipping_province" id="provinceName">
-                            <input type="hidden" name="shipping_city" id="cityName">
+                            <input type="hidden" name="shipping_province" id="provinceNameManual">
+                            <input type="hidden" name="shipping_city" id="cityNameManual">
                         </div>
                     </div>
 
                     <div class="shipping-calculator">
                         <h4 style="margin-bottom: 15px;">Calculate Shipping Cost</h4>
-                        
+
                         <div class="form-group">
                             <label class="form-label">Select Courier</label>
                             <select id="courierSelect" class="form-select">
@@ -706,7 +710,7 @@
 
                 <div class="form-section">
                     <h3 class="section-title">Billing Information</h3>
-                    
+
                     <div class="checkbox-group">
                         <input type="checkbox" id="same_as_shipping" name="same_as_shipping" value="1" checked onchange="toggleBillingFields()">
                         <label for="same_as_shipping" class="checkbox-label">Same as shipping address</label>
@@ -716,8 +720,8 @@
                 <div class="form-section">
                     <h3 class="section-title">Order Notes (Optional)</h3>
                     <div class="form-group">
-                        <textarea name="notes" class="form-input form-textarea" 
-                                  placeholder="Any special instructions for your order...">{{ old('notes') }}</textarea>
+                        <textarea name="notes" class="form-input form-textarea"
+                            placeholder="Any special instructions for your order...">{{ old('notes') }}</textarea>
                     </div>
                 </div>
             </form>
@@ -725,13 +729,13 @@
 
         <div class="order-summary">
             <h3 class="summary-title">Order Summary</h3>
-            
+
             <!-- Weight Information Box -->
             <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 12px; padding: 16px; margin-bottom: 20px; border-left: 4px solid #0284c7;">
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2.5">
-                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
                     </svg>
                     <span style="font-weight: 700; color: #0c4a6e; font-size: 15px;">Total Weight</span>
                 </div>
@@ -747,50 +751,50 @@
                     </div>
                 </div>
             </div>
-        
+
             <!-- Items List -->
             @foreach($selectedItems as $item)
-                <div class="order-item">
-                    <div class="item-image">
-                        @if($item->product->images && $item->product->images->isNotEmpty())
-                            <img src="{{ asset('storage/' . $item->product->images->first()->image_path) }}" alt="{{ $item->product->name }}">
-                        @else
-                            <img src="{{ asset('images/no-image.png') }}" alt="No Image">
+            <div class="order-item">
+                <div class="item-image">
+                    @if($item->product->images && $item->product->images->isNotEmpty())
+                    <img src="{{ asset('storage/' . $item->product->images->first()->image_path) }}" alt="{{ $item->product->name }}">
+                    @else
+                    <img src="{{ asset('images/no-image.png') }}" alt="No Image">
+                    @endif
+                </div>
+                <div class="item-details">
+                    <div class="item-name">{{ $item->product->name }}</div>
+                    <div class="item-options">
+                        @if($item->size)
+                        <span>Size: {{ $item->size }}</span>
                         @endif
-                    </div>
-                    <div class="item-details">
-                        <div class="item-name">{{ $item->product->name }}</div>
-                        <div class="item-options">
-                            @if($item->size)
-                                <span>Size: {{ $item->size }}</span>
-                            @endif
-                            @php
-                                $itemWeight = $item->product->berat ?? 1000;
-                                // Auto-convert if stored in kg
-                                if ($itemWeight > 0 && $itemWeight < 100) {
-                                    $itemWeight = $itemWeight * 1000;
-                                }
-                                $itemWeightKg = $itemWeight / 1000;
-                                $totalItemWeight = $itemWeight * $item->kuantitas;
-                                $totalItemWeightKg = $totalItemWeight / 1000;
+                        @php
+                        $itemWeight = $item->product->berat ?? 1000;
+                        // Auto-convert if stored in kg
+                        if ($itemWeight > 0 && $itemWeight < 100) {
+                            $itemWeight=$itemWeight * 1000;
+                            }
+                            $itemWeightKg=$itemWeight / 1000;
+                            $totalItemWeight=$itemWeight * $item->kuantitas;
+                            $totalItemWeightKg = $totalItemWeight / 1000;
                             @endphp
                             <span style="color: #6b7280;">
                                 • {{ number_format($itemWeightKg, 2) }} kg
                                 @if($item->kuantitas > 1)
-                                    <span style="font-size: 11px; color: #9ca3af;">
-                                        ({{ number_format($totalItemWeightKg, 2) }} kg total)
-                                    </span>
+                                <span style="font-size: 11px; color: #9ca3af;">
+                                    ({{ number_format($totalItemWeightKg, 2) }} kg total)
+                                </span>
                                 @endif
                             </span>
-                        </div>
-                        <div class="item-price">
-                            <span>Qty: {{ $item->kuantitas }}</span>
-                            <span><strong>IDR {{ number_format(($item->product->harga_jual ?? $item->product->harga) * $item->kuantitas, 0, ',', '.') }}</strong></span>
-                        </div>
+                    </div>
+                    <div class="item-price">
+                        <span>Qty: {{ $item->kuantitas }}</span>
+                        <span><strong>IDR {{ number_format(($item->product->harga_jual ?? $item->product->harga) * $item->kuantitas, 0, ',', '.') }}</strong></span>
                     </div>
                 </div>
+            </div>
             @endforeach
-        
+
             <!-- Summary Totals -->
             <div class="summary-row">
                 <span>Subtotal</span>
@@ -808,12 +812,12 @@
                 <span>Total</span>
                 <span id="grandTotalDisplay">IDR {{ number_format($subtotal + $tax, 0, ',', '.') }}</span>
             </div>
-        
+
             <div class="payment-info">
                 <h5>Secure Payment</h5>
                 <p>Choose from various payment methods after confirming your order.</p>
             </div>
-        
+
             <button type="button" id="payNowBtn" class="pay-now-btn" disabled>
                 <span class="btn-text">Select Shipping First</span>
             </button>
@@ -834,457 +838,582 @@
 <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
 
 <script>
-let selectedShippingCost = 0;
-const subtotal = {{ $subtotal }};
-const tax = {{ $tax }};
-const totalWeight = {{ $totalWeight }};
+    document.addEventListener('DOMContentLoaded', function() {
+        loadProvincesManual();
+        setupManualAddressListeners();
+        setupShippingCalculator();
+        setupPayNowButton();
+    });
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Load provinces untuk manual address form
-    loadProvinces();
-    
-    @if($defaultAddress && $defaultAddress->district_id)
-        document.getElementById('shippingDistrictId').value = {{ $defaultAddress->district_id }};
-    @endif
-});
+    // =====================
+    // ADDRESS SELECTION
+    // =====================
+    function selectAddress(addressId, districtId) {
+        document.querySelectorAll('.address-option').forEach(opt => opt.classList.remove('selected'));
+        event.currentTarget.classList.add('selected');
+        const radio = event.currentTarget.querySelector('input[type="radio"]');
+        if (radio) radio.checked = true;
 
-function loadProvinces() {
-    fetch('/api/rajaongkir/provinces')
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                const select = document.getElementById('provinceSelect');
-                data.data.forEach(province => {
-                    const option = new Option(province.province, province.province_id);
-                    option.setAttribute('data-name', province.province);
-                    select.add(option);
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Failed to load provinces:', error);
-            showNotification('error', 'Failed to load provinces');
-        });
-}
+        const manualForm = document.getElementById('manualAddressForm');
+        if (manualForm) manualForm.classList.remove('show');
 
-document.getElementById('provinceSelect').addEventListener('change', function() {
-    const provinceId = this.value;
-    const provinceName = this.options[this.selectedIndex].getAttribute('data-name');
-    document.getElementById('provinceName').value = provinceName;
-    
-    const citySelect = document.getElementById('citySelect');
-    citySelect.innerHTML = '<option value="">Select City</option>';
-    citySelect.disabled = !provinceId;
-    
-    const districtSelect = document.getElementById('districtSelect');
-    districtSelect.innerHTML = '<option value="">Select District</option>';
-    districtSelect.disabled = true;
-    
-    if (provinceId) {
-        fetch(`/api/rajaongkir/cities/${provinceId}`)
-            .then(response => response.json())
+        if (districtId) document.getElementById('shippingDistrictId').value = districtId;
+
+        resetShippingOptions();
+    }
+
+    function selectManualAddress() {
+        document.querySelectorAll('.address-option').forEach(opt => opt.classList.remove('selected'));
+        event.currentTarget.classList.add('selected');
+
+        const manualRadio = document.getElementById('manualAddressRadio');
+        if (manualRadio) manualRadio.checked = true;
+
+        const manualForm = document.getElementById('manualAddressForm');
+        if (manualForm) manualForm.classList.add('show');
+
+        document.getElementById('shippingDistrictId').value = '';
+        resetShippingOptions();
+    }
+
+    // =====================
+    // MANUAL ADDRESS FORM
+    // =====================
+    function setupManualAddressListeners() {
+        const provinceSelect = document.getElementById('provinceSelectManual');
+        const citySelect = document.getElementById('citySelectManual');
+        const districtSelect = document.getElementById('districtSelectManual');
+
+        if (provinceSelect) {
+            provinceSelect.addEventListener('change', function() {
+                const provinceId = this.value;
+                const provinceName = this.options[this.selectedIndex]?.dataset.name || '';
+                document.getElementById('provinceNameManual').value = provinceName;
+
+                citySelect.innerHTML = '<option value="">Select City</option>';
+                citySelect.disabled = true;
+                districtSelect.innerHTML = '<option value="">Select District</option>';
+                districtSelect.disabled = true;
+
+                if (provinceId) loadCitiesManual(provinceId);
+            });
+        }
+
+        if (citySelect) {
+            citySelect.addEventListener('change', function() {
+                const cityId = this.value;
+                const cityName = this.options[this.selectedIndex]?.dataset.name || '';
+                document.getElementById('cityNameManual').value = cityName;
+
+                districtSelect.innerHTML = '<option value="">Select District</option>';
+                districtSelect.disabled = true;
+
+                if (cityId) loadDistrictsManual(cityId);
+            });
+        }
+
+        if (districtSelect) {
+            districtSelect.addEventListener('change', function() {
+                const districtId = this.value;
+                document.getElementById('shippingDistrictId').value = districtId;
+                resetShippingOptions();
+            });
+        }
+    }
+
+    // =====================
+    // LOAD PROVINCES (FIXED)
+    // =====================
+    function loadProvincesManual() {
+        fetch('/api/rajaongkir/provinces')
+            .then(res => res.json())
             .then(data => {
-                if (data.success) {
-                    data.data.forEach(city => {
-                        const option = new Option(city.city_name, city.city_id);
-                        option.setAttribute('data-name', city.city_name);
-                        citySelect.add(option);
+                const select = document.getElementById('provinceSelectManual');
+                if (!select) return;
+
+                select.innerHTML = '<option value="">Select Province</option>';
+
+                if (data.success && data.data) {
+                    data.data.forEach(province => {
+                        const id = province.province_id || province.id || province.code;
+                        const name = province.province || province.province_name || province.name;
+                        const option = document.createElement('option');
+                        option.value = id;
+                        option.text = name;
+                        option.dataset.name = name;
+                        select.appendChild(option);
                     });
+                    select.disabled = false;
+                } else {
+                    showNotification('error', 'No provinces found');
                 }
             })
-            .catch(error => {
-                console.error('Failed to load cities:', error);
+            .catch(err => {
+                console.error('Failed to load provinces:', err);
+                showNotification('error', 'Failed to load provinces');
+            });
+    }
+
+    // =====================
+    // LOAD CITIES (SAFE)
+    // =====================
+    function loadCitiesManual(provinceId) {
+        fetch(`/api/rajaongkir/cities/${provinceId}`)
+            .then(res => res.json())
+            .then(data => {
+                const select = document.getElementById('citySelectManual');
+                if (!select) return;
+
+                select.innerHTML = '<option value="">Select City</option>';
+
+                if (data.success && data.data) {
+                    data.data.forEach(city => {
+                        const id = city.city_id || city.id;
+                        const name = city.city_name || city.name;
+                        const option = document.createElement('option');
+                        option.value = id;
+                        option.text = name;
+                        option.dataset.name = name;
+                        select.appendChild(option);
+                    });
+                    select.disabled = false;
+                } else {
+                    showNotification('error', 'No cities found');
+                }
+            })
+            .catch(err => {
+                console.error('Failed to load cities:', err);
                 showNotification('error', 'Failed to load cities');
             });
     }
-});
 
-document.getElementById('citySelect').addEventListener('change', function() {
-    const cityId = this.value;
-    const cityName = this.options[this.selectedIndex].getAttribute('data-name');
-    document.getElementById('cityName').value = cityName;
-    
-    const districtSelect = document.getElementById('districtSelect');
-    districtSelect.innerHTML = '<option value="">Select District</option>';
-    districtSelect.disabled = !cityId;
-    
-    if (cityId) {
+    // =====================
+    // LOAD DISTRICTS (SAFE)
+    // =====================
+    function loadDistrictsManual(cityId) {
         fetch(`/api/rajaongkir/districts/${cityId}`)
-            .then(response => response.json())
+            .then(res => res.json())
             .then(data => {
-                if (data.success) {
-                    data.data.forEach(district => {
-                        const option = new Option(district.subdistrict_name, district.subdistrict_id);
-                        districtSelect.add(option);
+                const select = document.getElementById('districtSelectManual');
+                if (!select) return;
+
+                select.innerHTML = '<option value="">Select District</option>';
+
+                if (data.success && data.data) {
+                    data.data.forEach(dist => {
+                        const id = dist.subdistrict_id || dist.id;
+                        const name = dist.subdistrict_name || dist.name;
+                        const option = document.createElement('option');
+                        option.value = id;
+                        option.text = name;
+                        select.appendChild(option);
                     });
+                    select.disabled = false;
+                } else {
+                    showNotification('error', 'No districts found');
                 }
             })
-            .catch(error => {
-                console.error('Failed to load districts:', error);
+            .catch(err => {
+                console.error('Failed to load districts:', err);
                 showNotification('error', 'Failed to load districts');
             });
     }
-});
 
-document.getElementById('districtSelect').addEventListener('change', function() {
-    document.getElementById('shippingDistrictId').value = this.value;
-});
+    // =====================
+    // SHIPPING CALCULATOR
+    // =====================
+    function setupShippingCalculator() {
+        const calculateBtn = document.getElementById('calculateShippingBtn');
+        const courierSelect = document.getElementById('courierSelect');
 
-function selectAddress(addressId, districtId) {
-    document.querySelectorAll('.address-option').forEach(option => {
-        option.classList.remove('selected');
-    });
-    
-    event.currentTarget.classList.add('selected');
-    event.currentTarget.querySelector('input[type="radio"]').checked = true;
-    
-    document.getElementById('manualAddressForm').classList.remove('show');
-    
-    if (districtId) {
-        document.getElementById('shippingDistrictId').value = districtId;
-    }
-    
-    resetShipping();
-}
-
-function selectManualAddress() {
-    document.querySelectorAll('.address-option').forEach(option => {
-        option.classList.remove('selected');
-    });
-    
-    event.currentTarget.classList.add('selected');
-    document.getElementById('manualAddressRadio').checked = true;
-    document.getElementById('manualAddressForm').classList.add('show');
-    document.getElementById('shippingDistrictId').value = '';
-    
-    resetShipping();
-}
-
-function resetShipping() {
-    selectedShippingCost = 0;
-    document.getElementById('shippingCostInput').value = '0';
-    document.getElementById('shippingCostDisplay').textContent = 'IDR 0';
-    document.getElementById('courierCode').value = '';
-    document.getElementById('courierService').value = '';
-    document.getElementById('shippingOptions').classList.remove('show');
-    document.getElementById('shippingResults').innerHTML = '';
-    updateGrandTotal();
-    updatePayButton();
-}
-
-document.getElementById('calculateShippingBtn').addEventListener('click', function() {
-    const districtId = document.getElementById('shippingDistrictId').value;
-    const courier = document.getElementById('courierSelect').value;
-    
-    if (!districtId) {
-        showNotification('error', 'Please select a shipping address first');
-        return;
-    }
-    
-    if (!courier) {
-        showNotification('error', 'Please select a courier');
-        return;
-    }
-    
-    const resultsDiv = document.getElementById('shippingResults');
-    resultsDiv.innerHTML = '<div class="loading-indicator"><span class="loading-spinner"></span>Calculating shipping cost...</div>';
-    document.getElementById('shippingOptions').classList.add('show');
-    
-    fetch('/api/rajaongkir/calculate-cost', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-        },
-        body: JSON.stringify({
-            destination_district_id: districtId,
-            weight: totalWeight,
-            courier: courier
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success && data.data.length > 0) {
-            displayShippingOptions(data.data[0]);
-        } else {
-            resultsDiv.innerHTML = '<p style="color: #dc3545; text-align: center; padding: 10px;">No shipping options available for this destination</p>';
+        if (calculateBtn) {
+            calculateBtn.addEventListener('click', calculateShipping);
         }
-    })
-    .catch(error => {
-        console.error('Shipping calculation error:', error);
-        resultsDiv.innerHTML = '<p style="color: #dc3545; text-align: center; padding: 10px;">Failed to calculate shipping cost. Please try again.</p>';
-        showNotification('error', 'Failed to calculate shipping cost');
-    });
-});
-
-function displayShippingOptions(courierData) {
-    const resultsDiv = document.getElementById('shippingResults');
-    let html = '';
-    
-    if (courierData.costs && courierData.costs.length > 0) {
-        courierData.costs.forEach(service => {
-            const cost = service.cost[0];
-            html += `
-                <div class="shipping-option" onclick="selectShipping('${courierData.code}', '${service.service}', ${cost.value}, '${service.description}')">
-                    <input type="radio" name="shipping_service" value="${service.service}">
-                    <div class="shipping-info">
-                        <div class="shipping-service">${courierData.name} - ${service.service}</div>
-                        <div class="shipping-description">${service.description} (${cost.etd} days)</div>
-                    </div>
-                    <div class="shipping-cost">IDR ${cost.value.toLocaleString('id-ID')}</div>
-                </div>
-            `;
-        });
-    } else {
-        html = '<p style="color: #dc3545; text-align: center; padding: 10px;">No shipping services available</p>';
     }
-    
-    resultsDiv.innerHTML = html;
-}
 
-function selectShipping(courierCode, service, cost, description) {
-    document.querySelectorAll('.shipping-option').forEach(opt => opt.classList.remove('selected'));
-    event.currentTarget.classList.add('selected');
-    event.currentTarget.querySelector('input[type="radio"]').checked = true;
-    
-    selectedShippingCost = cost;
-    document.getElementById('shippingCostInput').value = cost;
-    document.getElementById('courierCode').value = courierCode;
-    document.getElementById('courierService').value = service;
-    document.getElementById('shippingCostDisplay').textContent = 'IDR ' + cost.toLocaleString('id-ID');
-    
-    updateGrandTotal();
-    updatePayButton();
-}
+    function calculateShipping() {
+        const districtId = document.getElementById('shippingDistrictId').value;
+        const courier = document.getElementById('courierSelect').value;
+        const totalWeight = {{$totalWeight}}; // Weight in grams from PHP
 
-function updateGrandTotal() {
-    const grandTotal = subtotal + tax + selectedShippingCost;
-    document.getElementById('grandTotalDisplay').textContent = 'IDR ' + grandTotal.toLocaleString('id-ID');
-}
+        console.log('=== Calculate Shipping Debug ===');
+        console.log('District ID:', districtId);
+        console.log('Courier:', courier);
+        console.log('Total Weight:', totalWeight);
 
-function updatePayButton() {
-    const btn = document.getElementById('payNowBtn');
-    const grandTotal = subtotal + tax + selectedShippingCost;
-    
-    if (selectedShippingCost > 0) {
-        btn.disabled = false;
-        btn.querySelector('.btn-text').textContent = 'Pay Now - IDR ' + grandTotal.toLocaleString('id-ID');
-    } else {
-        btn.disabled = true;
-        btn.querySelector('.btn-text').textContent = 'Select Shipping First';
-    }
-}
-
-function toggleBillingFields() {
-    const checkbox = document.getElementById('same_as_shipping');
-    const billingFields = document.getElementById('billing-fields');
-    
-    if (checkbox.checked && billingFields) {
-        billingFields.style.display = 'none';
-    } else if (billingFields) {
-        billingFields.style.display = 'block';
-    }
-}
-
-document.getElementById('payNowBtn').addEventListener('click', function() {
-    const btn = this;
-    
-    const selectedAddress = document.querySelector('input[name="selected_address"]:checked');
-    if (!selectedAddress) {
-        showNotification('error', 'Please select a shipping address');
-        return;
-    }
-    
-    const districtId = document.getElementById('shippingDistrictId').value;
-    if (!districtId) {
-        showNotification('error', 'Please select a valid address with district information');
-        return;
-    }
-    
-    if (selectedShippingCost === 0) {
-        showNotification('error', 'Please calculate and select shipping method');
-        return;
-    }
-    
-    if (selectedAddress.value === 'manual') {
-        const form = document.getElementById('checkoutForm');
-        const requiredFields = form.querySelectorAll('[name^="shipping_"]:not([type="hidden"])');
-        let isValid = true;
-        
-        requiredFields.forEach(field => {
-            if (!field.value && field.hasAttribute('required')) {
-                isValid = false;
-                field.style.borderColor = '#dc3545';
-            } else {
-                field.style.borderColor = '#e9ecef';
-            }
-        });
-        
-        if (!isValid) {
-            showNotification('error', 'Please fill in all required fields');
+        if (!districtId) {
+            showNotification('error', 'Please select a shipping address first');
             return;
         }
-    }
 
-    btn.classList.add('loading');
-    btn.disabled = true;
-    showPaymentModal();
-    
-    const formData = new FormData(document.getElementById('checkoutForm'));
-    
-    if (selectedAddress.value !== 'manual') {
-        const addresses = @json($userAddresses ?? []);
-        const address = addresses.find(addr => addr.id == selectedAddress.value);
-        if (address) {
-            formData.set('shipping_name', address.recipient_name);
-            formData.set('shipping_email', '{{ auth()->user()->email ?? "" }}');
-            formData.set('shipping_phone', '{{ auth()->user()->phone ?? "" }}');
-            formData.set('shipping_address', address.address);
-            formData.set('shipping_city', address.city);
-            formData.set('shipping_province', address.province);
-            formData.set('shipping_postal_code', address.postal_code);
+        if (!courier) {
+            showNotification('error', 'Please select a courier service');
+            return;
         }
-    }
-    
-    fetch('{{ route("checkout.create-payment") }}', {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        btn.classList.remove('loading');
-        btn.disabled = false;
-        
-        if (data.success) {
-            snap.pay(data.snap_token, {
-                onSuccess: function(result) {
-                    handlePaymentSuccess(result, data.order_number);
+
+        // Show loading
+        const resultsDiv = document.getElementById('shippingResults');
+        resultsDiv.innerHTML = '<div class="loading-indicator"><div class="loading-spinner"></div> Calculating shipping cost...</div>';
+        document.getElementById('shippingOptions').classList.add('show');
+
+        // Get CSRF token
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+        // Create FormData to match backend validation
+        const formData = new FormData();
+        formData.append('destination_district_id', districtId);
+        formData.append('weight', totalWeight);
+        formData.append('courier', courier);
+
+        console.log('Sending request to:', '/api/rajaongkir/check-ongkir');
+
+        // Make API call
+        fetch('/api/rajaongkir/check-ongkir', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
                 },
-                onPending: function(result) {
-                    showNotification('info', 'Payment is being processed...');
-                    hidePaymentModal();
-                },
-                onError: function(result) {
-                    showNotification('error', 'Payment failed. Please try again.');
-                    hidePaymentModal();
-                },
-                onClose: function() {
-                    hidePaymentModal();
+                body: formData
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    return response.json().then(err => {
+                        console.error('Error response:', err);
+                        throw new Error(err.message || 'Network response was not ok');
+                    });
                 }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Full Shipping API Response:', JSON.stringify(data, null, 2));
+
+               if (data.success && data.data) {
+                    const costs = Array.isArray(data.data) ? data.data : [];
+
+                    console.log('Extracted Costs:', costs);
+                    console.log('Costs length:', costs.length);
+
+                    if (costs.length > 0) {
+                        displayShippingOptions(costs, courier);
+                        showNotification('success', 'Shipping options loaded successfully');
+                    } else {
+                        resultsDiv.innerHTML = `
+                            <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 20px; text-align: center;">
+                                <p style="color: #856404; margin: 0 0 10px 0; font-weight: 600;">
+                                    ⚠️ No shipping service available
+                                </p>
+                                <p style="color: #856404; margin: 0; font-size: 13px;">
+                                    ${courier.toUpperCase()} doesn't serve this destination or weight.<br>
+                                    Please try another courier service.
+                                </p>
+                            </div>
+                        `;
+                        showNotification('error', 'No shipping options for ' + courier.toUpperCase());
+                    }
+                } else {
+                    resultsDiv.innerHTML = '<p style="color: #dc3545; text-align: center; padding: 15px;">Invalid response from shipping API</p>';
+                    showNotification('error', 'Failed to get shipping options');
+                }
+
+            })
+            .catch(error => {
+                console.error('Shipping calculation error:', error);
+                resultsDiv.innerHTML = `
+                    <div style="background: #f8d7da; border: 1px solid #dc3545; border-radius: 8px; padding: 20px; text-align: center;">
+                        <p style="color: #721c24; margin: 0 0 10px 0; font-weight: 600;">
+                            ❌ Failed to calculate shipping
+                        </p>
+                        <p style="color: #721c24; margin: 0; font-size: 13px;">
+                            ${error.message}
+                        </p>
+                    </div>
+                `;
+                showNotification('error', 'Failed to calculate shipping cost');
             });
-        } else {
-            showNotification('error', data.message || 'Failed to create payment');
-            hidePaymentModal();
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        btn.classList.remove('loading');
-        btn.disabled = false;
-        showNotification('error', 'An error occurred. Please try again.');
-        hidePaymentModal();
-    });
-});
-
-function showPaymentModal() {
-    document.getElementById('paymentModal').classList.add('show');
-}
-
-function hidePaymentModal() {
-    document.getElementById('paymentModal').classList.remove('show');
-}
-
-function handlePaymentSuccess(result, orderNumber) {
-    const loadingContent = document.getElementById('loadingContent');
-    loadingContent.innerHTML = '<div class="loading-spinner"></div><h3>Processing payment...</h3>';
-
-    fetch('{{ route("checkout.handle-payment") }}', {
-        method: 'POST',
-        body: JSON.stringify({
-            order_number: orderNumber,
-            transaction_id: result.transaction_id
-        }),
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showNotification('success', 'Payment successful! Redirecting...');
-            setTimeout(() => {
-                window.location.href = data.redirect_url;
-            }, 2000);
-        } else {
-            showNotification('error', data.message || 'Failed to process payment');
-            hidePaymentModal();
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification('error', 'An error occurred. Please contact support.');
-        hidePaymentModal();
-    });
-}
-
-function showNotification(type, message) {
-    const existingNotifications = document.querySelectorAll('.notification');
-    existingNotifications.forEach(notification => {
-        if (document.body.contains(notification)) {
-            document.body.removeChild(notification);
-        }
-    });
-
-    const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
-    
-    let icon = '';
-    switch(type) {
-        case 'success':
-            icon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20,6 9,17 4,12"></polyline></svg>';
-            break;
-        case 'error':
-            icon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
-            break;
-        case 'info':
-            icon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
-            break;
     }
-    
-    notification.innerHTML = `
-        <div class="notification-icon">${icon}</div>
+
+    function displayShippingOptions(services, courierCode) {
+        const resultsDiv = document.getElementById('shippingResults');
+        let html = '';
+
+        console.log('=== Display Shipping Options ===');
+        console.log('Number of services:', services.length);
+        console.log('Courier code:', courierCode);
+        console.log('Services array:', JSON.stringify(services, null, 2));
+
+        services.forEach((service, index) => {
+            console.log(`\n=== Processing Service ${index} ===`);
+            console.log('Service object:', JSON.stringify(service, null, 2));
+
+            // Handle different possible structures based on RajaOngkir response
+            let serviceName, description, costValue, etd;
+
+            // Check structure 1: Direct properties (name, code, service, description, cost, etd)
+            if (service.name || service.service) {
+                serviceName = service.service || service.name || service.code || 'Unknown Service';
+                description = service.description || '';
+                costValue = service.cost || 0;
+                etd = service.etd || '';
+
+                console.log('Structure 1 (Direct):', {
+                    serviceName,
+                    description,
+                    costValue,
+                    etd
+                });
+            }
+            // Check structure 2: Nested cost array
+            else if (service.cost && Array.isArray(service.cost) && service.cost.length > 0) {
+                serviceName = service.service || service.service_name || 'Unknown Service';
+                description = service.description || service.service_description || '';
+                costValue = service.cost[0].value || 0;
+                etd = service.cost[0].etd || '';
+
+                console.log('Structure 2 (Nested cost):', {
+                    serviceName,
+                    description,
+                    costValue,
+                    etd
+                });
+            }
+            // Check structure 3: Alternative naming
+            else {
+                serviceName = service.service_name || service.type || 'Unknown Service';
+                description = service.service_description || service.desc || '';
+                costValue = service.value || service.price || 0;
+                etd = service.etd || service.estimation || '';
+
+                console.log('Structure 3 (Alternative):', {
+                    serviceName,
+                    description,
+                    costValue,
+                    etd
+                });
+            }
+
+            console.log('Final values:', {
+                serviceName,
+                description,
+                costValue,
+                etd
+            });
+
+            // Only add if we have a valid cost
+            if (costValue > 0) {
+                const etdDisplay = etd ? ` (${etd} days)` : '';
+                const descDisplay = description ? description : serviceName;
+
+                html += `
+                <div class="shipping-option" onclick="selectShipping('${courierCode}', '${serviceName}', ${costValue}, '${description}')">
+                    <input type="radio" name="shipping_service" value="${serviceName}" id="ship_${index}">
+                    <div class="shipping-info">
+                        <div class="shipping-service">${courierCode.toUpperCase()} - ${serviceName}</div>
+                        <div class="shipping-description">${descDisplay}${etdDisplay}</div>
+                    </div>
+                    <div class="shipping-cost">IDR ${formatNumber(costValue)}</div>
+                </div>
+            `;
+            } else {
+                console.warn(`Service ${index} skipped - no valid cost:`, service);
+            }
+        });
+
+        if (html === '') {
+            console.error('No valid shipping options generated');
+            resultsDiv.innerHTML = `
+                <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 20px; text-align: center;">
+                    <p style="color: #856404; margin: 0 0 10px 0;">⚠️ No valid shipping options found</p>
+                    <details style="margin-top: 10px; text-align: left;">
+                        <summary style="cursor: pointer; color: #856404;">Debug: View Services Data</summary>
+                        <pre style="font-size: 11px; max-height: 200px; overflow: auto; background: white; padding: 10px; border-radius: 4px;">${JSON.stringify(services, null, 2)}</pre>
+                    </details>
+                </div>
+            `;
+        } else {
+            console.log('Successfully generated', services.length, 'shipping options');
+            resultsDiv.innerHTML = html;
+        }
+    }
+
+    function selectShipping(courierCode, serviceName, cost, description) {
+        // Remove selected class from all options
+        document.querySelectorAll('.shipping-option').forEach(option => {
+            option.classList.remove('selected');
+        });
+
+        // Add selected class to clicked option
+        event.currentTarget.classList.add('selected');
+
+        // Check the radio button
+        const radio = event.currentTarget.querySelector('input[type="radio"]');
+        if (radio) {
+            radio.checked = true;
+        }
+
+        // Update hidden inputs
+        document.getElementById('courierCode').value = courierCode;
+        document.getElementById('courierService').value = serviceName;
+        document.getElementById('shippingCostInput').value = cost;
+
+        // Update display
+        document.getElementById('shippingCostDisplay').textContent = 'IDR ' + formatNumber(cost);
+
+        // Update grand total
+        updateGrandTotal();
+
+        // Enable pay now button
+        const payBtn = document.getElementById('payNowBtn');
+        payBtn.disabled = false;
+        payBtn.querySelector('.btn-text').textContent = 'Pay Now';
+    }
+
+    function resetShippingOptions() {
+        document.getElementById('shippingOptions').classList.remove('show');
+        document.getElementById('shippingResults').innerHTML = '';
+        document.getElementById('courierSelect').value = '';
+        document.getElementById('shippingCostDisplay').textContent = 'IDR 0';
+        document.getElementById('shippingCostInput').value = '0';
+
+        const payBtn = document.getElementById('payNowBtn');
+        payBtn.disabled = true;
+        payBtn.querySelector('.btn-text').textContent = 'Select Shipping First';
+
+        updateGrandTotal();
+    }
+
+    // =====================
+    // BILLING TOGGLE
+    // =====================
+    function toggleBillingFields() {
+        const checkbox = document.getElementById('same_as_shipping');
+        const billingFields = document.getElementById('billingFields');
+
+        if (billingFields) {
+            if (checkbox.checked) {
+                billingFields.style.display = 'none';
+            } else {
+                billingFields.style.display = 'block';
+            }
+        }
+    }
+
+    // =====================
+    // PAYMENT HANDLING
+    // =====================
+    function setupPayNowButton() {
+        const payBtn = document.getElementById('payNowBtn');
+        if (payBtn) {
+            payBtn.addEventListener('click', handlePayment);
+        }
+    }
+
+    function handlePayment() {
+        // Validate form
+        const districtId = document.getElementById('shippingDistrictId').value;
+        const shippingCost = document.getElementById('shippingCostInput').value;
+
+        if (!districtId) {
+            showNotification('error', 'Please select a shipping address');
+            return;
+        }
+
+        if (!shippingCost || shippingCost === '0') {
+            showNotification('error', 'Please select a shipping method');
+            return;
+        }
+
+        // Show loading modal
+        document.getElementById('paymentModal').classList.add('show');
+
+        // Submit form
+        const form = document.getElementById('checkoutForm');
+        const formData = new FormData(form);
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+        fetch('/checkout/create-payment', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.snap_token) {
+                    // Hide loading modal
+                    document.getElementById('paymentModal').classList.remove('show');
+
+                    // Open Midtrans Snap
+                    snap.pay(data.snap_token, {
+                        onSuccess: function(result) {
+                            window.location.href = '/checkout/success/' + data.order_number;
+                        },
+                        onPending: function(result) {
+                            window.location.href = '/orders';
+                        },
+                        onError: function(result) {
+                            showNotification('error', 'Payment failed. Please try again.');
+                        },
+                        onClose: function() {
+                            showNotification('error', 'Payment cancelled');
+                        }
+                    });
+                } else {
+                    document.getElementById('paymentModal').classList.remove('show');
+                    showNotification('error', data.message || 'Payment creation failed');
+                }
+            })
+            .catch(error => {
+                console.error('Payment error:', error);
+                document.getElementById('paymentModal').classList.remove('show');
+                showNotification('error', 'An error occurred. Please try again.');
+            });
+    }
+
+    // =====================
+    // UTILITY FUNCTIONS
+    // =====================
+    function updateGrandTotal() {
+        const subtotalElement = document.querySelector('.summary-row:nth-child(1) span:last-child');
+        const taxElement = document.querySelector('.summary-row:nth-child(2) span:last-child');
+        const shippingCost = parseInt(document.getElementById('shippingCostInput').value) || 0;
+
+        if (subtotalElement && taxElement) {
+            const subtotal = parsePrice(subtotalElement.textContent);
+            const tax = parsePrice(taxElement.textContent);
+            const grandTotal = subtotal + tax + shippingCost;
+
+            document.getElementById('grandTotalDisplay').textContent = 'IDR ' + formatNumber(grandTotal);
+        }
+    }
+
+    function formatNumber(num) {
+        return new Intl.NumberFormat('id-ID').format(num);
+    }
+
+    function parsePrice(priceText) {
+        return parseInt(priceText.replace(/[^\d]/g, '')) || 0;
+    }
+
+    function showNotification(type, message) {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            ${type === 'success' ? '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>' : '<circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line>'}
+        </svg>
         <span>${message}</span>
     `;
-    
-    document.body.appendChild(notification);
-    setTimeout(() => notification.classList.add('show'), 100);
-    
-    setTimeout(() => {
-        notification.classList.remove('show');
+        document.body.appendChild(notification);
+
+        setTimeout(() => notification.classList.add('show'), 100);
         setTimeout(() => {
-            if (document.body.contains(notification)) {
-                document.body.removeChild(notification);
-            }
-        }, 300);
-    }, 4000);
-}
-
-document.getElementById('paymentModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        hidePaymentModal();
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
     }
-});
-
-@if(session('success'))
-    showNotification('success', '{{ session('success') }}');
-@endif
-
-@if(session('error'))
-    showNotification('error', '{{ session('error') }}');
-@endif
 </script>
+
 @endsection

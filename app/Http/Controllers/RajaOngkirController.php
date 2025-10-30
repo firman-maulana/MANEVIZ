@@ -8,61 +8,33 @@ use Illuminate\Support\Facades\Log;
 
 class RajaOngkirController extends Controller
 {
-    private $apiKey;
-    private $baseUrl;
-    private $originCityId = 254; // Malang
-
-    public function __construct()
-    {
-        $this->apiKey = config('rajaongkir.api_key');
-        
-        // FIXED: Gunakan endpoint yang benar untuk starter account
-        $this->baseUrl = 'https://api.rajaongkir.com/starter';
-    }
-
     /**
-     * Get all provinces
+     * Menampilkan daftar provinsi dari API Raja Ongkir
      */
-    public function getProvinces()
+    public function index()
     {
         try {
             $response = Http::withHeaders([
-                'key' => $this->apiKey,
-            ])->get("{$this->baseUrl}/province");
+                'Accept' => 'application/json',
+                'key' => config('rajaongkir.api_key'),
+            ])->get('https://rajaongkir.komerce.id/api/v1/destination/province');
 
             if ($response->successful()) {
-                $data = $response->json();
-                
-                if (isset($data['rajaongkir']['results'])) {
-                    return response()->json([
-                        'success' => true,
-                        'data' => collect($data['rajaongkir']['results'])->map(function($province) {
-                            return [
-                                'id' => $province['province_id'],
-                                'province_id' => $province['province_id'],
-                                'name' => $province['province'],
-                                'province' => $province['province']
-                            ];
-                        })
-                    ]);
-                }
-            }
+                $responseData = $response->json();
+                $provinces = $responseData['data'] ?? [];
 
-            Log::error('RajaOngkir Province Error', [
-                'status' => $response->status(),
-                'body' => $response->body()
-            ]);
+                return response()->json([
+                    'success' => true,
+                    'data' => $provinces
+                ]);
+            }
 
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch provinces'
             ], 500);
-
         } catch (\Exception $e) {
-            Log::error('RajaOngkir Province Exception', [
-                'message' => $e->getMessage()
-            ]);
-            
+            Log::error('Province fetch error:', ['message' => $e->getMessage()]);
             return response()->json([
                 'success' => false,
                 'message' => 'Error: ' . $e->getMessage()
@@ -71,46 +43,32 @@ class RajaOngkirController extends Controller
     }
 
     /**
-     * Get cities by province ID
+     * Mengambil data kota berdasarkan ID provinsi
      */
     public function getCities($provinceId)
     {
         try {
             $response = Http::withHeaders([
-                'key' => $this->apiKey,
-            ])->get("{$this->baseUrl}/city", [
-                'province' => $provinceId
-            ]);
+                'Accept' => 'application/json',
+                'key' => config('rajaongkir.api_key'),
+            ])->get("https://rajaongkir.komerce.id/api/v1/destination/city/{$provinceId}");
 
             if ($response->successful()) {
-                $data = $response->json();
-                
-                if (isset($data['rajaongkir']['results'])) {
-                    return response()->json([
-                        'success' => true,
-                        'data' => collect($data['rajaongkir']['results'])->map(function($city) {
-                            return [
-                                'id' => $city['city_id'],
-                                'city_id' => $city['city_id'],
-                                'name' => $city['type'] . ' ' . $city['city_name'],
-                                'city_name' => $city['type'] . ' ' . $city['city_name'],
-                                'type' => $city['type']
-                            ];
-                        })
-                    ]);
-                }
+                $responseData = $response->json();
+                $cities = $responseData['data'] ?? [];
+
+                return response()->json([
+                    'success' => true,
+                    'data' => $cities
+                ]);
             }
 
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch cities'
             ], 500);
-
         } catch (\Exception $e) {
-            Log::error('RajaOngkir City Exception', [
-                'message' => $e->getMessage()
-            ]);
-            
+            Log::error('City fetch error:', ['message' => $e->getMessage()]);
             return response()->json([
                 'success' => false,
                 'message' => 'Error: ' . $e->getMessage()
@@ -119,47 +77,32 @@ class RajaOngkirController extends Controller
     }
 
     /**
-     * Get districts - untuk starter hanya return city sebagai district
+     * Mengambil data kecamatan berdasarkan ID kota
      */
     public function getDistricts($cityId)
     {
         try {
-            // FIXED: Starter account tidak support subdistrict
-            // Return city sebagai district
             $response = Http::withHeaders([
-                'key' => $this->apiKey,
-            ])->get("{$this->baseUrl}/city", [
-                'id' => $cityId
-            ]);
+                'Accept' => 'application/json',
+                'key' => config('rajaongkir.api_key'),
+            ])->get("https://rajaongkir.komerce.id/api/v1/destination/district/{$cityId}");
 
             if ($response->successful()) {
-                $data = $response->json();
-                
-                if (isset($data['rajaongkir']['results'])) {
-                    $city = $data['rajaongkir']['results'];
-                    
-                    return response()->json([
-                        'success' => true,
-                        'data' => [[
-                            'id' => $city['city_id'],
-                            'subdistrict_id' => $city['city_id'],
-                            'name' => $city['city_name'],
-                            'subdistrict_name' => $city['city_name']
-                        ]]
-                    ]);
-                }
+                $responseData = $response->json();
+                $districts = $responseData['data'] ?? [];
+
+                return response()->json([
+                    'success' => true,
+                    'data' => $districts
+                ]);
             }
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to fetch district'
+                'message' => 'Failed to fetch districts'
             ], 500);
-
         } catch (\Exception $e) {
-            Log::error('RajaOngkir District Exception', [
-                'message' => $e->getMessage()
-            ]);
-            
+            Log::error('District fetch error:', ['message' => $e->getMessage()]);
             return response()->json([
                 'success' => false,
                 'message' => 'Error: ' . $e->getMessage()
@@ -168,128 +111,105 @@ class RajaOngkirController extends Controller
     }
 
     /**
-     * Calculate shipping cost
+     * Menghitung ongkos kirim berdasarkan data yang diberikan
      */
-    public function calculateShippingCost(Request $request)
+    public function checkOngkir(Request $request)
     {
+        // Validate request
+        $validated = $request->validate([
+            'destination_district_id' => 'required|integer',
+            'weight' => 'required|integer|min:1',
+            'courier' => 'required|string'
+        ]);
+
         try {
-            $validated = $request->validate([
-                'destination_district_id' => 'required|integer',
-                'weight' => 'required|integer|min:1',
-                'courier' => 'required|string|in:jne,pos,tiki'
+            Log::info('=== RAJAONGKIR CHECK ONGKIR REQUEST ===', [
+                'origin' => 3942,
+                'destination' => $validated['destination_district_id'],
+                'weight' => $validated['weight'],
+                'courier' => $validated['courier']
             ]);
 
-            $destinationCityId = $validated['destination_district_id'];
-            $weight = $validated['weight'];
-            $courier = strtolower($validated['courier']);
-
-            Log::info('Calculate Shipping Request', [
-                'origin' => $this->originCityId,
-                'destination' => $destinationCityId,
-                'weight' => $weight,
-                'courier' => $courier
+            $response = Http::asForm()->withHeaders([
+                'Accept' => 'application/json',
+                'key' => config('rajaongkir.api_key'),
+            ])->post('https://rajaongkir.komerce.id/api/v1/calculate/domestic-cost', [
+                'origin' => 3942, // ID kecamatan Diwek
+                'destination' => $validated['destination_district_id'],
+                'weight' => $validated['weight'],
+                'courier' => $validated['courier'],
             ]);
 
-            // FIXED: Gunakan asForm() untuk POST request
-            $response = Http::asForm()
-                ->withHeaders([
-                    'key' => $this->apiKey,
-                ])
-                ->post("{$this->baseUrl}/cost", [
-                    'origin' => $this->originCityId,
-                    'destination' => $destinationCityId,
-                    'weight' => $weight,
-                    'courier' => $courier,
-                ]);
-
-            Log::info('RajaOngkir Cost Response', [
+            Log::info('=== RAJAONGKIR RAW RESPONSE ===', [
                 'status' => $response->status(),
-                'body' => $response->json()
+                'body' => $response->body()
             ]);
 
             if ($response->successful()) {
-                $data = $response->json();
-                
-                // Check API status
-                if (isset($data['rajaongkir']['status']['code']) && $data['rajaongkir']['status']['code'] != 200) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'API Error: ' . ($data['rajaongkir']['status']['description'] ?? 'Unknown error')
-                    ], 400);
-                }
-                
-                if (isset($data['rajaongkir']['results']) && !empty($data['rajaongkir']['results'])) {
+                $responseData = $response->json();
+
+                Log::info('=== RAJAONGKIR PARSED RESPONSE ===', [
+                    'full_response' => $responseData
+                ]);
+
+                // Extract data - handle multiple possible structures
+                $data = $responseData['data'] ?? $responseData['results'] ?? [];
+
+                // Ensure data is properly formatted
+                if (!empty($data)) {
+                    // If data is not already an array of courier results, wrap it
+                    if (!isset($data[0])) {
+                        $data = [$data];
+                    }
+
+                    Log::info('=== EXTRACTED DATA ===', [
+                        'data' => $data,
+                        'count' => count($data)
+                    ]);
+
                     return response()->json([
                         'success' => true,
-                        'data' => $data['rajaongkir']['results']
+                        'data' => $data,
+                        'raw_response' => $responseData // Include for debugging
                     ]);
                 }
-                
+
+                Log::warning('No shipping data found in response');
                 return response()->json([
                     'success' => false,
-                    'message' => 'Tidak ada layanan pengiriman tersedia untuk tujuan ini'
+                    'message' => 'No shipping options available',
+                    'raw_response' => $responseData
                 ], 404);
             }
 
-            Log::error('RajaOngkir Cost HTTP Error', [
+            Log::error('RajaOngkir API request failed', [
                 'status' => $response->status(),
                 'body' => $response->body()
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal menghitung ongkos kirim. Status: ' . $response->status()
+                'message' => 'Failed to calculate shipping cost',
+                'error' => $response->body()
             ], $response->status());
 
         } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Validation error:', ['errors' => $e->errors()]);
             return response()->json([
                 'success' => false,
-                'message' => 'Data tidak lengkap',
+                'message' => 'Validation failed',
                 'errors' => $e->errors()
             ], 422);
-            
         } catch (\Exception $e) {
-            Log::error('Calculate Cost Exception', [
+            Log::error('Shipping calculation error:', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            
+
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+                'message' => 'Error calculating shipping: ' . $e->getMessage()
             ], 500);
         }
-    }
-
-    /**
-     * Get available couriers untuk starter account
-     */
-    public function getAvailableCouriers()
-    {
-        // FIXED: Starter account hanya support 3 kurir
-        return response()->json([
-            'success' => true,
-            'data' => [
-                ['code' => 'jne', 'name' => 'JNE'],
-                ['code' => 'pos', 'name' => 'POS Indonesia'],
-                ['code' => 'tiki', 'name' => 'TIKI'],
-            ]
-        ]);
-    }
-
-    /**
-     * Get origin info
-     */
-    public function getOriginInfo()
-    {
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'city_id' => $this->originCityId,
-                'city_name' => 'Malang',
-                'province_name' => 'Jawa Timur',
-                'note' => 'Using Starter account - city level only'
-            ]
-        ]);
     }
 }
