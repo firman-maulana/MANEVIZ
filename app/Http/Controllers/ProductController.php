@@ -52,7 +52,7 @@ class ProductController extends Controller
         $products = $query->paginate(12);
         $categories = Category::all();
 
-        // 🔥 NEW: Get best seller products (top 4 by sales)
+        // 🔥 FIXED: Get best seller products (top 4 by sales)
         $bestSellerProducts = Product::active()
             ->with(['category', 'images'])
             ->where('total_penjualan', '>', 0) // Only products with sales
@@ -65,15 +65,29 @@ class ProductController extends Controller
             $remainingCount = 4 - $bestSellerProducts->count();
             $bestSellerIds = $bestSellerProducts->pluck('id')->toArray();
             
+            // 🔥 FIXED: Correct query structure
             $additionalProducts = Product::active()
                 ->with(['category', 'images'])
                 ->whereNotIn('id', $bestSellerIds)
-                ->where(function ($query) {
-                    $query->where('is_featured', true)
-                          ->orOrderBy('created_at', 'desc');
-                })
+                ->where('is_featured', true) // First try to get featured products
+                ->orderBy('created_at', 'desc')
                 ->limit($remainingCount)
                 ->get();
+                
+            // If still not enough, get the newest products (non-featured)
+            if ($additionalProducts->count() < $remainingCount) {
+                $stillNeeded = $remainingCount - $additionalProducts->count();
+                $usedIds = array_merge($bestSellerIds, $additionalProducts->pluck('id')->toArray());
+                
+                $newestProducts = Product::active()
+                    ->with(['category', 'images'])
+                    ->whereNotIn('id', $usedIds)
+                    ->orderBy('created_at', 'desc')
+                    ->limit($stillNeeded)
+                    ->get();
+                    
+                $additionalProducts = $additionalProducts->concat($newestProducts);
+            }
                 
             $bestSellerProducts = $bestSellerProducts->concat($additionalProducts);
         }
