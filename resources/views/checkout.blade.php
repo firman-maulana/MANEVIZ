@@ -837,7 +837,6 @@
 
 <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
 
-// Add this complete JavaScript section to replace the existing one in checkout.blade.php
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
