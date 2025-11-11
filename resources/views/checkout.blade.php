@@ -837,6 +837,8 @@
 
 <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
 
+// Add this complete JavaScript section to replace the existing one in checkout.blade.php
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         loadProvincesManual();
@@ -922,7 +924,7 @@
     }
 
     // =====================
-    // LOAD PROVINCES (FIXED)
+    // LOAD PROVINCES
     // =====================
     function loadProvincesManual() {
         fetch('/api/rajaongkir/provinces')
@@ -955,7 +957,7 @@
     }
 
     // =====================
-    // LOAD CITIES (SAFE)
+    // LOAD CITIES
     // =====================
     function loadCitiesManual(provinceId) {
         fetch(`/api/rajaongkir/cities/${provinceId}`)
@@ -988,7 +990,7 @@
     }
 
     // =====================
-    // LOAD DISTRICTS (SAFE)
+    // LOAD DISTRICTS
     // =====================
     function loadDistrictsManual(cityId) {
         fetch(`/api/rajaongkir/districts/${cityId}`)
@@ -1024,8 +1026,6 @@
     // =====================
     function setupShippingCalculator() {
         const calculateBtn = document.getElementById('calculateShippingBtn');
-        const courierSelect = document.getElementById('courierSelect');
-
         if (calculateBtn) {
             calculateBtn.addEventListener('click', calculateShipping);
         }
@@ -1034,12 +1034,7 @@
     function calculateShipping() {
         const districtId = document.getElementById('shippingDistrictId').value;
         const courier = document.getElementById('courierSelect').value;
-        const totalWeight = {{$totalWeight}}; // Weight in grams from PHP
-
-        console.log('=== Calculate Shipping Debug ===');
-        console.log('District ID:', districtId);
-        console.log('Courier:', courier);
-        console.log('Total Weight:', totalWeight);
+        const totalWeight = {{$totalWeight}};
 
         if (!districtId) {
             showNotification('error', 'Please select a shipping address first');
@@ -1051,23 +1046,16 @@
             return;
         }
 
-        // Show loading
         const resultsDiv = document.getElementById('shippingResults');
         resultsDiv.innerHTML = '<div class="loading-indicator"><div class="loading-spinner"></div> Calculating shipping cost...</div>';
         document.getElementById('shippingOptions').classList.add('show');
 
-        // Get CSRF token
         const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-
-        // Create FormData to match backend validation
         const formData = new FormData();
         formData.append('destination_district_id', districtId);
         formData.append('weight', totalWeight);
         formData.append('courier', courier);
 
-        console.log('Sending request to:', '/api/rajaongkir/check-ongkir');
-
-        // Make API call
         fetch('/api/rajaongkir/check-ongkir', {
                 method: 'POST',
                 headers: {
@@ -1077,23 +1065,16 @@
                 body: formData
             })
             .then(response => {
-                console.log('Response status:', response.status);
                 if (!response.ok) {
                     return response.json().then(err => {
-                        console.error('Error response:', err);
                         throw new Error(err.message || 'Network response was not ok');
                     });
                 }
                 return response.json();
             })
             .then(data => {
-                console.log('Full Shipping API Response:', JSON.stringify(data, null, 2));
-
-               if (data.success && data.data) {
+                if (data.success && data.data) {
                     const costs = Array.isArray(data.data) ? data.data : [];
-
-                    console.log('Extracted Costs:', costs);
-                    console.log('Costs length:', costs.length);
 
                     if (costs.length > 0) {
                         displayShippingOptions(costs, courier);
@@ -1116,7 +1097,6 @@
                     resultsDiv.innerHTML = '<p style="color: #dc3545; text-align: center; padding: 15px;">Invalid response from shipping API</p>';
                     showNotification('error', 'Failed to get shipping options');
                 }
-
             })
             .catch(error => {
                 console.error('Shipping calculation error:', error);
@@ -1138,69 +1118,26 @@
         const resultsDiv = document.getElementById('shippingResults');
         let html = '';
 
-        console.log('=== Display Shipping Options ===');
-        console.log('Number of services:', services.length);
-        console.log('Courier code:', courierCode);
-        console.log('Services array:', JSON.stringify(services, null, 2));
-
         services.forEach((service, index) => {
-            console.log(`\n=== Processing Service ${index} ===`);
-            console.log('Service object:', JSON.stringify(service, null, 2));
-
-            // Handle different possible structures based on RajaOngkir response
             let serviceName, description, costValue, etd;
 
-            // Check structure 1: Direct properties (name, code, service, description, cost, etd)
             if (service.name || service.service) {
                 serviceName = service.service || service.name || service.code || 'Unknown Service';
                 description = service.description || '';
                 costValue = service.cost || 0;
                 etd = service.etd || '';
-
-                console.log('Structure 1 (Direct):', {
-                    serviceName,
-                    description,
-                    costValue,
-                    etd
-                });
-            }
-            // Check structure 2: Nested cost array
-            else if (service.cost && Array.isArray(service.cost) && service.cost.length > 0) {
+            } else if (service.cost && Array.isArray(service.cost) && service.cost.length > 0) {
                 serviceName = service.service || service.service_name || 'Unknown Service';
                 description = service.description || service.service_description || '';
                 costValue = service.cost[0].value || 0;
                 etd = service.cost[0].etd || '';
-
-                console.log('Structure 2 (Nested cost):', {
-                    serviceName,
-                    description,
-                    costValue,
-                    etd
-                });
-            }
-            // Check structure 3: Alternative naming
-            else {
+            } else {
                 serviceName = service.service_name || service.type || 'Unknown Service';
                 description = service.service_description || service.desc || '';
                 costValue = service.value || service.price || 0;
                 etd = service.etd || service.estimation || '';
-
-                console.log('Structure 3 (Alternative):', {
-                    serviceName,
-                    description,
-                    costValue,
-                    etd
-                });
             }
 
-            console.log('Final values:', {
-                serviceName,
-                description,
-                costValue,
-                etd
-            });
-
-            // Only add if we have a valid cost
             if (costValue > 0) {
                 const etdDisplay = etd ? ` (${etd} days)` : '';
                 const descDisplay = description ? description : serviceName;
@@ -1215,55 +1152,37 @@
                     <div class="shipping-cost">IDR ${formatNumber(costValue)}</div>
                 </div>
             `;
-            } else {
-                console.warn(`Service ${index} skipped - no valid cost:`, service);
             }
         });
 
         if (html === '') {
-            console.error('No valid shipping options generated');
             resultsDiv.innerHTML = `
                 <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 20px; text-align: center;">
                     <p style="color: #856404; margin: 0 0 10px 0;">⚠️ No valid shipping options found</p>
-                    <details style="margin-top: 10px; text-align: left;">
-                        <summary style="cursor: pointer; color: #856404;">Debug: View Services Data</summary>
-                        <pre style="font-size: 11px; max-height: 200px; overflow: auto; background: white; padding: 10px; border-radius: 4px;">${JSON.stringify(services, null, 2)}</pre>
-                    </details>
                 </div>
             `;
         } else {
-            console.log('Successfully generated', services.length, 'shipping options');
             resultsDiv.innerHTML = html;
         }
     }
 
     function selectShipping(courierCode, serviceName, cost, description) {
-        // Remove selected class from all options
         document.querySelectorAll('.shipping-option').forEach(option => {
             option.classList.remove('selected');
         });
 
-        // Add selected class to clicked option
         event.currentTarget.classList.add('selected');
 
-        // Check the radio button
         const radio = event.currentTarget.querySelector('input[type="radio"]');
-        if (radio) {
-            radio.checked = true;
-        }
+        if (radio) radio.checked = true;
 
-        // Update hidden inputs
         document.getElementById('courierCode').value = courierCode;
         document.getElementById('courierService').value = serviceName;
         document.getElementById('shippingCostInput').value = cost;
-
-        // Update display
         document.getElementById('shippingCostDisplay').textContent = 'IDR ' + formatNumber(cost);
 
-        // Update grand total
         updateGrandTotal();
 
-        // Enable pay now button
         const payBtn = document.getElementById('payNowBtn');
         payBtn.disabled = false;
         payBtn.querySelector('.btn-text').textContent = 'Pay Now';
@@ -1284,22 +1203,6 @@
     }
 
     // =====================
-    // BILLING TOGGLE
-    // =====================
-    function toggleBillingFields() {
-        const checkbox = document.getElementById('same_as_shipping');
-        const billingFields = document.getElementById('billingFields');
-
-        if (billingFields) {
-            if (checkbox.checked) {
-                billingFields.style.display = 'none';
-            } else {
-                billingFields.style.display = 'block';
-            }
-        }
-    }
-
-    // =====================
     // PAYMENT HANDLING
     // =====================
     function setupPayNowButton() {
@@ -1310,7 +1213,6 @@
     }
 
     function handlePayment() {
-        // Validate form
         const districtId = document.getElementById('shippingDistrictId').value;
         const shippingCost = document.getElementById('shippingCostInput').value;
 
@@ -1324,10 +1226,8 @@
             return;
         }
 
-        // Show loading modal
         document.getElementById('paymentModal').classList.add('show');
 
-        // Submit form
         const form = document.getElementById('checkoutForm');
         const formData = new FormData(form);
         const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
@@ -1342,18 +1242,19 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success && data.snap_token) {
-                    // Hide loading modal
                     document.getElementById('paymentModal').classList.remove('show');
 
-                    // Open Midtrans Snap
                     snap.pay(data.snap_token, {
                         onSuccess: function(result) {
-                            window.location.href = '/checkout/success/' + data.order_number;
+                            console.log('Payment Success:', result);
+                            handleMidtransCallback(data.order_number, result.transaction_id || result.order_id);
                         },
                         onPending: function(result) {
-                            window.location.href = '/orders';
+                            console.log('Payment Pending:', result);
+                            window.location.href = '/checkout/success/' + data.order_number;
                         },
                         onError: function(result) {
+                            console.error('Payment Error:', result);
                             showNotification('error', 'Payment failed. Please try again.');
                         },
                         onClose: function() {
@@ -1370,6 +1271,39 @@
                 document.getElementById('paymentModal').classList.remove('show');
                 showNotification('error', 'An error occurred. Please try again.');
             });
+    }
+
+    // Handle Midtrans callback
+    function handleMidtransCallback(orderNumber, transactionId) {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+        fetch('/checkout/handle-payment', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                order_number: orderNumber,
+                transaction_id: transactionId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = data.redirect_url;
+            } else {
+                showNotification('error', data.message || 'Failed to process payment');
+                setTimeout(() => {
+                    window.location.href = '/checkout/success/' + orderNumber;
+                }, 2000);
+            }
+        })
+        .catch(error => {
+            console.error('Callback error:', error);
+            window.location.href = '/checkout/success/' + orderNumber;
+        });
     }
 
     // =====================
@@ -1413,6 +1347,19 @@
             notification.classList.remove('show');
             setTimeout(() => notification.remove(), 300);
         }, 3000);
+    }
+
+    function toggleBillingFields() {
+        const checkbox = document.getElementById('same_as_shipping');
+        const billingFields = document.getElementById('billingFields');
+
+        if (billingFields) {
+            if (checkbox.checked) {
+                billingFields.style.display = 'none';
+            } else {
+                billingFields.style.display = 'block';
+            }
+        }
     }
 </script>
 

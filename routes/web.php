@@ -113,11 +113,11 @@ Route::middleware('auth')->group(function () {
     Route::put('/cart/update/{id}', [CartController::class, 'updateQuantity'])->name('cart.update');
     Route::delete('/cart/remove/{id}', [CartController::class, 'removeItem'])->name('cart.remove');
 
-    // Checkout routes
+    // Checkout routes - FIXED
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout/create-payment', [CheckoutController::class, 'createPayment'])->name('checkout.create-payment');
     Route::post('/checkout/handle-payment', [CheckoutController::class, 'handlePaymentSuccess'])->name('checkout.handle-payment');
-    Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
+    Route::get('/checkout/success/{orderNumber}', [CheckoutController::class, 'success'])->name('checkout.success');
 });
 
 // =====================
@@ -143,9 +143,6 @@ Route::get('/api/products/filter', [SearchController::class, 'filterByCategory']
 // =====================
 // RajaOngkir API Routes
 // =====================
-// =====================
-// RajaOngkir API Routes
-// =====================
 Route::prefix('api/rajaongkir')->name('rajaongkir.')->group(function () {
     // Step 1: Get provinces
     Route::get('/provinces', [RajaOngkirController::class, 'index'])->name('provinces');
@@ -159,7 +156,3 @@ Route::prefix('api/rajaongkir')->name('rajaongkir.')->group(function () {
     // Step 4: Calculate shipping cost
     Route::post('/check-ongkir', [RajaOngkirController::class, 'checkOngkir'])->name('check-ongkir');
 });
-
-
-//index route for RajaOngkirController
-
