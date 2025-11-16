@@ -16,6 +16,7 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PaymentConfirmationController;
 use App\Http\Controllers\RajaOngkirController;
+use App\Http\Controllers\TrackingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -155,4 +156,9 @@ Route::prefix('api/rajaongkir')->name('rajaongkir.')->group(function () {
 
     // Step 4: Calculate shipping cost
     Route::post('/check-ongkir', [RajaOngkirController::class, 'checkOngkir'])->name('check-ongkir');
+});
+
+Route::middleware('auth')->prefix('tracking')->name('tracking.')->group(function () {
+    Route::get('/{orderNumber}', [TrackingController::class, 'getTracking'])->name('get');
+    Route::get('/{orderNumber}/cached', [TrackingController::class, 'getCachedTracking'])->name('cached');
 });

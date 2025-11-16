@@ -21,6 +21,9 @@ class Order extends Model
         'grand_total',
         'courier_code',
         'courier_service',
+        'waybill_number', // NEW
+        'tracking_history', // NEW
+        'last_tracking_update', // NEW
         'shipping_district_id',
         'total_weight',
         'payment_method',
@@ -53,6 +56,8 @@ class Order extends Model
         'order_date' => 'datetime',
         'shipped_date' => 'datetime',
         'delivered_date' => 'datetime',
+        'last_tracking_update' => 'datetime',
+        'tracking_history' => 'array', // NEW - cast JSON to array
     ];
 
     public static function generateOrderNumber()
@@ -93,6 +98,11 @@ class Order extends Model
     public function userAddress()
     {
         return $this->belongsTo(UserAddress::class, 'address_id');
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
     }
 
     // Accessors
@@ -157,6 +167,26 @@ class Order extends Model
         return $this->billing_address . ', ' . $this->billing_city . ', ' . $this->billing_province . ' ' . $this->billing_postal_code;
     }
 
+    // NEW: Get latest tracking status
+    public function getLatestTrackingStatusAttribute()
+    {
+        if (!$this->tracking_history || empty($this->tracking_history)) {
+            return null;
+        }
+
+        $history = is_string($this->tracking_history)
+            ? json_decode($this->tracking_history, true)
+            : $this->tracking_history;
+
+        return $history[0] ?? null;
+    }
+
+    // NEW: Check if tracking is available
+    public function hasTracking()
+    {
+        return !empty($this->waybill_number) && in_array($this->status, ['shipped', 'delivered']);
+    }
+
     // Scopes
     public function scopePending($query)
     {
@@ -186,11 +216,6 @@ class Order extends Model
     public function needsPayment()
     {
         return $this->payment_status === 'pending' && $this->payment_method !== 'cod';
-    }
-
-    public function reviews()
-    {
-        return $this->hasMany(Review::class);
     }
 
     public function hasUnreviewedItems()
