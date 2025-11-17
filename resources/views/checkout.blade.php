@@ -798,11 +798,11 @@
             <!-- Summary Totals -->
             <div class="summary-row">
                 <span>Subtotal</span>
-                <span>IDR {{ number_format($subtotal, 0, ',', '.') }}</span>
+                <span id="subtotalDisplay">IDR {{ number_format($subtotal, 0, ',', '.') }}</span>
             </div>
             <div class="summary-row">
                 <span>Tax (2.5%)</span>
-                <span>IDR {{ number_format($tax, 0, ',', '.') }}</span>
+                <span id="taxDisplay">IDR {{ number_format($tax, 0, ',', '.') }}</span>
             </div>
             <div class="summary-row">
                 <span>Shipping</span>

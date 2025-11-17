@@ -71,8 +71,8 @@ class CheckoutController extends Controller
         $totalWeight = round($totalWeight);
         $totalWeightKg = $totalWeight / 1000;
         $tax = $subtotal * 0.025;
-        $shipping = 0;
-        $total = $subtotal + $tax + $shipping;
+        $shipping = 0; // Will be updated dynamically via AJAX when user selects shipping option
+        $total = $subtotal + $tax + $shipping; // Initial total without shipping, will update when shipping is selected
 
         return view('checkout', compact(
             'selectedItems',
@@ -191,7 +191,6 @@ class CheckoutController extends Controller
                 if (empty($shippingData['phone']) || $shippingData['phone'] === '08123456789') {
                     throw new \Exception('Nomor telepon tidak tersedia. Silakan lengkapi nomor telepon di profil Anda.');
                 }
-
             } else {
                 // Manual address
                 $shippingData = [
@@ -207,10 +206,12 @@ class CheckoutController extends Controller
             }
 
             // Validate shipping data completeness
-            if (empty($shippingData['name']) || empty($shippingData['email']) ||
+            if (
+                empty($shippingData['name']) || empty($shippingData['email']) ||
                 empty($shippingData['phone']) || empty($shippingData['address']) ||
                 empty($shippingData['city']) || empty($shippingData['province']) ||
-                empty($shippingData['postal_code'])) {
+                empty($shippingData['postal_code'])
+            ) {
                 throw new \Exception('Data alamat tidak lengkap. Pastikan semua field terisi.');
             }
 
@@ -335,7 +336,6 @@ class CheckoutController extends Controller
                 'order_number' => $orderNumber,
                 'order_id' => $order->id
             ]);
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollback();
             Log::error('Validation Error:', $e->errors());
@@ -403,7 +403,6 @@ class CheckoutController extends Controller
                 'order_number' => $order->order_number,
                 'redirect_url' => route('checkout.success', ['orderNumber' => $order->order_number])
             ]);
-
         } catch (\Exception $e) {
             DB::rollback();
             Log::error('Payment Success Handler Error:', [
