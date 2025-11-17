@@ -91,17 +91,10 @@ class CheckoutController extends Controller
     {
         Log::info('Create Payment Request:', $request->all());
 
+        // BASE VALIDATION
         $request->validate([
             'items' => 'required|string',
             'selected_address' => 'required',
-            'shipping_name' => 'required_if:selected_address,manual|string|max:255',
-            'shipping_email' => 'required_if:selected_address,manual|email|max:255',
-            'shipping_phone' => 'required_if:selected_address,manual|string|max:20',
-            'shipping_address' => 'required_if:selected_address,manual|string',
-            'shipping_city' => 'required_if:selected_address,manual|string|max:255',
-            'shipping_province' => 'required_if:selected_address,manual|string|max:255',
-            'shipping_postal_code' => 'required_if:selected_address,manual|string|max:10',
-            'shipping_district_id' => 'required|integer',
             'courier_code' => 'required|string',
             'courier_service' => 'required|string',
             'shipping_cost' => 'required|numeric|min:0',
@@ -109,6 +102,26 @@ class CheckoutController extends Controller
             'same_as_shipping' => 'nullable|boolean',
         ]);
 
+        // CONDITIONAL VALIDATION for manual address
+        if ($request->selected_address === 'manual') {
+            $request->validate([
+                'shipping_name' => 'required|string|max:255',
+                'shipping_email' => 'required|email|max:255',
+                'shipping_phone' => 'required|string|max:20',
+                'shipping_address' => 'required|string',
+                'shipping_city' => 'required|string|max:255',
+                'shipping_province' => 'required|string|max:255',
+                'shipping_postal_code' => 'required|string|max:10',
+                'shipping_district_id' => 'required|integer',
+            ]);
+        } else {
+            // For saved address, district_id might be optional if not available
+            $request->validate([
+                'shipping_district_id' => 'nullable|integer',
+            ]);
+        }
+
+        // BILLING ADDRESS validation
         if (!$request->same_as_shipping) {
             $request->validate([
                 'billing_name' => 'required|string|max:255',
@@ -151,6 +164,7 @@ class CheckoutController extends Controller
             $selectedAddressId = null;
             $shippingData = [];
 
+            // PROCESS ADDRESS DATA
             if ($request->selected_address !== 'manual') {
                 $selectedAddressId = $request->selected_address;
                 $address = UserAddress::where('id', $selectedAddressId)
@@ -161,17 +175,25 @@ class CheckoutController extends Controller
                     throw new \Exception('Selected address not found');
                 }
 
+                // FIX: Use correct field names and proper phone number retrieval
                 $shippingData = [
                     'name' => $address->recipient_name,
                     'email' => Auth::user()->email,
-                    'phone' => $address->phone_number ?? Auth::user()->phone ?? '',
+                    'phone' => $address->phone ?? Auth::user()->phone ?? '08123456789', // Use accessor method or fallback
                     'address' => $address->address,
                     'city' => $address->city,
                     'province' => $address->province,
                     'postal_code' => $address->postal_code,
-                    'district_id' => $request->shipping_district_id,
+                    'district_id' => $address->district_id ?? $request->shipping_district_id ?? null,
                 ];
+
+                // IMPORTANT: Validate that we have complete data
+                if (empty($shippingData['phone']) || $shippingData['phone'] === '08123456789') {
+                    throw new \Exception('Nomor telepon tidak tersedia. Silakan lengkapi nomor telepon di profil Anda.');
+                }
+
             } else {
+                // Manual address
                 $shippingData = [
                     'name' => $request->shipping_name,
                     'email' => $request->shipping_email,
@@ -182,6 +204,14 @@ class CheckoutController extends Controller
                     'postal_code' => $request->shipping_postal_code,
                     'district_id' => $request->shipping_district_id,
                 ];
+            }
+
+            // Validate shipping data completeness
+            if (empty($shippingData['name']) || empty($shippingData['email']) ||
+                empty($shippingData['phone']) || empty($shippingData['address']) ||
+                empty($shippingData['city']) || empty($shippingData['province']) ||
+                empty($shippingData['postal_code'])) {
+                throw new \Exception('Data alamat tidak lengkap. Pastikan semua field terisi.');
             }
 
             $subtotal = $cartItems->sum(function ($item) {

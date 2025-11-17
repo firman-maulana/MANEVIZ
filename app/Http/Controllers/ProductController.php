@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Review;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::active()->with(['category', 'images']);
+        $query = Product::with(['category', 'images']);
 
         // Filter kategori
         if ($request->filled('category')) {
@@ -52,10 +53,9 @@ class ProductController extends Controller
         $products = $query->paginate(12);
         $categories = Category::all();
 
-        // 🔥 FIXED: Get best seller products (top 4 by sales)
-        $bestSellerProducts = Product::active()
-            ->with(['category', 'images'])
-            ->where('total_penjualan', '>', 0) // Only products with sales
+        // Get best seller products (top 4 by sales)
+        $bestSellerProducts = Product::with(['category', 'images'])
+            ->where('total_penjualan', '>', 0)
             ->orderBy('total_penjualan', 'desc')
             ->limit(4)
             ->get();
@@ -64,91 +64,98 @@ class ProductController extends Controller
         if ($bestSellerProducts->count() < 4) {
             $remainingCount = 4 - $bestSellerProducts->count();
             $bestSellerIds = $bestSellerProducts->pluck('id')->toArray();
-            
-            // 🔥 FIXED: Correct query structure
-            $additionalProducts = Product::active()
-                ->with(['category', 'images'])
+
+            $additionalProducts = Product::with(['category', 'images'])
                 ->whereNotIn('id', $bestSellerIds)
-                ->where('is_featured', true) // First try to get featured products
+                ->where('is_featured', true)
                 ->orderBy('created_at', 'desc')
                 ->limit($remainingCount)
                 ->get();
-                
+
             // If still not enough, get the newest products (non-featured)
             if ($additionalProducts->count() < $remainingCount) {
                 $stillNeeded = $remainingCount - $additionalProducts->count();
                 $usedIds = array_merge($bestSellerIds, $additionalProducts->pluck('id')->toArray());
-                
-                $newestProducts = Product::active()
-                    ->with(['category', 'images'])
+
+                $newestProducts = Product::with(['category', 'images'])
                     ->whereNotIn('id', $usedIds)
                     ->orderBy('created_at', 'desc')
                     ->limit($stillNeeded)
                     ->get();
-                    
+
                 $additionalProducts = $additionalProducts->concat($newestProducts);
             }
-                
+
             $bestSellerProducts = $bestSellerProducts->concat($additionalProducts);
         }
 
         return view('allProduk', compact('products', 'categories', 'bestSellerProducts'));
     }
 
-    // 🔥 FIXED METHOD - Dynamic star rating calculation
+    // 🔥 FIXED METHOD - Removed is_active check
     public function show($slug)
     {
-        // Get product with images and reviews
-        $product = Product::active()
-            ->with(['category', 'images', 'reviews.user'])
+        // Get product with images and category
+        $product = Product::with(['images', 'category'])
             ->where('slug', $slug)
             ->firstOrFail();
 
-        // Get reviews with pagination
-        $reviews = $product->reviews()
-            ->verified()
-            ->with(['user', 'orderItem.order'])
-            ->orderBy('created_at', 'desc')
+        // Get related products from same category
+        $relatedProducts = Product::with('images')
+            ->where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->take(4)
+            ->get();
+
+        // 🔥 Get reviews with proper relationships and pagination
+        $reviews = Review::with(['user', 'orderItem'])
+            ->where('product_id', $product->id)
+            ->where('is_verified', true)
+            ->latest()
             ->paginate(10);
 
-        // 🔥 FIXED: Calculate review statistics properly
-        $totalReviews = $product->reviews()->count();
-        $averageRating = $totalReviews > 0 ? $product->reviews()->avg('rating') : 0;
-        
+        // 🔥 Calculate review statistics accurately
+        $totalReviews = Review::where('product_id', $product->id)
+            ->where('is_verified', true)
+            ->count();
+
+        $averageRating = Review::where('product_id', $product->id)
+            ->where('is_verified', true)
+            ->avg('rating') ?? 0;
+
         // Calculate rating distribution (1-5 stars)
         $ratingDistribution = [];
         for ($i = 1; $i <= 5; $i++) {
-            $ratingDistribution[$i] = $product->reviews()->where('rating', $i)->count();
+            $ratingDistribution[$i] = Review::where('product_id', $product->id)
+                ->where('is_verified', true)
+                ->where('rating', $i)
+                ->count();
         }
 
         // Calculate recommendation percentage
-        $recommendationPercentage = $totalReviews > 0 
-            ? ($product->reviews()->where('is_recommended', true)->count() / $totalReviews) * 100 
+        $recommendedCount = Review::where('product_id', $product->id)
+            ->where('is_verified', true)
+            ->where('is_recommended', true)
+            ->count();
+
+        $recommendationPercentage = $totalReviews > 0
+            ? round(($recommendedCount / $totalReviews) * 100, 1)
             : 0;
 
+        // 🔥 Review statistics array
         $reviewStats = [
-            'average_rating' => round($averageRating, 1), // Round to 1 decimal
             'total_reviews' => $totalReviews,
+            'average_rating' => number_format($averageRating, 1), // Format to 1 decimal
             'rating_distribution' => $ratingDistribution,
-            'recommendation_percentage' => round($recommendationPercentage, 1)
+            'recommendation_percentage' => $recommendationPercentage
         ];
-
-        // Related products
-        $relatedProducts = Product::active()
-            ->where('category_id', $product->category_id)
-            ->where('id', '!=', $product->id)
-            ->with(['images'])
-            ->inRandomOrder()
-            ->limit(4)
-            ->get();
 
         return view('detailproduk', compact('product', 'relatedProducts', 'reviews', 'reviewStats'));
     }
 
     public function featured()
     {
-        $featuredProducts = Product::active()
-            ->featured()
+        $featuredProducts = Product::where('is_featured', true)
             ->with(['category', 'images'])
             ->orderBy('created_at', 'desc')
             ->paginate(8);
@@ -158,8 +165,7 @@ class ProductController extends Controller
 
     public function timelessChoice()
     {
-        $timelessProducts = Product::active()
-            ->with(['category', 'images'])
+        $timelessProducts = Product::with(['category', 'images'])
             ->where('badge_type', '!=', 'just-in')
             ->where('created_at', '<', now()->subMonths(3))
             ->orderBy('rating_rata', 'desc')
@@ -171,8 +177,7 @@ class ProductController extends Controller
 
     public function latest()
     {
-        $latestProducts = Product::active()
-            ->with(['category', 'images'])
+        $latestProducts = Product::with(['category', 'images'])
             ->where(function ($q) {
                 $q->where('badge_type', 'just-in')
                   ->orWhere('created_at', '>=', now()->subDays(30));
@@ -191,8 +196,7 @@ class ProductController extends Controller
             return redirect()->route('products.index');
         }
 
-        $products = Product::active()
-            ->with(['category', 'images'])
+        $products = Product::with(['category', 'images'])
             ->where(function ($q) use ($query) {
                 $q->where('name', 'like', '%' . $query . '%')
                   ->orWhere('deskripsi', 'like', '%' . $query . '%');
@@ -203,17 +207,17 @@ class ProductController extends Controller
         return view('products.search', compact('products', 'query'));
     }
 
-    // 🔹 API
+    // API
     public function api_index(Request $request)
     {
-        $query = Product::active()->with(['category', 'images']);
+        $query = Product::with(['category', 'images']);
 
         if ($request->filled('category')) {
             $query->where('category_id', $request->category);
         }
 
         if ($request->filled('featured')) {
-            $query->featured();
+            $query->where('is_featured', true);
         }
 
         $products = $request->has('limit')

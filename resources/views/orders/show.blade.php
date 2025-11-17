@@ -410,6 +410,18 @@
         transform: translateY(-1px);
     }
 
+    .btn-success {
+        background: #10b981;
+        color: white;
+    }
+
+    .btn-success:hover {
+        background: #059669;
+        color: white;
+        text-decoration: none;
+        transform: translateY(-1px);
+    }
+
     /* Responsive */
     @media (max-width: 1024px) {
         .top-row {
@@ -683,7 +695,39 @@
             </div>
         </div>
 
-        @if($order->waybill_number)
+        @if($order->status === 'delivered')
+        <!-- Delivered Success Message -->
+        <div class="order-card tracking-card" style="grid-column: 1 / -1;">
+            <div style="text-align: center; padding: 40px 20px;">
+                <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+                <h2 style="font-size: 28px; font-weight: 700; color: #1a1a1a; margin-bottom: 12px;">
+                    Order Delivered Successfully! 🎉
+                </h2>
+                <p style="font-size: 16px; color: #6b7280; margin-bottom: 8px;">
+                    Your order has been delivered on <strong>{{ $order->delivered_date->format('l, d F Y') }}</strong> at <strong>{{ $order->delivered_date->format('H:i') }}</strong>
+                </p>
+                <p style="font-size: 14px; color: #9ca3af; margin-bottom: 24px;">
+                    We hope you love your purchase! Thank you for shopping with us.
+                </p>
+
+                <div style="background: #f0fdf4; border: 2px solid #86efac; border-radius: 12px; padding: 20px; margin: 24px 0;">
+                    <p style="font-size: 15px; color: #166534; margin-bottom: 12px; font-weight: 600;">
+                        💚 How was your experience?
+                    </p>
+                    <p style="font-size: 13px; color: #166534; margin-bottom: 16px;">
+                        Share your thoughts and help other customers make informed decisions
+                    </p>
+                    <a href="{{ route('order-history.review-form', $item->id) }}" class="btn btn-success" style="background: #10b981; padding: 12px 24px; font-size: 14px;">
+                        Write a Review
+                    </a>
+                </div>
+            </div>
+        </div>
+        @elseif($order->waybill_number && in_array($order->status, ['shipped']))
         <div class="order-card tracking-card" style="grid-column: 1 / -1;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h2 class="card-title">Shipment Tracking</h2>

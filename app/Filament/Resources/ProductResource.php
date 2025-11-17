@@ -79,17 +79,36 @@ class ProductResource extends Resource
 
                 Forms\Components\Toggle::make('is_featured'),
 
-                Forms\Components\TextInput::make('rating_rata')
-                    ->numeric()
-                    ->default(0.00),
+                // 🔒 READONLY FIELDS - Auto-calculated, tidak bisa diinput manual
+                Forms\Components\Section::make('Statistik Produk (Auto-generated)')
+                    ->schema([
+                        Forms\Components\TextInput::make('rating_rata')
+                            ->label('Rating Rata-rata')
+                            ->numeric()
+                            ->default(0.00)
+                            ->disabled()
+                            ->dehydrated(true)
+                            ->helperText('Rating ini di-update otomatis dari review pelanggan'),
 
-                Forms\Components\TextInput::make('total_reviews')
-                    ->numeric()
-                    ->default(0),
+                        Forms\Components\TextInput::make('total_reviews')
+                            ->label('Total Review')
+                            ->numeric()
+                            ->default(0)
+                            ->disabled()
+                            ->dehydrated(true)
+                            ->helperText('Jumlah review dari pelanggan'),
 
-                Forms\Components\TextInput::make('total_penjualan')
-                    ->numeric()
-                    ->default(0),
+                        Forms\Components\TextInput::make('total_penjualan')
+                            ->label('Total Penjualan')
+                            ->numeric()
+                            ->default(0)
+                            ->disabled()
+                            ->dehydrated(true)
+                            ->helperText('Total produk yang terjual'),
+                    ])
+                    ->columns(3)
+                    ->collapsed()
+                    ->description('Data ini di-update otomatis oleh sistem berdasarkan aktivitas user'),
 
                 Forms\Components\KeyValue::make('meta_data'),
 
