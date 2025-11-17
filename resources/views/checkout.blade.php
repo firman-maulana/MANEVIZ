@@ -844,6 +844,8 @@
         setupManualAddressListeners();
         setupShippingCalculator();
         setupPayNowButton();
+        // Initialize grand total on page load
+        updateGrandTotal();
     });
 
     // =====================
@@ -1165,41 +1167,116 @@
         }
     }
 
+    // =====================
+    // SELECT SHIPPING - FIXED VERSION
+    // =====================
     function selectShipping(courierCode, serviceName, cost, description) {
+        console.log('=== SELECT SHIPPING ===');
+        console.log('Courier:', courierCode);
+        console.log('Service:', serviceName);
+        console.log('Cost:', cost);
+
+        // Remove selected class from all options
         document.querySelectorAll('.shipping-option').forEach(option => {
             option.classList.remove('selected');
         });
 
+        // Add selected class to clicked option
         event.currentTarget.classList.add('selected');
 
+        // Check the radio button
         const radio = event.currentTarget.querySelector('input[type="radio"]');
         if (radio) radio.checked = true;
 
+        // Update hidden form inputs
         document.getElementById('courierCode').value = courierCode;
         document.getElementById('courierService').value = serviceName;
         document.getElementById('shippingCostInput').value = cost;
+
+        // Update shipping cost display
         document.getElementById('shippingCostDisplay').textContent = 'IDR ' + formatNumber(cost);
 
+        console.log('Shipping cost input value:', document.getElementById('shippingCostInput').value);
+
+        // ⭐⭐⭐ UPDATE GRAND TOTAL - THIS IS THE MAIN FIX! ⭐⭐⭐
         updateGrandTotal();
 
+        console.log('Grand total after update:', document.getElementById('grandTotalDisplay').textContent);
+
+        // Enable Pay Now button
         const payBtn = document.getElementById('payNowBtn');
         payBtn.disabled = false;
         payBtn.querySelector('.btn-text').textContent = 'Pay Now';
+
+        showNotification('success', `${courierCode.toUpperCase()} - ${serviceName} selected`);
     }
 
+    // =====================
+    // RESET SHIPPING OPTIONS
+    // =====================
     function resetShippingOptions() {
         document.getElementById('shippingOptions').classList.remove('show');
         document.getElementById('shippingResults').innerHTML = '';
         document.getElementById('courierSelect').value = '';
         document.getElementById('shippingCostDisplay').textContent = 'IDR 0';
         document.getElementById('shippingCostInput').value = '0';
+        document.getElementById('courierCode').value = '';
+        document.getElementById('courierService').value = '';
 
         const payBtn = document.getElementById('payNowBtn');
         payBtn.disabled = true;
         payBtn.querySelector('.btn-text').textContent = 'Select Shipping First';
 
         updateGrandTotal();
+        console.log('Grand total after reset:', document.getElementById('grandTotalDisplay').textContent);
     }
+
+    // =====================
+// UPDATE GRAND TOTAL - FINAL VERSION
+// =====================
+function updateGrandTotal() {
+    console.log('=== UPDATE GRAND TOTAL ===');
+
+    // Get subtotal and tax elements by their new IDs
+    const subtotalElement = document.getElementById('subtotalDisplay'); // <-- Ambil dari ID
+    const taxElement = document.getElementById('taxDisplay');           // <-- Ambil dari ID
+
+    if (!subtotalElement || !taxElement) {
+        console.error('Cannot find subtotal or tax display elements');
+        return;
+    }
+
+    // Parse values using the parsePrice function
+    const subtotal = parsePrice(subtotalElement.textContent); // <-- Ambil nilai Subtotal
+    const tax = parsePrice(taxElement.textContent);           // <-- Ambil nilai Tax
+
+    // Get shipping cost from the hidden input field
+    const shippingCostInput = document.getElementById('shippingCostInput');
+    let shippingCost = 0;
+    if (shippingCostInput) {
+        shippingCost = Number(shippingCostInput.value) || 0; // Gunakan Number() lebih aman
+    } else {
+        console.error('Cannot find shippingCostInput element');
+        // Jika elemen tidak ditemukan, tetap lanjutkan dengan 0
+    }
+
+    console.log('Parsed Subtotal:', subtotal);
+    console.log('Parsed Tax:', tax);
+    console.log('Parsed Shipping Cost:', shippingCost);
+
+    // Calculate grand total
+    const grandTotal = subtotal + tax + shippingCost; // <-- Hitung total akhir
+    console.log('Calculated Grand Total:', grandTotal);
+
+    // Update the display for the grand total
+    const grandTotalDisplay = document.getElementById('grandTotalDisplay');
+    if (grandTotalDisplay) {
+        grandTotalDisplay.textContent = 'IDR ' + formatNumber(grandTotal); // <-- Update tampilan
+        console.log('Updated Grand Total Display to:', grandTotalDisplay.textContent);
+    } else {
+        console.error('Cannot find grandTotalDisplay element');
+    }
+}
 
     // =====================
     // PAYMENT HANDLING
@@ -1214,6 +1291,14 @@
     function handlePayment() {
         const districtId = document.getElementById('shippingDistrictId').value;
         const shippingCost = document.getElementById('shippingCostInput').value;
+        const courierCode = document.getElementById('courierCode').value;
+        const courierService = document.getElementById('courierService').value;
+
+        console.log('=== HANDLE PAYMENT ===');
+        console.log('District ID:', districtId);
+        console.log('Shipping Cost:', shippingCost);
+        console.log('Courier:', courierCode);
+        console.log('Service:', courierService);
 
         if (!districtId) {
             showNotification('error', 'Please select a shipping address');
@@ -1225,11 +1310,22 @@
             return;
         }
 
+        if (!courierCode || !courierService) {
+            showNotification('error', 'Please select a shipping service');
+            return;
+        }
+
         document.getElementById('paymentModal').classList.add('show');
 
         const form = document.getElementById('checkoutForm');
         const formData = new FormData(form);
         const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+        // Log form data
+        console.log('Form Data:');
+        for (let [key, value] of formData.entries()) {
+            console.log(key + ':', value);
+        }
 
         fetch('/checkout/create-payment', {
                 method: 'POST',
@@ -1240,6 +1336,8 @@
             })
             .then(response => response.json())
             .then(data => {
+                console.log('Payment response:', data);
+
                 if (data.success && data.snap_token) {
                     document.getElementById('paymentModal').classList.remove('show');
 
@@ -1308,25 +1406,13 @@
     // =====================
     // UTILITY FUNCTIONS
     // =====================
-    function updateGrandTotal() {
-        const subtotalElement = document.querySelector('.summary-row:nth-child(1) span:last-child');
-        const taxElement = document.querySelector('.summary-row:nth-child(2) span:last-child');
-        const shippingCost = parseInt(document.getElementById('shippingCostInput').value) || 0;
-
-        if (subtotalElement && taxElement) {
-            const subtotal = parsePrice(subtotalElement.textContent);
-            const tax = parsePrice(taxElement.textContent);
-            const grandTotal = subtotal + tax + shippingCost;
-
-            document.getElementById('grandTotalDisplay').textContent = 'IDR ' + formatNumber(grandTotal);
-        }
-    }
-
     function formatNumber(num) {
         return new Intl.NumberFormat('id-ID').format(num);
     }
 
     function parsePrice(priceText) {
+        // Remove "IDR", spaces, dots (thousand separator)
+        // Keep only digits
         return parseInt(priceText.replace(/[^\d]/g, '')) || 0;
     }
 

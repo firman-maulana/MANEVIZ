@@ -34,16 +34,37 @@ class ProductController extends Controller
         // Sorting
         switch ($request->get('sort', 'newest')) {
             case 'price_low':
-                $query->orderBy('harga', 'asc');
+                // Sort by final price (considering discount)
+                $query->orderByRaw('
+                    CASE
+                        WHEN discount_percentage > 0
+                        AND (discount_start_date IS NULL OR discount_start_date <= NOW())
+                        AND (discount_end_date IS NULL OR discount_end_date >= NOW())
+                        THEN (COALESCE(harga_jual, harga) - (COALESCE(harga_jual, harga) * discount_percentage / 100))
+                        ELSE COALESCE(harga_jual, harga)
+                    END ASC
+                ');
                 break;
             case 'price_high':
-                $query->orderBy('harga', 'desc');
+                $query->orderByRaw('
+                    CASE
+                        WHEN discount_percentage > 0
+                        AND (discount_start_date IS NULL OR discount_start_date <= NOW())
+                        AND (discount_end_date IS NULL OR discount_end_date >= NOW())
+                        THEN (COALESCE(harga_jual, harga) - (COALESCE(harga_jual, harga) * discount_percentage / 100))
+                        ELSE COALESCE(harga_jual, harga)
+                    END DESC
+                ');
                 break;
             case 'name':
                 $query->orderBy('name', 'asc');
                 break;
             case 'popular':
                 $query->orderBy('total_penjualan', 'desc');
+                break;
+            case 'discount':
+                // Sort by highest discount first
+                $query->orderBy('discount_percentage', 'desc');
                 break;
             default:
                 $query->orderBy('created_at', 'desc');
@@ -92,7 +113,6 @@ class ProductController extends Controller
         return view('allProduk', compact('products', 'categories', 'bestSellerProducts'));
     }
 
-    // 🔥 FIXED METHOD - Removed is_active check
     public function show($slug)
     {
         // Get product with images and category
@@ -107,14 +127,14 @@ class ProductController extends Controller
             ->take(4)
             ->get();
 
-        // 🔥 Get reviews with proper relationships and pagination
+        // Get reviews with proper relationships and pagination
         $reviews = Review::with(['user', 'orderItem'])
             ->where('product_id', $product->id)
             ->where('is_verified', true)
             ->latest()
             ->paginate(10);
 
-        // 🔥 Calculate review statistics accurately
+        // Calculate review statistics accurately
         $totalReviews = Review::where('product_id', $product->id)
             ->where('is_verified', true)
             ->count();
@@ -142,10 +162,10 @@ class ProductController extends Controller
             ? round(($recommendedCount / $totalReviews) * 100, 1)
             : 0;
 
-        // 🔥 Review statistics array
+        // Review statistics array
         $reviewStats = [
             'total_reviews' => $totalReviews,
-            'average_rating' => number_format($averageRating, 1), // Format to 1 decimal
+            'average_rating' => number_format($averageRating, 1),
             'rating_distribution' => $ratingDistribution,
             'recommendation_percentage' => $recommendationPercentage
         ];
@@ -233,11 +253,13 @@ class ProductController extends Controller
                     'name' => $product->name,
                     'slug' => $product->slug,
                     'category' => $product->category?->name,
-                    'price' => $product->formatted_price ?? number_format($product->harga, 0, ',', '.'),
-                    'final_price' => number_format($product->final_price ?? $product->harga_jual, 0, ',', '.'),
+                    'price' => $product->formatted_original_price,
+                    'final_price' => $product->formatted_final_price,
+                    'discount_percentage' => $product->discount_percentage,
+                    'has_discount' => $product->hasActiveDiscount(),
                     'image' => $primaryImage ? asset('storage/' . $primaryImage->image_path) : null,
                     'badge' => $product->badge_type ?? null,
-                    'is_on_sale' => $product->harga_jual < $product->harga,
+                    'is_on_sale' => $product->is_on_sale,
                     'stock_status' => $product->stock_kuantitas > 0 ? 'In Stock' : 'Out of Stock',
                     'rating' => $product->rating_rata,
                     'url' => route('products.show', $product->slug),
@@ -249,5 +271,18 @@ class ProductController extends Controller
                 'total' => $products->total(),
             ] : null
         ]);
+    }
+
+    /**
+     * 🔥 NEW: Get products with active discounts
+     */
+    public function discounted(Request $request)
+    {
+        $products = Product::with(['category', 'images'])
+            ->withActiveDiscount()
+            ->orderBy('discount_percentage', 'desc')
+            ->paginate(12);
+
+        return view('products.discounted', compact('products'));
     }
 }

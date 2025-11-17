@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::table('products', function (Blueprint $table) {
             $table->decimal('discount_percentage', 5, 2)->default(0)->after('harga_jual');
-            $table->timestamp('discount_start_date')->nullable()->after('discount_percentage');
+            $table->timestamp ('discount_start_date')->nullable()->after('discount_percentage');
             $table->timestamp('discount_end_date')->nullable()->after('discount_start_date');
         });
     }

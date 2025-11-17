@@ -1062,6 +1062,257 @@ use App\Models\Product;
             gap: 40px;
         }
     }
+
+
+
+    /* ============================================
+   DETAILPRODUK.BLADE.PHP - DISCOUNT STYLES
+   ============================================ */
+
+    /* Product Price Section */
+    .product-price-section {
+        margin: 20px 0;
+    }
+
+    /* Discount Badge with Animation */
+    .discount-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+        animation: pulse-subtle 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-subtle {
+
+        0%,
+        100% {
+            transform: scale(1);
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+        }
+
+        50% {
+            transform: scale(1.02);
+            box-shadow: 0 6px 16px rgba(255, 107, 107, 0.4);
+        }
+    }
+
+    /* Original Price (Struck Through) */
+    .original-price {
+        color: #999;
+        font-size: 1.2rem;
+        text-decoration: line-through;
+        font-weight: 400;
+        margin-bottom: 5px;
+    }
+
+    /* Discounted Price Display */
+    .product-price[style*="dc3545"] {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #dc3545;
+        margin-bottom: 10px;
+    }
+
+    /* Savings Info Box */
+    .savings-info {
+        display: inline-block;
+        background: #d4edda;
+        color: #155724;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        border: 1px solid #c3e6cb;
+        animation: slideInUp 0.5s ease-out;
+    }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .savings-info svg {
+        width: 16px;
+        height: 16px;
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 5px;
+    }
+
+    /* Discount Timer Box */
+    .discount-timer {
+        margin-top: 12px;
+        padding: 10px;
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+        border-radius: 8px;
+        color: #856404;
+    }
+
+    .discount-timer svg {
+        width: 16px;
+        height: 16px;
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 5px;
+    }
+
+    .discount-timer strong {
+        font-weight: 700;
+    }
+
+    /* Regular Price (No Discount) */
+    .product-price {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #212529;
+    }
+
+    /* Tablet Responsive */
+    @media (max-width: 992px) {
+        .discount-badge {
+            padding: 5px 10px;
+            font-size: 13px;
+        }
+
+        .original-price {
+            font-size: 1.1rem;
+        }
+
+        .product-price[style*="dc3545"] {
+            font-size: 2.2rem;
+        }
+
+        .savings-info {
+            padding: 7px 14px;
+            font-size: 13px;
+        }
+
+        .discount-timer {
+            padding: 9px;
+            font-size: 13px;
+        }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .product-price-section {
+            margin: 15px 0;
+        }
+
+        .discount-badge {
+            padding: 5px 10px;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .original-price {
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .product-price {
+            font-size: 2rem !important;
+        }
+
+        .product-price[style*="dc3545"] {
+            font-size: 2rem !important;
+        }
+
+        .savings-info {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .savings-info svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .discount-timer {
+            padding: 8px;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .discount-timer svg {
+            width: 14px;
+            height: 14px;
+        }
+    }
+
+    /* Small Mobile Responsive */
+    @media (max-width: 576px) {
+        .discount-badge {
+            padding: 4px 8px;
+            font-size: 11px;
+        }
+
+        .original-price {
+            font-size: 0.9rem;
+        }
+
+        .product-price {
+            font-size: 1.75rem !important;
+        }
+
+        .product-price[style*="dc3545"] {
+            font-size: 1.75rem !important;
+        }
+
+        .savings-info {
+            padding: 5px 10px;
+            font-size: 11px;
+        }
+
+        .discount-timer {
+            padding: 7px;
+            font-size: 11px;
+        }
+    }
+
+    /* Very Small Mobile */
+    @media (max-width: 400px) {
+        .discount-badge {
+            padding: 3px 7px;
+            font-size: 10px;
+        }
+
+        .original-price {
+            font-size: 0.85rem;
+        }
+
+        .product-price {
+            font-size: 1.5rem !important;
+        }
+
+        .product-price[style*="dc3545"] {
+            font-size: 1.5rem !important;
+        }
+
+        .savings-info {
+            padding: 4px 8px;
+            font-size: 10px;
+        }
+
+        .discount-timer {
+            padding: 6px;
+            font-size: 10px;
+        }
+    }
 </style>
 
 <div class="product-detail-container">
@@ -1153,8 +1404,50 @@ use App\Models\Product;
                     </div>
 
                     <!-- Price -->
-                    <div class="product-price">
-                        IDR {{ number_format($product->harga_jual ?? $product->harga, 0, ',', '.') }}
+                    <div class="product-price-section" style="margin: 20px 0;">
+                        @if($product->hasActiveDiscount() || $product->is_on_sale)
+                        <!-- Discount Badge -->
+                        @if($product->hasActiveDiscount())
+                        <div class="discount-badge" style="display: inline-block; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); color: white; padding: 6px 12px; border-radius: 8px; font-size: 14px; font-weight: 700; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);">
+                            {{ $product->getDiscountLabel() }} OFF
+                        </div>
+                        @endif
+
+                        <!-- Original Price (struck through) -->
+                        <div class="original-price" style="color: #999; font-size: 1.2rem; text-decoration: line-through; font-weight: 400; margin-bottom: 5px;">
+                            IDR {{ number_format($product->getOriginalPrice(), 0, ',', '.') }}
+                        </div>
+
+                        <!-- Discounted Price (large, red) -->
+                        <div class="product-price" style="font-size: 2.5rem; font-weight: bold; color: #dc3545; margin-bottom: 10px;">
+                            IDR {{ number_format($product->final_price, 0, ',', '.') }}
+                        </div>
+
+                        <!-- Savings Amount -->
+                        @if($product->hasActiveDiscount())
+                        <div class="savings-info" style="display: inline-block; background: #d4edda; color: #155724; padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; border: 1px solid #c3e6cb;">
+                            <svg style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 5px;" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
+                            </svg>
+                            You save IDR {{ number_format($product->getDiscountAmount(), 0, ',', '.') }}
+                        </div>
+                        @endif
+
+                        <!-- Discount Timer (if discount has end date) -->
+                        @if($product->discount_end_date)
+                        <div class="discount-timer" style="margin-top: 12px; padding: 10px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; color: #856404;">
+                            <svg style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 5px;" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z" />
+                            </svg>
+                            <strong>Hurry!</strong> Discount ends {{ $product->discount_end_date->format('d M Y, H:i') }}
+                        </div>
+                        @endif
+                        @else
+                        <!-- Regular Price -->
+                        <div class="product-price" style="font-size: 2rem; font-weight: bold; color: #212529;">
+                            IDR {{ number_format($product->final_price, 0, ',', '.') }}
+                        </div>
+                        @endif
                     </div>
 
                     <!-- Color Selection -->
@@ -1423,329 +1716,267 @@ use App\Models\Product;
 </div>
 
 <script>
-    // Slideshow variables
-    let currentSlide = 0;
-    let totalImages = 0;
-    let imagesPerSlide = 4; // Default for desktop
-
-    // Initialize slideshow
-    document.addEventListener('DOMContentLoaded', function() {
-        initializeSlideshow();
-        updateResponsiveSettings();
-    });
-
-    // Update settings based on screen size
-    function updateResponsiveSettings() {
-        const screenWidth = window.innerWidth;
-        if (screenWidth <= 576) {
-            imagesPerSlide = 1;
-        } else if (screenWidth <= 768) {
-            imagesPerSlide = 2;
-        } else if (screenWidth <= 992) {
-            imagesPerSlide = 3;
-        } else {
-            imagesPerSlide = 4;
-        }
-
-        // Recalculate total slides needed
-        if (totalImages > 0) {
-            const totalSlides = Math.ceil(totalImages / imagesPerSlide);
-            generateDots(totalSlides);
-            updateSlidePosition();
-        }
-    }
-
-    function initializeSlideshow() {
-        const thumbnails = document.querySelectorAll('.thumbnail');
-        totalImages = thumbnails.length;
-
-        if (totalImages <= imagesPerSlide) {
-            // Hide navigation if all images fit in one view
-            const slideshow = document.querySelector('.thumbnail-slideshow');
-            if (slideshow) {
-                slideshow.classList.add('no-navigation');
-            }
-            return;
-        }
-
-        const totalSlides = Math.ceil(totalImages / imagesPerSlide);
-        generateDots(totalSlides);
-        updateNavigationButtons();
-    }
-
-    function generateDots(totalSlides) {
-        const dotsContainer = document.getElementById('slideshowDots');
-        if (!dotsContainer) return;
-
-        dotsContainer.innerHTML = '';
-
-        for (let i = 0; i < totalSlides; i++) {
-            const dot = document.createElement('div');
-            dot.className = `dot ${i === 0 ? 'active' : ''}`;
-            dot.onclick = () => goToSlide(i);
-            dotsContainer.appendChild(dot);
-        }
-    }
-
-    function updateSlidePosition() {
-        const container = document.getElementById('thumbnailContainer');
-        if (!container) return;
-
-        const slideWidth = 100 / imagesPerSlide;
-        const translateX = -currentSlide * slideWidth;
-        container.style.transform = `translateX(${translateX}%)`;
-
-        updateDots();
-        updateNavigationButtons();
-    }
-
-    function updateDots() {
-        const dots = document.querySelectorAll('.dot');
-        dots.forEach((dot, index) => {
-            dot.classList.toggle('active', index === currentSlide);
-        });
-    }
-
-    function updateNavigationButtons() {
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const totalSlides = Math.ceil(totalImages / imagesPerSlide);
-
-        if (prevBtn) {
-            prevBtn.disabled = currentSlide === 0;
-        }
-
-        if (nextBtn) {
-            nextBtn.disabled = currentSlide === totalSlides - 1;
-        }
-    }
-
-    function previousSlide() {
-        if (currentSlide > 0) {
-            currentSlide--;
-            updateSlidePosition();
-        }
-    }
-
-    function nextSlide() {
-        const totalSlides = Math.ceil(totalImages / imagesPerSlide);
-        if (currentSlide < totalSlides - 1) {
-            currentSlide++;
-            updateSlidePosition();
-        }
-    }
-
-    function goToSlide(slideIndex) {
-        currentSlide = slideIndex;
-        updateSlidePosition();
-    }
-
-    // Handle window resize
-    window.addEventListener('resize', function() {
-        updateResponsiveSettings();
-    });
-
-    // Existing functions
+    // Global variables
     let selectedColor = 'Black';
     let selectedSize = 'M';
+    const productId = {{ $product->id }};
+    const isAuthenticated = {{ Auth::check() ? 'true' : 'false' }};
+    const loginUrl = "{{ route('login') }}";
+    const cartAddUrl = "{{ route('cart.add') }}";
+    const checkoutUrl = "{{ route('checkout.index') }}";
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-    function changeMainImage(imageSrc, thumbnailElement, imageIndex) {
-        document.getElementById('mainProductImage').src = imageSrc;
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Page loaded. Product ID:', productId);
+        console.log('Is Authenticated:', isAuthenticated);
+        console.log('CSRF Token:', csrfToken ? 'Found' : 'Not Found');
+    });
 
-        // Remove active class from all thumbnails
-        document.querySelectorAll('.thumbnail').forEach(thumb => {
-            thumb.classList.remove('active');
-        });
-
-        // Add active class to clicked thumbnail
-        thumbnailElement.classList.add('active');
-    }
-
+    // Color selection
     function selectColor(element, color) {
-        // Remove active class from all color options
         document.querySelectorAll('.color-option').forEach(option => {
             option.classList.remove('active');
         });
-
-        // Add active class to selected color
         element.classList.add('active');
-
-        // Update selected color display
         document.getElementById('selectedColor').textContent = color;
         selectedColor = color;
+        console.log('Color selected:', color);
     }
 
+    // Size selection
     function selectSize(element, size) {
-        // Remove active class from all size options
         document.querySelectorAll('.size-option').forEach(option => {
             option.classList.remove('active');
         });
-
-        // Add active class to selected size
         element.classList.add('active');
         selectedSize = size;
+        console.log('Size selected:', size);
     }
 
+    // ADD TO CART FUNCTION
     function addToCart() {
-        // Check if user is authenticated
-        @guest
-        showNotification('error', 'Silakan login terlebih dahulu untuk menambahkan produk ke keranjang');
-        setTimeout(() => {
-            window.location.href = '{{ route("login") }}';
-        }, 2000);
-        return;
-        @endguest
+        console.log('Add to Cart clicked');
 
-        // Disable button to prevent double submission
+        // Check authentication
+        if (!isAuthenticated) {
+            console.log('User not authenticated');
+            showNotification('error', 'Silakan login terlebih dahulu untuk menambahkan produk ke keranjang');
+            setTimeout(() => {
+                window.location.href = loginUrl;
+            }, 2000);
+            return;
+        }
+
+        // Check CSRF token
+        if (!csrfToken) {
+            console.error('CSRF token not found');
+            showNotification('error', 'Security token not found. Please refresh the page.');
+            return;
+        }
+
+        // Get button
         const button = document.querySelector('.add-to-cart-btn');
+        if (!button) {
+            console.error('Add to cart button not found');
+            return;
+        }
+
+        // Disable button
         const originalText = button.innerHTML;
         button.disabled = true;
         button.innerHTML = `
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px; animation: spin 1s linear infinite;">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <path d="M16 12l-4-4-4 4M12 16V8"></path>
-                </svg>
-                Adding...
-            `;
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px; animation: spin 1s linear infinite;">
+                <circle cx="12" cy="12" r="10"></circle>
+            </svg>
+            Adding...
+        `;
 
         // Prepare data
-        const data = {
-            product_id: {
-                {
-                    $product - > id
-                }
-            },
+        const requestData = {
+            product_id: productId,
             kuantitas: 1,
             color: selectedColor,
             size: selectedSize
         };
 
-        // AJAX request
-        fetch('{{ route("cart.add") }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(result => {
-                if (result.success) {
-                    showNotification('success', result.message);
+        console.log('Sending request to:', cartAddUrl);
+        console.log('Request data:', requestData);
+
+        // Send request
+        fetch(cartAddUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+                return response.json().then(err => {
+                    throw new Error(err.message || 'Network response was not ok');
+                });
+            }
+            return response.json();
+        })
+        .then(result => {
+            console.log('Response data:', result);
+
+            if (result.success) {
+                showNotification('success', result.message || 'Produk berhasil ditambahkan ke keranjang');
+
+                // Update cart count
+                if (result.cart_count !== undefined) {
                     updateCartCount(result.cart_count);
-                } else {
-                    showNotification('error', result.message);
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showNotification('error', 'Terjadi kesalahan. Silakan coba lagi.');
-            })
-            .finally(() => {
-                button.disabled = false;
-                button.innerHTML = originalText;
-            });
+            } else {
+                showNotification('error', result.message || 'Gagal menambahkan ke keranjang');
+            }
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            showNotification('error', 'Terjadi kesalahan: ' + error.message);
+        })
+        .finally(() => {
+            // Re-enable button
+            button.disabled = false;
+            button.innerHTML = originalText;
+        });
     }
 
-    // Buy Now Function
+    // BUY NOW FUNCTION
     function buyNow() {
-        // Check if user is authenticated
-        @guest
-        showNotification('error', 'Silakan login terlebih dahulu untuk melakukan pembelian');
-        setTimeout(() => {
-            window.location.href = '{{ route("login") }}';
-        }, 2000);
-        return;
-        @endguest
+        console.log('Buy Now clicked');
 
-        // Disable button to prevent double submission
+        // Check authentication
+        if (!isAuthenticated) {
+            console.log('User not authenticated');
+            showNotification('error', 'Silakan login terlebih dahulu untuk melakukan pembelian');
+            setTimeout(() => {
+                window.location.href = loginUrl;
+            }, 2000);
+            return;
+        }
+
+        // Check CSRF token
+        if (!csrfToken) {
+            console.error('CSRF token not found');
+            showNotification('error', 'Security token not found. Please refresh the page.');
+            return;
+        }
+
+        // Get button
         const button = document.querySelector('.buy-now-btn');
+        if (!button) {
+            console.error('Buy now button not found');
+            return;
+        }
+
+        // Disable button
         const originalText = button.innerHTML;
         button.disabled = true;
         button.innerHTML = `
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px; animation: spin 1s linear infinite;">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <path d="M16 12l-4-4-4 4M12 16V8"></path>
-                </svg>
-                Processing...
-            `;
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px; animation: spin 1s linear infinite;">
+                <circle cx="12" cy="12" r="10"></circle>
+            </svg>
+            Processing...
+        `;
 
-        // First, add to cart temporarily
-        const data = {
-            product_id: {
-                {
-                    $product - > id
-                }
-            },
+        // Prepare data
+        const requestData = {
+            product_id: productId,
             kuantitas: 1,
             color: selectedColor,
             size: selectedSize
         };
 
-        // AJAX request to add to cart first
-        fetch('{{ route("cart.add") }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(result => {
-                if (result.success) {
-                    // If successfully added to cart, redirect to checkout with the item
-                    // We need to get the cart item ID from the response or find it another way
-                    // For now, let's redirect to checkout and let checkout page handle getting the latest cart items
-                    showNotification('success', 'Produk ditambahkan ke keranjang. Mengarahkan ke checkout...');
+        console.log('Sending request to:', cartAddUrl);
+        console.log('Request data:', requestData);
 
-                    // Redirect to checkout after a brief delay
-                    setTimeout(() => {
-                        window.location.href = '{{ route("checkout.index") }}';
-                    }, 1500);
-                } else {
-                    showNotification('error', result.message);
-                    button.disabled = false;
-                    button.innerHTML = originalText;
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showNotification('error', 'Terjadi kesalahan. Silakan coba lagi.');
+        // First add to cart
+        fetch(cartAddUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+                return response.json().then(err => {
+                    throw new Error(err.message || 'Network response was not ok');
+                });
+            }
+            return response.json();
+        })
+        .then(result => {
+            console.log('Response data:', result);
+
+            if (result.success) {
+                showNotification('success', 'Produk ditambahkan. Mengarahkan ke checkout...');
+
+                // Redirect to checkout
+                setTimeout(() => {
+                    console.log('Redirecting to:', checkoutUrl);
+                    window.location.href = checkoutUrl;
+                }, 1500);
+            } else {
+                showNotification('error', result.message || 'Gagal menambahkan ke keranjang');
                 button.disabled = false;
                 button.innerHTML = originalText;
-            });
+            }
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            showNotification('error', 'Terjadi kesalahan: ' + error.message);
+            button.disabled = false;
+            button.innerHTML = originalText;
+        });
     }
 
+    // SHOW NOTIFICATION
     function showNotification(type, message) {
+        console.log('Notification:', type, message);
+
+        // Remove existing notifications
+        const existingNotifications = document.querySelectorAll('.notification');
+        existingNotifications.forEach(notif => notif.remove());
+
         const notification = document.createElement('div');
         notification.className = `notification notification-${type}`;
         notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                padding: 15px 20px;
-                border-radius: 8px;
-                color: white;
-                z-index: 10000;
-                font-weight: 500;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                transform: translateX(400px);
-                transition: transform 0.3s ease;
-                max-width: 350px;
-                ${type === 'success' ? 'background: #28a745;' : 'background: #dc3545;'}
-            `;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            z-index: 10000;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            max-width: 350px;
+            ${type === 'success' ? 'background: #28a745;' : 'background: #dc3545;'}
+        `;
         notification.textContent = message;
 
         document.body.appendChild(notification);
 
+        // Slide in
         setTimeout(() => {
             notification.style.transform = 'translateX(0)';
         }, 100);
 
+        // Slide out and remove
         setTimeout(() => {
             notification.style.transform = 'translateX(400px)';
             setTimeout(() => {
@@ -1756,55 +1987,31 @@ use App\Models\Product;
         }, 3000);
     }
 
+    // UPDATE CART COUNT
     function updateCartCount(count) {
-        const cartCountElements = document.querySelectorAll('.cart-count, #cart-count, .navbar-cart-count');
+        console.log('Updating cart count to:', count);
+
+        const cartCountElements = document.querySelectorAll('.cart-count, #cart-count, .navbar-cart-count, [data-cart-count]');
+
         cartCountElements.forEach(element => {
             element.textContent = count;
-            element.style.transform = 'scale(1.2)';
+            element.style.transition = 'transform 0.2s ease';
+            element.style.transform = 'scale(1.3)';
+
             setTimeout(() => {
                 element.style.transform = 'scale(1)';
             }, 200);
         });
     }
 
-    function toggleWishlist() {
-        const wishlistBtn = document.querySelector('.wishlist-btn svg');
-        const isInWishlist = wishlistBtn.getAttribute('fill') === 'currentColor';
-
-        if (isInWishlist) {
-            wishlistBtn.setAttribute('fill', 'none');
-            showNotification('success', 'Removed from wishlist');
-        } else {
-            wishlistBtn.setAttribute('fill', 'currentColor');
-            showNotification('success', 'Added to wishlist');
+    // Add spin animation for loading
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
-    }
-
-    // Image Modal Functions
-    function openImageModal(imageSrc) {
-        const modal = document.getElementById('imageModal');
-        const modalImage = document.getElementById('modalImage');
-
-        modalImage.src = imageSrc;
-        modal.classList.add('active');
-
-        // Prevent body scroll when modal is open
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeImageModal() {
-        const modal = document.getElementById('imageModal');
-        modal.classList.remove('active');
-
-        // Restore body scroll
-        document.body.style.overflow = 'auto';
-    }
-
-    // Close modal with ESC key
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            closeImageModal();
-        }
-    });
+    `;
+    document.head.appendChild(style);
 </script>
 @endsection

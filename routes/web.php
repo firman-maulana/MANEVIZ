@@ -162,3 +162,5 @@ Route::middleware('auth')->prefix('tracking')->name('tracking.')->group(function
     Route::get('/{orderNumber}', [TrackingController::class, 'getTracking'])->name('get');
     Route::get('/{orderNumber}/cached', [TrackingController::class, 'getCachedTracking'])->name('cached');
 });
+
+Route::get('/products/on-sale', [ProductController::class, 'discounted'])->name('products.discounted');

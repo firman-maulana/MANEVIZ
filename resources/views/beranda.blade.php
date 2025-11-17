@@ -208,7 +208,7 @@
         margin-top: 13px;
     }
 
-    .mostculture h2{
+    .mostculture h2 {
         color: black;
         text-align: left;
         padding-left: 20px;
@@ -697,6 +697,112 @@
         }
     }
 
+
+    /* ============================================
+   BERANDA.BLADE.PHP - DISCOUNT STYLES
+   ============================================ */
+
+    /* Discount Badge with Pulse Animation */
+    @keyframes pulse {
+
+        0%,
+        100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.05);
+        }
+    }
+
+    .sale-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background-color: #dc3545;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 10px;
+        font-weight: 600;
+        z-index: 2;
+        text-transform: uppercase;
+    }
+
+    /* Enhanced gradient badge for active discounts */
+    .sale-badge[style*="gradient"] {
+        animation: pulse 2s infinite;
+        box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+    }
+
+    /* Product Pricing with Discount */
+    .product-pricing {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .product-price-original {
+        color: #999;
+        font-size: 8px;
+        font-weight: 400;
+        text-decoration: line-through;
+    }
+
+    .product-price {
+        color: #666 !important;
+        font-weight: 400 !important;
+        font-size: 12px;
+    }
+
+    /* Discounted price styling */
+    .product-price[style*="dc3545"] {
+        color: #dc3545 !important;
+        font-weight: 600 !important;
+    }
+
+    /* Savings Display */
+    .product-savings {
+        color: #28a745;
+        font-size: 10px;
+        font-weight: 500;
+        margin: 2px 0 0 0;
+    }
+
+    /* Mobile Responsive - Beranda */
+    @media (max-width: 768px) {
+        .sale-badge {
+            top: 8px;
+            left: 8px;
+            padding: 3px 6px;
+            font-size: 9px;
+        }
+
+        .product-price-original {
+            font-size: 9px;
+        }
+
+        .product-savings {
+            font-size: 9px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .sale-badge {
+            top: 6px;
+            left: 6px;
+            padding: 2px 5px;
+            font-size: 8px;
+        }
+
+        .product-price-original {
+            font-size: 8px;
+        }
+
+        .product-savings {
+            font-size: 8px;
+        }
+    }
 </style>
 
 <!-- Hero Section -->
@@ -732,12 +838,12 @@
         <!-- Navigation Buttons -->
         <button class="carousel-nav prev" id="prevBtn" aria-label="Previous slide">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M15 18l-6-6 6-6"/>
+                <path d="M15 18l-6-6 6-6" />
             </svg>
         </button>
         <button class="carousel-nav next" id="nextBtn" aria-label="Next slide">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M9 18l6-6-6-6"/>
+                <path d="M9 18l6-6-6-6" />
             </svg>
         </button>
     </div>
@@ -760,79 +866,96 @@
     <div class="container">
         <div class="product-grid-horizontal">
             @if($latestProducts->count() > 0)
-                @foreach($latestProducts as $product)
-                    <a href="{{ route('products.show', $product->slug) }}" class="product-card">
-                        <div class="product-image">
-                            @if($product->primaryImage)
-                                <img src="{{ asset('storage/' . $product->primaryImage->image_path) }}"
-                                    alt="{{ $product->primaryImage->alt_text ?: $product->name }}">
-                            @elseif($product->images->isNotEmpty())
-                                <img src="{{ asset('storage/' . $product->images->first()->image_path) }}"
-                                    alt="{{ $product->name }}">
-                            @else
-                                <img src="{{ asset('images/no-image.png') }}"
-                                    onerror="this.onerror=null;this.src='https://via.placeholder.com/300x300?text=No+Image';"
-                                    alt="No Image">
-                            @endif
+            @foreach($latestProducts as $product)
+            <a href="{{ route('products.show', $product->slug) }}" class="product-card">
+                <div class="product-image">
+                    @if($product->primaryImage)
+                    <img src="{{ asset('storage/' . $product->primaryImage->image_path) }}"
+                        alt="{{ $product->primaryImage->alt_text ?: $product->name }}">
+                    @elseif($product->images->isNotEmpty())
+                    <img src="{{ asset('storage/' . $product->images->first()->image_path) }}"
+                        alt="{{ $product->name }}">
+                    @else
+                    <img src="{{ asset('images/no-image.png') }}"
+                        onerror="this.onerror=null;this.src='https://via.placeholder.com/300x300?text=No+Image';"
+                        alt="No Image">
+                    @endif
 
-                            <!-- Sale Badge (if product is on sale) -->
-                            @if($product->is_on_sale)
-                                <div class="sale-badge">Sale</div>
-                            @endif
+                    <!-- 🔥 NEW: Discount Badge (replaces or combines with sale badge) -->
+                    @if($product->hasActiveDiscount())
+                    <div class="sale-badge" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); animation: pulse 2s infinite;">
+                        {{ $product->getDiscountLabel() }}
+                    </div>
+                    @elseif($product->is_on_sale)
+                    <div class="sale-badge">Sale</div>
+                    @endif
 
-                            <!-- Just In Badge for latest products -->
-                            <div class="bestseller-badge">Just In</div>
-                        </div>
-                        <div class="product-info">
-                            <div class="product-content">
-                                <div class="product-details">
-                                    <h4 class="product-name">{{ $product->name }}</h4>
-                                    <div class="product-pricing">
-                                        @if($product->is_on_sale)
-                                            <span class="product-price-original">IDR {{ number_format($product->harga, 0, ',', '.') }}</span>
-                                            <span class="product-price" style="color: #666 !important; font-weight: 400 !important;">IDR {{ number_format($product->harga_jual, 0, ',', '.') }}</span>
-                                        @else
-                                            <span class="product-price" style="color: #666 !important; font-weight: 400 !important;">IDR {{ number_format($product->final_price, 0, ',', '.') }}</span>
-                                        @endif
-                                    </div>
-
-                                    <!-- Sales count (if available) -->
-                                    @if($product->total_penjualan > 0)
-                                        <p class="product-sales">{{ $product->total_penjualan }} sold</p>
-                                    @endif
-
-                                    <!-- Rating (if available) -->
-                                    @if($product->rating_rata > 0)
-                                        <div class="product-rating">
-                                            <span class="rating-stars">
-                                                @for($i = 1; $i <= 5; $i++)
-                                                    @if($i <= floor($product->rating_rata))
-                                                        ★
-                                                    @elseif($i - 0.5 <= $product->rating_rata)
-                                                        ☆
-                                                    @else
-                                                        ☆
-                                                    @endif
-                                                @endfor
-                                            </span>
-                                            <span class="rating-value">({{ number_format($product->rating_rata, 1) }})</span>
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="product-arrow">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M5 12h14m-7-7 7 7-7 7" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                @endforeach
-            @else
-                <div class="no-products">
-                    <h3>No Latest Products</h3>
-                    <p>There are no products available at the moment. Check back later!</p>
+                    <!-- Just In Badge for latest products -->
+                    <div class="bestseller-badge">Just In</div>
                 </div>
+                <div class="product-info">
+                    <div class="product-content">
+                        <div class="product-details">
+                            <h4 class="product-name">{{ $product->name }}</h4>
+                            <div class="product-pricing">
+                                @if($product->hasActiveDiscount() || $product->is_on_sale)
+                                <!-- Show original price struck through -->
+                                <span class="product-price-original">
+                                    IDR {{ number_format($product->getOriginalPrice(), 0, ',', '.') }}
+                                </span>
+                                <!-- Show discounted price in red -->
+                                <span class="product-price" style="color: #dc3545 !important; font-weight: 600 !important;">
+                                    IDR {{ number_format($product->final_price, 0, ',', '.') }}
+                                </span>
+                                @if($product->hasActiveDiscount())
+                                <span class="product-savings" style="color: #28a745; font-size: 9px; font-weight: 500;">
+                                    Save IDR {{ number_format($product->getDiscountAmount(), 0, ',', '.') }}
+                                </span>
+                                @endif
+                                @else
+                                <span class="product-price" style="color: #666 !important; font-weight: 400 !important;">
+                                    IDR {{ number_format($product->final_price, 0, ',', '.') }}
+                                </span>
+                                @endif
+                            </div>
+
+                            <!-- Sales count (if available) -->
+                            @if($product->total_penjualan > 0)
+                            <p class="product-sales">{{ $product->total_penjualan }} sold</p>
+                            @endif
+
+                            <!-- Rating (if available) -->
+                            @if($product->rating_rata > 0)
+                            <div class="product-rating">
+                                <span class="rating-stars">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        @if($i <=floor($product->rating_rata))
+                                        ★
+                                        @elseif($i - 0.5 <= $product->rating_rata)
+                                            ☆
+                                            @else
+                                            ☆
+                                            @endif
+                                            @endfor
+                                </span>
+                                <span class="rating-value">({{ number_format($product->rating_rata, 1) }})</span>
+                            </div>
+                            @endif
+                        </div>
+                        <div class="product-arrow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14m-7-7 7 7-7 7" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            @endforeach
+            @else
+            <div class="no-products">
+                <h3>No Latest Products</h3>
+                <p>There are no products available at the moment. Check back later!</p>
+            </div>
             @endif
         </div>
     </div>

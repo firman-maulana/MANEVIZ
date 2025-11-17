@@ -29,21 +29,26 @@ class Product extends Model
         'total_reviews',
         'total_penjualan',
         'meta_data',
+
+        // 🔥 Tambahan diskon
+        'discount_percentage',
+        'discount_start_date',
+        'discount_end_date',
     ];
 
     protected $casts = [
         'dimensi' => 'array',
         'meta_data' => 'array',
         'is_featured' => 'boolean',
+        'discount_start_date' => 'datetime',
+        'discount_end_date' => 'datetime',
     ];
 
-    // Relasi ke kategori
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
-    // Relasi ke semua gambar produk
     public function images()
     {
         return $this->hasMany(ProductImages::class, 'product_id');
@@ -59,19 +64,16 @@ class Product extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-    // Relasi ke gambar utama produk
     public function primaryImage()
     {
         return $this->hasOne(ProductImages::class, 'product_id')->where('is_primary', true);
     }
 
-    // 🔥 REVIEW RELATIONSHIPS - Tambahkan ini
     public function reviews()
     {
         return $this->hasMany(Review::class);
     }
 
-    // 🔥 REVIEW METHODS - Tambahkan semua method ini
     public function averageRating()
     {
         return $this->reviews()->avg('rating') ?? 0;
@@ -92,7 +94,6 @@ class Product extends Model
             ->toArray();
     }
 
-    // 🔥 METHOD BARU - Rating breakdown dengan persentase
     public function getRatingBreakdown()
     {
         $distribution = $this->ratingDistribution();
@@ -112,7 +113,6 @@ class Product extends Model
         return $breakdown;
     }
 
-    // 🔥 METHOD BARU - Persentase rekomendasi
     public function getRecommendationPercentage()
     {
         $totalReviews = $this->reviews()->count();
@@ -126,7 +126,6 @@ class Product extends Model
         return round(($recommendedCount / $totalReviews) * 100);
     }
 
-    // 🔥 METHOD BARU - Update rating rata-rata (panggil ini setiap ada review baru/update/delete)
     public function updateAverageRating()
     {
         $this->rating_rata = $this->averageRating();
@@ -134,19 +133,16 @@ class Product extends Model
         $this->save();
     }
 
-    // Scope untuk hanya ambil produk aktif
     public function scopeActive($query)
     {
         return $query->where('status', 'active');
     }
 
-    // 🔥 SCOPE BARU - Untuk featured products
     public function scopeFeatured($query)
     {
         return $query->where('is_featured', true);
     }
 
-    // 🔥 ACCESSOR BARU - Format harga dengan mata uang
     public function getFormattedPriceAttribute()
     {
         return 'IDR ' . number_format($this->harga, 0, ',', '.');
@@ -155,18 +151,6 @@ class Product extends Model
     public function getFormattedSalePriceAttribute()
     {
         return 'IDR ' . number_format($this->harga_jual, 0, ',', '.');
-    }
-
-    // 🔥 ACCESSOR BARU - Cek apakah sedang sale
-    public function getIsOnSaleAttribute()
-    {
-        return $this->harga_jual && $this->harga_jual < $this->harga;
-    }
-
-    // 🔥 ACCESSOR BARU - Harga final (sale atau normal)
-    public function getFinalPriceAttribute()
-    {
-        return $this->harga_jual ?: $this->harga;
     }
 
     public function getWeightInGrams()
@@ -189,5 +173,108 @@ class Product extends Model
         }
 
         return number_format($grams, 0, ',', '.') . ' g';
+    }
+
+
+    // ============================================================
+    // 🔥 DISCOUNT METHODS
+    // ============================================================
+
+    public function hasActiveDiscount()
+    {
+        if (!$this->discount_percentage || $this->discount_percentage <= 0) {
+            return false;
+        }
+
+        $now = now();
+
+        if (!$this->discount_start_date && !$this->discount_end_date) {
+            return true;
+        }
+
+        if ($this->discount_start_date && $now < $this->discount_start_date) {
+            return false;
+        }
+
+        if ($this->discount_end_date && $now > $this->discount_end_date) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function getDiscountedPrice()
+    {
+        if (!$this->hasActiveDiscount()) {
+            return $this->harga_jual ?: $this->harga;
+        }
+
+        $basePrice = $this->harga_jual ?: $this->harga;
+        $discountAmount = ($basePrice * $this->discount_percentage) / 100;
+
+        return $basePrice - $discountAmount;
+    }
+
+    public function getDiscountAmount()
+    {
+        if (!$this->hasActiveDiscount()) {
+            return 0;
+        }
+
+        $basePrice = $this->harga_jual ?: $this->harga;
+
+        return ($basePrice * $this->discount_percentage) / 100;
+    }
+
+    public function getFinalPriceAttribute()
+    {
+        if ($this->hasActiveDiscount()) {
+            return $this->getDiscountedPrice();
+        }
+
+        return $this->harga_jual ?: $this->harga;
+    }
+
+    public function getOriginalPrice()
+    {
+        return $this->harga_jual ?: $this->harga;
+    }
+
+    public function getIsOnSaleAttribute()
+    {
+        return ($this->harga_jual && $this->harga_jual < $this->harga)
+            || $this->hasActiveDiscount();
+    }
+
+    public function getFormattedFinalPriceAttribute()
+    {
+        return 'IDR ' . number_format($this->final_price, 0, ',', '.');
+    }
+
+    public function getFormattedOriginalPriceAttribute()
+    {
+        return 'IDR ' . number_format($this->getOriginalPrice(), 0, ',', '.');
+    }
+
+    public function getDiscountLabel()
+    {
+        if (!$this->hasActiveDiscount()) {
+            return null;
+        }
+
+        return '-' . number_format($this->discount_percentage, 0) . '%';
+    }
+
+    public function scopeWithActiveDiscount($query)
+    {
+        return $query->where('discount_percentage', '>', 0)
+            ->where(function ($q) {
+                $q->whereNull('discount_start_date')
+                  ->orWhere('discount_start_date', '<=', now());
+            })
+            ->where(function ($q) {
+                $q->whereNull('discount_end_date')
+                  ->orWhere('discount_end_date', '>=', now());
+            });
     }
 }

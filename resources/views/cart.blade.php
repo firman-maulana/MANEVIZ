@@ -571,7 +571,7 @@
             const cartItem = document.querySelector(`[data-cart-id="${cartId}"]`);
             const quantityInput = cartItem.querySelector('.quantity-input');
             const currentValue = parseInt(quantityInput.value);
-            
+
             updateQuantity(cartId, currentValue + 1);
         }
 
@@ -579,7 +579,7 @@
             const cartItem = document.querySelector(`[data-cart-id="${cartId}"]`);
             const quantityInput = cartItem.querySelector('.quantity-input');
             const currentValue = parseInt(quantityInput.value);
-            
+
             if (currentValue > 1) {
                 updateQuantity(cartId, currentValue - 1);
             }
@@ -603,11 +603,11 @@
                     const quantityInput = cartItem.querySelector('.quantity-input');
                     const priceElement = cartItem.querySelector('.item-price');
                     const checkbox = cartItem.querySelector('.cart-checkbox');
-                    
+
                     quantityInput.value = newQuantity;
                     priceElement.textContent = `IDR ${data.new_total.toLocaleString('id-ID')}`;
                     checkbox.setAttribute('data-quantity', newQuantity);
-                    
+
                     updateOrderSummary();
                     showNotification('success', data.message);
                 } else {
@@ -634,7 +634,7 @@
                         document.querySelector(`[data-cart-id="${cartId}"]`).remove();
                         updateOrderSummary();
                         showNotification('success', data.message);
-                        
+
                         // Check if cart is empty
                         if (document.querySelectorAll('.cart-item').length === 0) {
                             location.reload();
@@ -670,7 +670,7 @@
 
         function proceedToCheckout() {
             const checkedItems = document.querySelectorAll('.cart-checkbox:checked');
-            
+
             if (checkedItems.length === 0) {
                 showNotification('error', 'Pilih minimal satu item untuk checkout');
                 return;
