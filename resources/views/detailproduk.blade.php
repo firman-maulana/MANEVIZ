@@ -1428,7 +1428,7 @@ use App\Models\Product;
                 </div>
 
                 <!-- Product Info -->
-                <div class="product-info">
+                <div class="product-info" data-product-id="{{ $product->id }}">
                     <h1 class="product-title">{{ $product->name }}</h1>
 
                     @if ($product->deskripsi_singkat)
@@ -1767,32 +1767,40 @@ use App\Models\Product;
 </div>
 
 <script>
-    // Global variables
+    // ============================================
+    // GLOBAL VARIABLES
+    // ============================================
     let selectedColor = 'Black';
     let selectedSize = 'M';
-    const productId = {
-        {
-            $product - > id
-        }
-    };
-    const isAuthenticated = {
-        {
-            Auth::check() ? 'true' : 'false'
-        }
-    };
+    const productId = {{ $product->id }};
+    const isAuthenticated = {{ Auth::check() ? 'true' : 'false' }};
     const loginUrl = "{{ route('login') }}";
     const cartAddUrl = "{{ route('cart.add') }}";
     const checkoutUrl = "{{ route('checkout.index') }}";
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    
+    // Get CSRF token
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                      '{{ csrf_token() }}';
 
-    // Initialize when page loads
+    // ============================================
+    // INITIALIZE
+    // ============================================
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('Page loaded. Product ID:', productId);
-        console.log('Is Authenticated:', isAuthenticated);
-        console.log('CSRF Token:', csrfToken ? 'Found' : 'Not Found');
+        console.log('✓ Page loaded');
+        console.log('✓ Product ID:', productId);
+        console.log('✓ Authenticated:', isAuthenticated);
+        console.log('✓ CSRF Token:', csrfToken ? 'Found' : 'Missing');
+        
+        // Test if buttons exist
+        const addToCartBtn = document.querySelector('.add-to-cart-btn');
+        const buyNowBtn = document.querySelector('.buy-now-btn');
+        console.log('✓ Add to Cart Button:', addToCartBtn ? 'Found' : 'Missing');
+        console.log('✓ Buy Now Button:', buyNowBtn ? 'Found' : 'Missing');
     });
 
-    // Color selection
+    // ============================================
+    // COLOR SELECTION
+    // ============================================
     function selectColor(element, color) {
         document.querySelectorAll('.color-option').forEach(option => {
             option.classList.remove('active');
@@ -1803,7 +1811,9 @@ use App\Models\Product;
         console.log('Color selected:', color);
     }
 
-    // Size selection
+    // ============================================
+    // SIZE SELECTION
+    // ============================================
     function selectSize(element, size) {
         document.querySelectorAll('.size-option').forEach(option => {
             option.classList.remove('active');
@@ -1813,45 +1823,43 @@ use App\Models\Product;
         console.log('Size selected:', size);
     }
 
+    // ============================================
     // ADD TO CART FUNCTION
+    // ============================================
     function addToCart() {
-        console.log('Add to Cart clicked');
+        console.log('🛒 Add to Cart clicked');
 
         // Check authentication
         if (!isAuthenticated) {
-            console.log('User not authenticated');
-            showNotification('error', 'Silakan login terlebih dahulu untuk menambahkan produk ke keranjang');
-            setTimeout(() => {
-                window.location.href = loginUrl;
-            }, 2000);
+            showNotification('error', 'Silakan login terlebih dahulu');
+            setTimeout(() => window.location.href = loginUrl, 1500);
             return;
         }
 
-        // Check CSRF token
+        // Validate CSRF token
         if (!csrfToken) {
-            console.error('CSRF token not found');
-            showNotification('error', 'Security token not found. Please refresh the page.');
+            showNotification('error', 'Security token missing. Please refresh.');
             return;
         }
 
-        // Get button
         const button = document.querySelector('.add-to-cart-btn');
         if (!button) {
-            console.error('Add to cart button not found');
+            console.error('❌ Button not found');
             return;
         }
 
-        // Disable button
-        const originalText = button.innerHTML;
+        // Disable button with loading state
+        const originalHTML = button.innerHTML;
         button.disabled = true;
         button.innerHTML = `
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px; animation: spin 1s linear infinite;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" 
+                 style="width: 20px; height: 20px; animation: spin 1s linear infinite;">
                 <circle cx="12" cy="12" r="10"></circle>
             </svg>
             Adding...
         `;
 
-        // Prepare data
+        // Prepare request data
         const requestData = {
             product_id: productId,
             kuantitas: 1,
@@ -1859,93 +1867,90 @@ use App\Models\Product;
             size: selectedSize
         };
 
-        console.log('Sending request to:', cartAddUrl);
-        console.log('Request data:', requestData);
+        console.log('📤 Sending request:', requestData);
 
-        // Send request
+        // Send AJAX request
         fetch(cartAddUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify(requestData)
-            })
-            .then(response => {
-                console.log('Response status:', response.status);
-                if (!response.ok) {
-                    return response.json().then(err => {
-                        throw new Error(err.message || 'Network response was not ok');
-                    });
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => {
+            console.log('📥 Response status:', response.status);
+            if (!response.ok) {
+                return response.json().then(err => {
+                    throw new Error(err.message || 'Request failed');
+                });
+            }
+            return response.json();
+        })
+        .then(result => {
+            console.log('✅ Success:', result);
+            
+            if (result.success) {
+                showNotification('success', result.message || 'Produk ditambahkan ke keranjang');
+                
+                // Update cart count
+                if (result.cart_count !== undefined) {
+                    updateCartCount(result.cart_count);
                 }
-                return response.json();
-            })
-            .then(result => {
-                console.log('Response data:', result);
-
-                if (result.success) {
-                    showNotification('success', result.message || 'Produk berhasil ditambahkan ke keranjang');
-
-                    // Update cart count
-                    if (result.cart_count !== undefined) {
-                        updateCartCount(result.cart_count);
-                    }
-                } else {
-                    showNotification('error', result.message || 'Gagal menambahkan ke keranjang');
-                }
-            })
-            .catch(error => {
-                console.error('Fetch error:', error);
-                showNotification('error', 'Terjadi kesalahan: ' + error.message);
-            })
-            .finally(() => {
-                // Re-enable button
-                button.disabled = false;
-                button.innerHTML = originalText;
-            });
+            } else {
+                showNotification('error', result.message || 'Gagal menambahkan produk');
+            }
+        })
+        .catch(error => {
+            console.error('❌ Error:', error);
+            showNotification('error', 'Terjadi kesalahan: ' + error.message);
+        })
+        .finally(() => {
+            // Restore button
+            button.disabled = false;
+            button.innerHTML = originalHTML;
+        });
     }
 
-    // BUY NOW FUNCTION
+    // ============================================
+    // BUY NOW FUNCTION - FIXED VERSION
+    // ============================================
     function buyNow() {
-        console.log('Buy Now clicked');
+        console.log('⚡ Buy Now clicked');
 
         // Check authentication
         if (!isAuthenticated) {
-            console.log('User not authenticated');
-            showNotification('error', 'Silakan login terlebih dahulu untuk melakukan pembelian');
-            setTimeout(() => {
-                window.location.href = loginUrl;
-            }, 2000);
+            showNotification('error', 'Silakan login terlebih dahulu');
+            setTimeout(() => window.location.href = loginUrl, 1500);
             return;
         }
 
-        // Check CSRF token
+        // Validate CSRF token
         if (!csrfToken) {
-            console.error('CSRF token not found');
-            showNotification('error', 'Security token not found. Please refresh the page.');
+            showNotification('error', 'Security token missing. Please refresh.');
             return;
         }
 
-        // Get button
         const button = document.querySelector('.buy-now-btn');
         if (!button) {
-            console.error('Buy now button not found');
+            console.error('❌ Button not found');
             return;
         }
 
-        // Disable button
-        const originalText = button.innerHTML;
+        // Disable button with loading state
+        const originalHTML = button.innerHTML;
         button.disabled = true;
         button.innerHTML = `
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 20px; height: 20px; animation: spin 1s linear infinite;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" 
+                 style="width: 20px; height: 20px; animation: spin 1s linear infinite;">
                 <circle cx="12" cy="12" r="10"></circle>
             </svg>
             Processing...
         `;
 
-        // Prepare data
+        // Prepare request data
         const requestData = {
             product_id: productId,
             kuantitas: 1,
@@ -1953,117 +1958,234 @@ use App\Models\Product;
             size: selectedSize
         };
 
-        console.log('Sending request to:', cartAddUrl);
-        console.log('Request data:', requestData);
+        console.log('📤 Sending request:', requestData);
 
-        // First add to cart
+        // Add to cart first
         fetch(cartAddUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify(requestData)
-            })
-            .then(response => {
-                console.log('Response status:', response.status);
-                if (!response.ok) {
-                    return response.json().then(err => {
-                        throw new Error(err.message || 'Network response was not ok');
-                    });
-                }
-                return response.json();
-            })
-            .then(result => {
-                console.log('Response data:', result);
-
-                if (result.success) {
-                    showNotification('success', 'Produk ditambahkan. Mengarahkan ke checkout...');
-
-                    // Redirect to checkout
-                    setTimeout(() => {
-                        console.log('Redirecting to:', checkoutUrl);
-                        window.location.href = checkoutUrl;
-                    }, 1500);
-                } else {
-                    showNotification('error', result.message || 'Gagal menambahkan ke keranjang');
-                    button.disabled = false;
-                    button.innerHTML = originalText;
-                }
-            })
-            .catch(error => {
-                console.error('Fetch error:', error);
-                showNotification('error', 'Terjadi kesalahan: ' + error.message);
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => {
+            console.log('📥 Response status:', response.status);
+            if (!response.ok) {
+                return response.json().then(err => {
+                    throw new Error(err.message || 'Request failed');
+                });
+            }
+            return response.json();
+        })
+        .then(result => {
+            console.log('✅ Success:', result);
+            
+            if (result.success && result.cart_item && result.cart_item.id) {
+                showNotification('success', 'Mengarahkan ke checkout...');
+                
+                // 🔥 FIX: Redirect to checkout with ONLY this cart item ID
+                setTimeout(() => {
+                    const checkoutUrlWithItem = checkoutUrl + '?items=' + result.cart_item.id;
+                    console.log('🔗 Redirecting to:', checkoutUrlWithItem);
+                    window.location.href = checkoutUrlWithItem;
+                }, 1000);
+            } else {
+                showNotification('error', result.message || 'Gagal menambahkan produk');
                 button.disabled = false;
-                button.innerHTML = originalText;
-            });
+                button.innerHTML = originalHTML;
+            }
+        })
+        .catch(error => {
+            console.error('❌ Error:', error);
+            showNotification('error', 'Terjadi kesalahan: ' + error.message);
+            button.disabled = false;
+            button.innerHTML = originalHTML;
+        });
     }
 
-    // SHOW NOTIFICATION
+    // ============================================
+    // NOTIFICATION SYSTEM
+    // ============================================
     function showNotification(type, message) {
-        console.log('Notification:', type, message);
-
         // Remove existing notifications
-        const existingNotifications = document.querySelectorAll('.notification');
-        existingNotifications.forEach(notif => notif.remove());
+        document.querySelectorAll('.custom-notification').forEach(n => n.remove());
 
         const notification = document.createElement('div');
-        notification.className = `notification notification-${type}`;
+        notification.className = `custom-notification custom-notification-${type}`;
         notification.style.cssText = `
             position: fixed;
-            top: 20px;
+            top: 80px;
             right: 20px;
-            padding: 15px 20px;
-            border-radius: 8px;
+            padding: 16px 24px;
+            border-radius: 12px;
             color: white;
-            z-index: 10000;
-            font-weight: 500;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 999999;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
             transform: translateX(400px);
-            transition: transform 0.3s ease;
-            max-width: 350px;
-            ${type === 'success' ? 'background: #28a745;' : 'background: #dc3545;'}
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: 400px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            ${type === 'success' ? 
+                'background: linear-gradient(135deg, #28a745 0%, #20c997 100%);' : 
+                'background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);'
+            }
         `;
-        notification.textContent = message;
 
+        // Add icon
+        const icon = type === 'success' ? 
+            '<svg viewBox="0 0 24 24" fill="currentColor" style="width: 20px; height: 20px; flex-shrink: 0;"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>' :
+            '<svg viewBox="0 0 24 24" fill="currentColor" style="width: 20px; height: 20px; flex-shrink: 0;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>';
+        
+        notification.innerHTML = icon + '<span>' + message + '</span>';
         document.body.appendChild(notification);
 
         // Slide in
-        setTimeout(() => {
-            notification.style.transform = 'translateX(0)';
-        }, 100);
+        setTimeout(() => notification.style.transform = 'translateX(0)', 100);
 
         // Slide out and remove
         setTimeout(() => {
             notification.style.transform = 'translateX(400px)';
-            setTimeout(() => {
-                if (document.body.contains(notification)) {
-                    document.body.removeChild(notification);
-                }
-            }, 300);
-        }, 3000);
+            setTimeout(() => notification.remove(), 400);
+        }, 3500);
     }
 
+    // ============================================
     // UPDATE CART COUNT
+    // ============================================
     function updateCartCount(count) {
-        console.log('Updating cart count to:', count);
+        console.log('🔄 Updating cart count to:', count);
+        
+        const selectors = [
+            '.cart-count',
+            '#cart-count',
+            '.navbar-cart-count',
+            '[data-cart-count]',
+            '.cart-badge'
+        ];
 
-        const cartCountElements = document.querySelectorAll('.cart-count, #cart-count, .navbar-cart-count, [data-cart-count]');
-
-        cartCountElements.forEach(element => {
-            element.textContent = count;
-            element.style.transition = 'transform 0.2s ease';
-            element.style.transform = 'scale(1.3)';
-
-            setTimeout(() => {
-                element.style.transform = 'scale(1)';
-            }, 200);
+        selectors.forEach(selector => {
+            document.querySelectorAll(selector).forEach(element => {
+                element.textContent = count;
+                element.style.transition = 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+                element.style.transform = 'scale(1.4)';
+                
+                setTimeout(() => {
+                    element.style.transform = 'scale(1)';
+                }, 300);
+            });
         });
     }
 
-    // Add spin animation for loading
+    // ============================================
+    // IMAGE FUNCTIONS
+    // ============================================
+    function changeMainImage(imageSrc, thumbnailElement, index) {
+        const mainImage = document.getElementById('mainProductImage');
+        if (mainImage) {
+            mainImage.style.opacity = '0.5';
+            setTimeout(() => {
+                mainImage.src = imageSrc;
+                mainImage.style.opacity = '1';
+            }, 200);
+        }
+
+        // Update active thumbnail
+        document.querySelectorAll('.thumbnail').forEach(thumb => {
+            thumb.classList.remove('active');
+        });
+        if (thumbnailElement) {
+            thumbnailElement.classList.add('active');
+        }
+    }
+
+    function openImageModal(imageSrc) {
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        if (modal && modalImage) {
+            modalImage.src = imageSrc;
+            modal.classList.add('active');
+        }
+    }
+
+    function closeImageModal() {
+        const modal = document.getElementById('imageModal');
+        if (modal) {
+            modal.classList.remove('active');
+        }
+    }
+
+    // ============================================
+    // THUMBNAIL SLIDESHOW (if more than 4 images)
+    // ============================================
+    let currentSlide = 0;
+    const thumbnailsPerView = 4;
+
+    function updateSlideshow() {
+        const container = document.getElementById('thumbnailContainer');
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        const totalSlides = Math.ceil(thumbnails.length / thumbnailsPerView);
+        
+        if (!container || thumbnails.length <= thumbnailsPerView) return;
+
+        const slideWidth = 100 / thumbnailsPerView;
+        const offset = -(currentSlide * slideWidth * thumbnailsPerView);
+        container.style.transform = `translateX(${offset}%)`;
+
+        // Update dots
+        const dotsContainer = document.getElementById('slideshowDots');
+        if (dotsContainer) {
+            dotsContainer.innerHTML = '';
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.createElement('div');
+                dot.className = `dot ${i === currentSlide ? 'active' : ''}`;
+                dot.onclick = () => goToSlide(i);
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        // Update button states
+        document.getElementById('prevBtn').disabled = currentSlide === 0;
+        document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+    }
+
+    function nextSlide() {
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        const totalSlides = Math.ceil(thumbnails.length / thumbnailsPerView);
+        if (currentSlide < totalSlides - 1) {
+            currentSlide++;
+            updateSlideshow();
+        }
+    }
+
+    function previousSlide() {
+        if (currentSlide > 0) {
+            currentSlide--;
+            updateSlideshow();
+        }
+    }
+
+    function goToSlide(index) {
+        currentSlide = index;
+        updateSlideshow();
+    }
+
+    // Initialize slideshow on load
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', updateSlideshow);
+    } else {
+        updateSlideshow();
+    }
+
+    // ============================================
+    // ADD SPIN ANIMATION
+    // ============================================
     const style = document.createElement('style');
     style.textContent = `
         @keyframes spin {

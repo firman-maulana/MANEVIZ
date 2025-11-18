@@ -540,6 +540,114 @@
             grid-template-columns: 1fr;
         }
     }
+
+
+
+    /* 🔥 DISCOUNT STYLES FOR CHECKOUT */
+    .discount-badge-checkout {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+        color: white;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 8px;
+        font-weight: 700;
+        z-index: 2;
+        box-shadow: 0 2px 6px rgba(255, 107, 107, 0.3);
+    }
+
+    .item-price-original-checkout {
+        color: #999;
+        font-size: 11px;
+        text-decoration: line-through;
+        font-weight: 400;
+    }
+
+    .item-price-final-checkout {
+        color: #dc3545;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    .item-savings-checkout {
+        color: #28a745;
+        font-size: 9px;
+        font-weight: 500;
+        margin-top: 2px;
+    }
+
+    .savings-summary {
+        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        border: 1px solid #28a745;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .savings-summary svg {
+        width: 24px;
+        height: 24px;
+        color: #28a745;
+        flex-shrink: 0;
+    }
+
+    .savings-content {
+        flex: 1;
+    }
+
+    .savings-amount-large {
+        font-weight: bold;
+        color: #155724;
+        font-size: 18px;
+        margin-bottom: 4px;
+    }
+
+    .savings-label-large {
+        font-size: 13px;
+        color: #155724;
+    }
+
+    .summary-row.discount {
+        color: #28a745;
+        font-weight: 600;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .discount-badge-checkout {
+            padding: 2px 5px;
+            font-size: 7px;
+        }
+
+        .item-price-original-checkout {
+            font-size: 10px;
+        }
+
+        .item-price-final-checkout {
+            font-size: 12px;
+        }
+
+        .item-savings-checkout {
+            font-size: 8px;
+        }
+
+        .savings-summary {
+            padding: 12px;
+        }
+
+        .savings-amount-large {
+            font-size: 16px;
+        }
+
+        .savings-label-large {
+            font-size: 12px;
+        }
+    }
 </style>
 
 <div class="container">

@@ -11,7 +11,6 @@ use App\Services\MidtransService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class CheckoutController extends Controller
@@ -28,20 +27,34 @@ class CheckoutController extends Controller
     {
         $selectedItems = [];
 
+        // 🔥 HANDLE ITEMS PARAMETER (for Buy Now or specific cart items)
         if ($request->has('items')) {
             $itemIds = explode(',', $request->get('items'));
             $selectedItems = Cart::with('product.images')
                 ->whereIn('id', $itemIds)
                 ->where('user_id', Auth::id())
                 ->get();
+
+            // 🔥 LOG: untuk debugging
+            \Log::info('Checkout with specific items:', [
+                'item_ids' => $itemIds,
+                'found_items' => $selectedItems->count()
+            ]);
         } else {
+            // If no items specified, get ALL cart items
             $selectedItems = Cart::with('product.images')
                 ->where('user_id', Auth::id())
                 ->get();
+
+            \Log::info('Checkout with all cart items:', [
+                'total_items' => $selectedItems->count()
+            ]);
         }
 
+        // 🔥 VALIDATION: Redirect if no items selected
         if ($selectedItems->isEmpty()) {
-            return redirect()->route('cart.index')->with('error', 'Tidak ada item yang dipilih untuk checkout');
+            return redirect()->route('cart.index')
+                ->with('error', 'Tidak ada item yang dipilih untuk checkout');
         }
 
         // Get user addresses
@@ -52,10 +65,24 @@ class CheckoutController extends Controller
 
         $defaultAddress = $userAddresses->where('is_default', true)->first();
 
-        // Calculate totals
-        $subtotal = $selectedItems->sum(function ($item) {
-            return ($item->product->harga_jual ?? $item->product->harga) * $item->kuantitas;
-        });
+        // 🔥 CALCULATE WITH DISCOUNT
+        $subtotalBeforeDiscount = 0;
+        $subtotal = 0;
+        $totalDiscount = 0;
+
+        foreach ($selectedItems as $item) {
+            $product = $item->product;
+            $originalPrice = $product->getOriginalPrice();
+            $finalPrice = $product->final_price;
+            $hasDiscount = $product->hasActiveDiscount() || $product->is_on_sale;
+
+            $subtotalBeforeDiscount += $originalPrice * $item->kuantitas;
+            $subtotal += $finalPrice * $item->kuantitas;
+
+            if ($hasDiscount) {
+                $totalDiscount += $product->getDiscountAmount() * $item->kuantitas;
+            }
+        }
 
         // Calculate total weight in GRAMS
         $totalWeight = $selectedItems->sum(function ($item) {
@@ -71,12 +98,14 @@ class CheckoutController extends Controller
         $totalWeight = round($totalWeight);
         $totalWeightKg = $totalWeight / 1000;
         $tax = $subtotal * 0.025;
-        $shipping = 0; // Will be updated dynamically via AJAX when user selects shipping option
-        $total = $subtotal + $tax + $shipping; // Initial total without shipping, will update when shipping is selected
+        $shipping = 0;
+        $total = $subtotal + $tax + $shipping;
 
         return view('checkout', compact(
             'selectedItems',
             'subtotal',
+            'subtotalBeforeDiscount',
+            'totalDiscount',
             'tax',
             'shipping',
             'total',
@@ -115,7 +144,6 @@ class CheckoutController extends Controller
                 'shipping_district_id' => 'required|integer',
             ]);
         } else {
-            // For saved address, district_id might be optional if not available
             $request->validate([
                 'shipping_district_id' => 'nullable|integer',
             ]);
@@ -175,11 +203,10 @@ class CheckoutController extends Controller
                     throw new \Exception('Selected address not found');
                 }
 
-                // FIX: Use correct field names and proper phone number retrieval
                 $shippingData = [
                     'name' => $address->recipient_name,
                     'email' => Auth::user()->email,
-                    'phone' => $address->phone ?? Auth::user()->phone ?? '08123456789', // Use accessor method or fallback
+                    'phone' => $address->phone ?? Auth::user()->phone ?? '08123456789',
                     'address' => $address->address,
                     'city' => $address->city,
                     'province' => $address->province,
@@ -187,12 +214,10 @@ class CheckoutController extends Controller
                     'district_id' => $address->district_id ?? $request->shipping_district_id ?? null,
                 ];
 
-                // IMPORTANT: Validate that we have complete data
                 if (empty($shippingData['phone']) || $shippingData['phone'] === '08123456789') {
                     throw new \Exception('Nomor telepon tidak tersedia. Silakan lengkapi nomor telepon di profil Anda.');
                 }
             } else {
-                // Manual address
                 $shippingData = [
                     'name' => $request->shipping_name,
                     'email' => $request->shipping_email,
@@ -215,9 +240,24 @@ class CheckoutController extends Controller
                 throw new \Exception('Data alamat tidak lengkap. Pastikan semua field terisi.');
             }
 
-            $subtotal = $cartItems->sum(function ($item) {
-                return ($item->product->harga_jual ?? $item->product->harga) * $item->kuantitas;
-            });
+            // 🔥 CALCULATE WITH DISCOUNT
+            $subtotalBeforeDiscount = 0;
+            $subtotal = 0;
+            $totalDiscount = 0;
+
+            foreach ($cartItems as $item) {
+                $product = $item->product;
+                $originalPrice = $product->getOriginalPrice();
+                $finalPrice = $product->final_price;
+                $hasDiscount = $product->hasActiveDiscount() || $product->is_on_sale;
+
+                $subtotalBeforeDiscount += $originalPrice * $item->kuantitas;
+                $subtotal += $finalPrice * $item->kuantitas;
+
+                if ($hasDiscount) {
+                    $totalDiscount += $product->getDiscountAmount() * $item->kuantitas;
+                }
+            }
 
             $tax = $subtotal * 0.025;
             $shippingCost = floatval($request->shipping_cost);
@@ -265,18 +305,18 @@ class CheckoutController extends Controller
                 'order_date' => now(),
             ]);
 
-            // Create order items
+            // Create order items with final discounted prices
             foreach ($cartItems as $item) {
-                $productPrice = $item->product->harga_jual ?? $item->product->harga;
+                $finalPrice = $item->product->final_price;
 
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $item->product_id,
                     'product_name' => $item->product->name,
-                    'product_price' => $productPrice,
+                    'product_price' => $finalPrice, // 🔥 USE DISCOUNTED PRICE
                     'kuantitas' => $item->kuantitas,
                     'size' => $item->size,
-                    'subtotal' => $productPrice * $item->kuantitas,
+                    'subtotal' => $finalPrice * $item->kuantitas,
                 ]);
 
                 // Decrement stock

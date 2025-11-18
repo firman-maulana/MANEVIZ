@@ -115,12 +115,28 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            position: relative;
         }
 
         .item-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+
+        /* 🔥 DISCOUNT BADGE IN CART */
+        .cart-discount-badge {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 8px;
+            font-weight: 700;
+            z-index: 2;
+            box-shadow: 0 2px 6px rgba(255, 107, 107, 0.3);
         }
 
         .item-details {
@@ -163,6 +179,39 @@
             font-size: 10px;
             color: #666;
             text-transform: uppercase;
+        }
+
+        /* 🔥 PRICE WITH DISCOUNT STYLES */
+        .item-price-container {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            align-items: flex-end;
+        }
+
+        .item-price-original {
+            color: #999;
+            font-size: 12px;
+            text-decoration: line-through;
+            font-weight: 400;
+        }
+
+        .item-price-final {
+            font-size: 16px;
+            font-weight: bold;
+            color: #dc3545;
+        }
+
+        .item-price-regular {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .item-savings {
+            color: #28a745;
+            font-size: 10px;
+            font-weight: 600;
         }
 
         .move-to-favorites {
@@ -273,12 +322,53 @@
             font-size: 14px;
         }
 
+        /* 🔥 DISCOUNT SUMMARY ROW */
+        .summary-row.discount {
+            color: #28a745;
+            font-weight: 600;
+        }
+
         .summary-row.total {
             font-weight: bold;
             font-size: 16px;
             padding-top: 15px;
             border-top: 1px solid #e9ecef;
             margin-top: 15px;
+        }
+
+        /* 🔥 SAVINGS INFO BOX */
+        .savings-box {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border: 1px solid #28a745;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .savings-box svg {
+            width: 20px;
+            height: 20px;
+            color: #28a745;
+            flex-shrink: 0;
+        }
+
+        .savings-text {
+            flex: 1;
+        }
+
+        .savings-amount {
+            font-weight: bold;
+            color: #155724;
+            font-size: 16px;
+        }
+
+        .savings-label {
+            font-size: 12px;
+            color: #155724;
+            margin-top: 2px;
         }
 
         .checkout-btn {
@@ -346,12 +436,19 @@
                 order: 2;
             }
 
-            .item-price {
+            .item-price-container {
                 order: 3;
             }
 
             .remove-btn {
                 order: 1;
+            }
+
+            .cart-discount-badge {
+                top: 6px;
+                left: 6px;
+                padding: 3px 8px;
+                font-size: 9px;
             }
         }
 
@@ -383,8 +480,17 @@
                 font-size: 10px;
             }
 
-            .item-price {
+            .item-price-final,
+            .item-price-regular {
                 font-size: 14px;
+            }
+
+            .item-price-original {
+                font-size: 11px;
+            }
+
+            .item-savings {
+                font-size: 9px;
             }
 
             .quantity-btn {
@@ -401,6 +507,14 @@
             .order-summary {
                 padding: 20px;
                 margin-top: 10px;
+            }
+
+            .savings-box {
+                padding: 10px;
+            }
+
+            .savings-amount {
+                font-size: 14px;
             }
         }
 
@@ -452,36 +566,16 @@
                 order: 1;
             }
 
-            .item-price {
+            .item-price-container {
                 order: 2;
-            }
-        }
-
-        /* Very small screens */
-        @media (max-width: 360px) {
-            .container {
-                padding: 8px;
+                align-items: center;
             }
 
-            .cart-item {
-                padding: 12px;
-            }
-
-            .order-summary {
-                padding: 15px;
-            }
-
-            .checkout-btn {
-                padding: 12px;
-                font-size: 12px;
-            }
-        }
-
-        /* Touch improvements */
-        @media (hover: none) {
-            .quantity-btn, .remove-btn, .move-to-favorites {
-                min-height: 44px;
-                min-width: 44px;
+            .cart-discount-badge {
+                top: 4px;
+                left: 4px;
+                padding: 2px 5px;
+                font-size: 7px;
             }
         }
     </style>
@@ -497,19 +591,40 @@
             <div class="cart-items">
                 @if($cartItems->count() > 0)
                     @foreach($cartItems as $item)
+                        @php
+                            $product = $item->product;
+                            $hasDiscount = $product->hasActiveDiscount() || $product->is_on_sale;
+                            $finalPrice = $product->final_price;
+                            $originalPrice = $product->getOriginalPrice();
+                            $discountAmount = $hasDiscount ? $product->getDiscountAmount() : 0;
+                            $itemTotal = $finalPrice * $item->kuantitas;
+                        @endphp
                         <div class="cart-item" data-cart-id="{{ $item->id }}">
                             <div class="item-checkbox">
-                                <input type="checkbox" class="cart-checkbox" data-price="{{ $item->product->harga_jual ?? $item->product->harga }}" data-quantity="{{ $item->kuantitas }}" checked>
+                                <input type="checkbox" 
+                                       class="cart-checkbox" 
+                                       data-price="{{ $finalPrice }}" 
+                                       data-original-price="{{ $originalPrice }}"
+                                       data-has-discount="{{ $hasDiscount ? 'true' : 'false' }}"
+                                       data-discount-amount="{{ $discountAmount }}"
+                                       data-quantity="{{ $item->kuantitas }}" 
+                                       checked>
                             </div>
                             <div class="item-image">
-                                @if($item->product->images && $item->product->images->isNotEmpty())
-                                    <img src="{{ asset('storage/' . $item->product->images->first()->image_path) }}" alt="{{ $item->product->name }}">
+                                @if($product->images && $product->images->isNotEmpty())
+                                    <img src="{{ asset('storage/' . $product->images->first()->image_path) }}" alt="{{ $product->name }}">
                                 @else
                                     <img src="{{ asset('images/no-image.png') }}" alt="No Image">
                                 @endif
+                                
+                                @if($hasDiscount)
+                                    <div class="cart-discount-badge">
+                                        {{ $product->getDiscountLabel() }}
+                                    </div>
+                                @endif
                             </div>
                             <div class="item-details">
-                                <h3 class="item-name">{{ $item->product->name }}</h3>
+                                <h3 class="item-name">{{ $product->name }}</h3>
                                 <div class="item-options">
                                     @if($item->color)
                                         <div class="option-group">
@@ -532,7 +647,15 @@
                                     <input type="text" class="quantity-input" value="{{ $item->kuantitas }}" readonly>
                                     <button class="quantity-btn" onclick="increaseQuantity({{ $item->id }})">+</button>
                                 </div>
-                                <div class="item-price">IDR {{ number_format(($item->product->harga_jual ?? $item->product->harga) * $item->kuantitas, 0, ',', '.') }}</div>
+                                <div class="item-price-container">
+                                    @if($hasDiscount)
+                                        <span class="item-price-original">IDR {{ number_format($originalPrice * $item->kuantitas, 0, ',', '.') }}</span>
+                                        <span class="item-price-final">IDR {{ number_format($itemTotal, 0, ',', '.') }}</span>
+                                        <span class="item-savings">Save IDR {{ number_format($discountAmount * $item->kuantitas, 0, ',', '.') }}</span>
+                                    @else
+                                        <span class="item-price-regular">IDR {{ number_format($itemTotal, 0, ',', '.') }}</span>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     @endforeach
@@ -548,9 +671,25 @@
             @if($cartItems->count() > 0)
                 <div class="order-summary">
                     <h3 class="summary-title">Order Summary</h3>
+                    
+                    <!-- 🔥 SAVINGS BOX -->
+                    <div class="savings-box" id="savingsBox" style="display: none;">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                        </svg>
+                        <div class="savings-text">
+                            <div class="savings-amount" id="totalSavings">IDR 0</div>
+                            <div class="savings-label">Total Savings</div>
+                        </div>
+                    </div>
+
                     <div class="summary-row">
                         <span>Subtotal</span>
                         <span id="subtotal">IDR 0</span>
+                    </div>
+                    <div class="summary-row discount" id="discountRow" style="display: none;">
+                        <span>Discount</span>
+                        <span id="discount">-IDR 0</span>
                     </div>
                     <div class="summary-row">
                         <span>Tax (2.5%)</span>
@@ -601,12 +740,29 @@
                 if (data.success) {
                     const cartItem = document.querySelector(`[data-cart-id="${cartId}"]`);
                     const quantityInput = cartItem.querySelector('.quantity-input');
-                    const priceElement = cartItem.querySelector('.item-price');
                     const checkbox = cartItem.querySelector('.cart-checkbox');
+                    const priceContainer = cartItem.querySelector('.item-price-container');
+                    
+                    const hasDiscount = checkbox.dataset.hasDiscount === 'true';
+                    const finalPrice = parseFloat(checkbox.dataset.price);
+                    const originalPrice = parseFloat(checkbox.dataset.originalPrice);
+                    const discountAmount = parseFloat(checkbox.dataset.discountAmount);
 
                     quantityInput.value = newQuantity;
-                    priceElement.textContent = `IDR ${data.new_total.toLocaleString('id-ID')}`;
                     checkbox.setAttribute('data-quantity', newQuantity);
+
+                    // Update displayed prices
+                    if (hasDiscount) {
+                        priceContainer.innerHTML = `
+                            <span class="item-price-original">IDR ${(originalPrice * newQuantity).toLocaleString('id-ID')}</span>
+                            <span class="item-price-final">IDR ${data.new_total.toLocaleString('id-ID')}</span>
+                            <span class="item-savings">Save IDR ${(discountAmount * newQuantity).toLocaleString('id-ID')}</span>
+                        `;
+                    } else {
+                        priceContainer.innerHTML = `
+                            <span class="item-price-regular">IDR ${data.new_total.toLocaleString('id-ID')}</span>
+                        `;
+                    }
 
                     updateOrderSummary();
                     showNotification('success', data.message);
@@ -652,18 +808,46 @@
 
         function updateOrderSummary() {
             const checkedItems = document.querySelectorAll('.cart-checkbox:checked');
+            let subtotalBeforeDiscount = 0;
             let subtotal = 0;
+            let totalDiscount = 0;
 
             checkedItems.forEach(checkbox => {
                 const price = parseFloat(checkbox.getAttribute('data-price'));
+                const originalPrice = parseFloat(checkbox.getAttribute('data-original-price'));
                 const quantity = parseInt(checkbox.getAttribute('data-quantity'));
+                const hasDiscount = checkbox.getAttribute('data-has-discount') === 'true';
+                const discountAmount = parseFloat(checkbox.getAttribute('data-discount-amount'));
+
+                subtotalBeforeDiscount += originalPrice * quantity;
                 subtotal += price * quantity;
+                
+                if (hasDiscount) {
+                    totalDiscount += discountAmount * quantity;
+                }
             });
 
             const tax = subtotal * 0.025;
             const total = subtotal + tax;
 
-            document.getElementById('subtotal').textContent = `IDR ${subtotal.toLocaleString('id-ID')}`;
+            // Update displays
+            document.getElementById('subtotal').textContent = `IDR ${subtotalBeforeDiscount.toLocaleString('id-ID')}`;
+            
+            // Show/hide discount row
+            const discountRow = document.getElementById('discountRow');
+            const savingsBox = document.getElementById('savingsBox');
+            
+            if (totalDiscount > 0) {
+                discountRow.style.display = 'flex';
+                document.getElementById('discount').textContent = `-IDR ${Math.round(totalDiscount).toLocaleString('id-ID')}`;
+                
+                savingsBox.style.display = 'flex';
+                document.getElementById('totalSavings').textContent = `IDR ${Math.round(totalDiscount).toLocaleString('id-ID')}`;
+            } else {
+                discountRow.style.display = 'none';
+                savingsBox.style.display = 'none';
+            }
+
             document.getElementById('tax').textContent = `IDR ${Math.round(tax).toLocaleString('id-ID')}`;
             document.getElementById('total').textContent = `IDR ${Math.round(total).toLocaleString('id-ID')}`;
         }
