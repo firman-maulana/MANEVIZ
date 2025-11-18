@@ -94,6 +94,7 @@ class ProductResource extends Resource
                         Forms\Components\DateTimePicker::make('discount_end_date')
                             ->label('Discount End Date (Optional)')
                             ->helperText('Leave empty for unlimited discount')
+                            ->timezone(config('app.timezone'))
                             ->native(false)
                             ->after('discount_start_date'),
                     ])

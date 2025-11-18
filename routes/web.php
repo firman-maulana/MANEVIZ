@@ -17,6 +17,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PaymentConfirmationController;
 use App\Http\Controllers\RajaOngkirController;
 use App\Http\Controllers\TrackingController;
+use App\Http\Controllers\DiscountController;
 
 /*
 |--------------------------------------------------------------------------
@@ -164,3 +165,10 @@ Route::middleware('auth')->prefix('tracking')->name('tracking.')->group(function
 });
 
 Route::get('/products/on-sale', [ProductController::class, 'discounted'])->name('products.discounted');
+
+
+Route::prefix('api/discount')->name('discount.')->group(function () {
+    Route::get('/check-status', [DiscountController::class, 'checkDiscountStatus'])->name('check-status');
+    Route::post('/batch-check', [DiscountController::class, 'batchCheckDiscountStatus'])->name('batch-check');
+    Route::get('/active', [DiscountController::class, 'getActiveDiscounts'])->name('active');
+});

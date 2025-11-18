@@ -803,6 +803,63 @@
             font-size: 8px;
         }
     }
+
+
+    /* Compact Timer Styles for Product Cards */
+    .product-card .discount-timer-container {
+        margin-top: 6px;
+        padding: 6px 8px;
+        background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
+        border: 1px solid #ffc107;
+        border-radius: 6px;
+    }
+
+    .product-card .discount-timer-display {
+        gap: 6px;
+    }
+
+    .product-card .timer-icon {
+        width: 14px;
+        height: 14px;
+    }
+
+    .product-card .timer-label {
+        font-size: 8px;
+        margin-bottom: 3px;
+    }
+
+    .product-card .timer-countdown {
+        gap: 2px;
+    }
+
+    .product-card .time-block {
+        padding: 2px 4px;
+        min-width: 24px;
+    }
+
+    .product-card .time-value {
+        font-size: 11px;
+    }
+
+    .product-card .time-unit {
+        font-size: 6px;
+        margin-top: 1px;
+    }
+
+    .product-card .time-separator {
+        font-size: 11px;
+    }
+
+    /* Hide timer on very small cards */
+    @media (max-width: 480px) {
+        .product-card .timer-label {
+            display: none;
+        }
+
+        .product-card .time-unit {
+            font-size: 5px;
+        }
+    }
 </style>
 
 <!-- Hero Section -->
@@ -918,6 +975,12 @@
                                 </span>
                                 @endif
                             </div>
+
+                            @if($product->hasActiveDiscount() && $product->discount_end_date)
+                            <div style="margin-top: 6px; font-size: 10px;">
+                                <x-discount-timer :product="$product" />
+                            </div>
+                            @endif
 
                             <!-- Sales count (if available) -->
                             @if($product->total_penjualan > 0)

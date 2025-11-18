@@ -1313,6 +1313,64 @@ use App\Models\Product;
             font-size: 10px;
         }
     }
+
+
+
+    /* Compact Timer Styles for Product Cards */
+    .product-card .discount-timer-container {
+        margin-top: 6px;
+        padding: 6px 8px;
+        background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
+        border: 1px solid #ffc107;
+        border-radius: 6px;
+    }
+
+    .product-card .discount-timer-display {
+        gap: 6px;
+    }
+
+    .product-card .timer-icon {
+        width: 14px;
+        height: 14px;
+    }
+
+    .product-card .timer-label {
+        font-size: 8px;
+        margin-bottom: 3px;
+    }
+
+    .product-card .timer-countdown {
+        gap: 2px;
+    }
+
+    .product-card .time-block {
+        padding: 2px 4px;
+        min-width: 24px;
+    }
+
+    .product-card .time-value {
+        font-size: 11px;
+    }
+
+    .product-card .time-unit {
+        font-size: 6px;
+        margin-top: 1px;
+    }
+
+    .product-card .time-separator {
+        font-size: 11px;
+    }
+
+    /* Hide timer on very small cards */
+    @media (max-width: 480px) {
+        .product-card .timer-label {
+            display: none;
+        }
+
+        .product-card .time-unit {
+            font-size: 5px;
+        }
+    }
 </style>
 
 <div class="product-detail-container">
@@ -1434,14 +1492,7 @@ use App\Models\Product;
                         @endif
 
                         <!-- Discount Timer (if discount has end date) -->
-                        @if($product->discount_end_date)
-                        <div class="discount-timer" style="margin-top: 12px; padding: 10px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; color: #856404;">
-                            <svg style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 5px;" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z" />
-                            </svg>
-                            <strong>Hurry!</strong> Discount ends {{ $product->discount_end_date->format('d M Y, H:i') }}
-                        </div>
-                        @endif
+                        <x-discount-timer :product="$product" />
                         @else
                         <!-- Regular Price -->
                         <div class="product-price" style="font-size: 2rem; font-weight: bold; color: #212529;">
@@ -1719,8 +1770,16 @@ use App\Models\Product;
     // Global variables
     let selectedColor = 'Black';
     let selectedSize = 'M';
-    const productId = {{ $product->id }};
-    const isAuthenticated = {{ Auth::check() ? 'true' : 'false' }};
+    const productId = {
+        {
+            $product - > id
+        }
+    };
+    const isAuthenticated = {
+        {
+            Auth::check() ? 'true' : 'false'
+        }
+    };
     const loginUrl = "{{ route('login') }}";
     const cartAddUrl = "{{ route('cart.add') }}";
     const checkoutUrl = "{{ route('checkout.index') }}";
@@ -1805,47 +1864,47 @@ use App\Models\Product;
 
         // Send request
         fetch(cartAddUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken,
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify(requestData)
-        })
-        .then(response => {
-            console.log('Response status:', response.status);
-            if (!response.ok) {
-                return response.json().then(err => {
-                    throw new Error(err.message || 'Network response was not ok');
-                });
-            }
-            return response.json();
-        })
-        .then(result => {
-            console.log('Response data:', result);
-
-            if (result.success) {
-                showNotification('success', result.message || 'Produk berhasil ditambahkan ke keranjang');
-
-                // Update cart count
-                if (result.cart_count !== undefined) {
-                    updateCartCount(result.cart_count);
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    return response.json().then(err => {
+                        throw new Error(err.message || 'Network response was not ok');
+                    });
                 }
-            } else {
-                showNotification('error', result.message || 'Gagal menambahkan ke keranjang');
-            }
-        })
-        .catch(error => {
-            console.error('Fetch error:', error);
-            showNotification('error', 'Terjadi kesalahan: ' + error.message);
-        })
-        .finally(() => {
-            // Re-enable button
-            button.disabled = false;
-            button.innerHTML = originalText;
-        });
+                return response.json();
+            })
+            .then(result => {
+                console.log('Response data:', result);
+
+                if (result.success) {
+                    showNotification('success', result.message || 'Produk berhasil ditambahkan ke keranjang');
+
+                    // Update cart count
+                    if (result.cart_count !== undefined) {
+                        updateCartCount(result.cart_count);
+                    }
+                } else {
+                    showNotification('error', result.message || 'Gagal menambahkan ke keranjang');
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                showNotification('error', 'Terjadi kesalahan: ' + error.message);
+            })
+            .finally(() => {
+                // Re-enable button
+                button.disabled = false;
+                button.innerHTML = originalText;
+            });
     }
 
     // BUY NOW FUNCTION
@@ -1899,47 +1958,47 @@ use App\Models\Product;
 
         // First add to cart
         fetch(cartAddUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken,
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify(requestData)
-        })
-        .then(response => {
-            console.log('Response status:', response.status);
-            if (!response.ok) {
-                return response.json().then(err => {
-                    throw new Error(err.message || 'Network response was not ok');
-                });
-            }
-            return response.json();
-        })
-        .then(result => {
-            console.log('Response data:', result);
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    return response.json().then(err => {
+                        throw new Error(err.message || 'Network response was not ok');
+                    });
+                }
+                return response.json();
+            })
+            .then(result => {
+                console.log('Response data:', result);
 
-            if (result.success) {
-                showNotification('success', 'Produk ditambahkan. Mengarahkan ke checkout...');
+                if (result.success) {
+                    showNotification('success', 'Produk ditambahkan. Mengarahkan ke checkout...');
 
-                // Redirect to checkout
-                setTimeout(() => {
-                    console.log('Redirecting to:', checkoutUrl);
-                    window.location.href = checkoutUrl;
-                }, 1500);
-            } else {
-                showNotification('error', result.message || 'Gagal menambahkan ke keranjang');
+                    // Redirect to checkout
+                    setTimeout(() => {
+                        console.log('Redirecting to:', checkoutUrl);
+                        window.location.href = checkoutUrl;
+                    }, 1500);
+                } else {
+                    showNotification('error', result.message || 'Gagal menambahkan ke keranjang');
+                    button.disabled = false;
+                    button.innerHTML = originalText;
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                showNotification('error', 'Terjadi kesalahan: ' + error.message);
                 button.disabled = false;
                 button.innerHTML = originalText;
-            }
-        })
-        .catch(error => {
-            console.error('Fetch error:', error);
-            showNotification('error', 'Terjadi kesalahan: ' + error.message);
-            button.disabled = false;
-            button.innerHTML = originalText;
-        });
+            });
     }
 
     // SHOW NOTIFICATION
