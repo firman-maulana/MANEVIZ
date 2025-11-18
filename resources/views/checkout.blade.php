@@ -860,9 +860,29 @@
                 </div>
             </div>
 
-            <!-- Items List -->
+            <!-- Items List WITH DISCOUNT SUPPORT -->
             @foreach($selectedItems as $item)
-            <div class="order-item">
+            @php
+                $itemWeight = $item->product->berat ?? 1000;
+                // Auto-convert if stored in kg
+                if ($itemWeight > 0 && $itemWeight < 100) {
+                    $itemWeight = $itemWeight * 1000;
+                }
+                $itemWeightKg = $itemWeight / 1000;
+                $totalItemWeight = $itemWeight * $item->kuantitas;
+                $totalItemWeightKg = $totalItemWeight / 1000;
+
+                // 🔥 DISCOUNT CALCULATION
+                $originalPrice = $item->product->getOriginalPrice();
+                $finalPrice = $item->product->final_price;
+                $hasDiscount = $item->product->hasActiveDiscount() || $item->product->is_on_sale;
+                $discountAmount = $hasDiscount ? ($originalPrice - $finalPrice) : 0;
+                $totalDiscount = $discountAmount * $item->kuantitas;
+            @endphp
+            <div class="order-item" style="position: relative;">
+                @if($hasDiscount)
+                <div class="discount-badge-checkout">{{ $item->product->getDiscountLabel() }}</div>
+                @endif
                 <div class="item-image">
                     @if($item->product->images && $item->product->images->isNotEmpty())
                     <img src="{{ asset('storage/' . $item->product->images->first()->image_path) }}" alt="{{ $item->product->name }}">
@@ -876,28 +896,26 @@
                         @if($item->size)
                         <span>Size: {{ $item->size }}</span>
                         @endif
-                        @php
-                        $itemWeight = $item->product->berat ?? 1000;
-                        // Auto-convert if stored in kg
-                        if ($itemWeight > 0 && $itemWeight < 100) {
-                            $itemWeight=$itemWeight * 1000;
-                            }
-                            $itemWeightKg=$itemWeight / 1000;
-                            $totalItemWeight=$itemWeight * $item->kuantitas;
-                            $totalItemWeightKg = $totalItemWeight / 1000;
-                            @endphp
-                            <span style="color: #6b7280;">
-                                • {{ number_format($itemWeightKg, 2) }} kg
-                                @if($item->kuantitas > 1)
-                                <span style="font-size: 11px; color: #9ca3af;">
-                                    ({{ number_format($totalItemWeightKg, 2) }} kg total)
-                                </span>
-                                @endif
+                        <span style="color: #6b7280;">
+                            • {{ number_format($itemWeightKg, 2) }} kg
+                            @if($item->kuantitas > 1)
+                            <span style="font-size: 11px; color: #9ca3af;">
+                                ({{ number_format($totalItemWeightKg, 2) }} kg total)
                             </span>
+                            @endif
+                        </span>
                     </div>
                     <div class="item-price">
                         <span>Qty: {{ $item->kuantitas }}</span>
-                        <span><strong>IDR {{ number_format(($item->product->harga_jual ?? $item->product->harga) * $item->kuantitas, 0, ',', '.') }}</strong></span>
+                        <div>
+                            @if($hasDiscount)
+                            <div class="item-price-original-checkout">IDR {{ number_format($originalPrice * $item->kuantitas, 0, ',', '.') }}</div>
+                            <div class="item-price-final-checkout">IDR {{ number_format($finalPrice * $item->kuantitas, 0, ',', '.') }}</div>
+                            <div class="item-savings-checkout">💰 Save: IDR {{ number_format($totalDiscount, 0, ',', '.') }}</div>
+                            @else
+                            <div class="item-price-final-checkout">IDR {{ number_format($finalPrice * $item->kuantitas, 0, ',', '.') }}</div>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
