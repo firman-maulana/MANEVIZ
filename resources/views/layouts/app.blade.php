@@ -434,7 +434,7 @@
 
             .logo img {
                 height: 70px;
-                padding-left: 53px;
+                padding-left: 83px;
             }
 
             .mobile-menu-toggle {
@@ -447,6 +447,8 @@
                 font-size: 1.2rem;
                 order: 3;
                 flex: 0;
+                padding-left: 65px;
+
             }
 
             .nav-right {
