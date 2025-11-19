@@ -1,6 +1,8 @@
 @extends('layouts.app2')
 
 @section('content')
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
 <style>
     * {
         margin: 0;
@@ -501,6 +503,57 @@
             transform: rotate(360deg);
         }
     }
+
+
+    .payment-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(8px);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+    }
+
+    .payment-modal.show {
+        display: flex;
+    }
+
+    .payment-modal-content {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        max-width: 500px;
+        width: 90%;
+        text-align: center;
+    }
+
+    .loading-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .loading-spinner {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #007bff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
 </style>
 
 <div class="container">
@@ -786,9 +839,13 @@
         <!-- Actions -->
         <div class="order-actions">
             @if($order->payment_status === 'pending' && $order->payment_method !== 'cod')
-            <a href="#" class="btn btn-warning" onclick="completePayment('{{ $order->order_number }}')">
+            <button class="btn btn-warning" onclick="completePayment('{{ $order->order_number }}')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+                    <line x1="1" y1="10" x2="23" y2="10" />
+                </svg>
                 Complete Payment
-            </a>
+            </button>
             @endif
 
             @if(in_array($order->status, ['pending', 'processing']))
@@ -806,33 +863,117 @@
             </a>
         </div>
     </div>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="payment-modal">
+        <div class="payment-modal-content">
+            <div id="loadingContent" class="loading-content">
+                <div class="loading-spinner"></div>
+                <h3>Preparing Payment...</h3>
+                <p>Please wait while we set up your secure payment.</p>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
     function completePayment(orderNumber) {
-        alert('Payment feature will be implemented here for order: ' + orderNumber);
+        // Show loading modal
+        document.getElementById('paymentModal').classList.add('show');
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+        // Request new payment token
+        fetch(`/checkout/retry-payment/${orderNumber}`, {
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.snap_token) {
+                    document.getElementById('paymentModal').classList.remove('show');
+
+                    // Open Midtrans payment
+                    snap.pay(data.snap_token, {
+                        onSuccess: function(result) {
+                            handlePaymentSuccess(orderNumber, result.transaction_id);
+                        },
+                        onPending: function(result) {
+                            showNotification('success', 'Payment is being processed');
+                            setTimeout(() => window.location.href = '/orders/' + orderNumber, 2000);
+                        },
+                        onError: function(result) {
+                            showNotification('error', 'Payment failed. Please try again.');
+                            document.getElementById('paymentModal').classList.remove('show');
+                        },
+                        onClose: function() {
+                            showNotification('error', 'Payment cancelled');
+                            document.getElementById('paymentModal').classList.remove('show');
+                        }
+                    });
+                } else {
+                    document.getElementById('paymentModal').classList.remove('show');
+                    showNotification('error', data.message || 'Failed to create payment token');
+                }
+            })
+            .catch(error => {
+                document.getElementById('paymentModal').classList.remove('show');
+                showNotification('error', 'Failed to process payment. Please try again.');
+            });
+    }
+
+    function handlePaymentSuccess(orderNumber, transactionId) {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+        fetch('/checkout/handle-payment', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    order_number: orderNumber,
+                    transaction_id: transactionId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('success', 'Payment successful!');
+                    setTimeout(() => {
+                        window.location.href = data.redirect_url || '/orders/' + orderNumber;
+                    }, 1500);
+                } else {
+                    showNotification('error', data.message);
+                    setTimeout(() => window.location.reload(), 2000);
+                }
+            })
+            .catch(error => {
+                showNotification('success', 'Payment received! Redirecting...');
+                setTimeout(() => window.location.reload(), 2000);
+            });
     }
 
     function cancelOrder(orderId) {
-        if (confirm('Are you sure you want to cancel this order? This action cannot be undone.')) {
+        if (confirm('Are you sure you want to cancel this order?')) {
             fetch(`/orders/${orderId}/cancel`, {
                     method: 'POST',
                     headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         'Content-Type': 'application/json'
                     }
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        location.reload();
-                    } else {
-                        alert(data.message || 'Failed to cancel order');
+                        showNotification('success', 'Order cancelled successfully');
+                        setTimeout(() => location.reload(), 1500);
                     }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Failed to cancel order');
                 });
         }
     }

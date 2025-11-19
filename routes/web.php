@@ -19,12 +19,6 @@ use App\Http\Controllers\RajaOngkirController;
 use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\DiscountController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
-
 // ====================
 // Halaman Umum (Public)
 // ====================
@@ -115,11 +109,14 @@ Route::middleware('auth')->group(function () {
     Route::put('/cart/update/{id}', [CartController::class, 'updateQuantity'])->name('cart.update');
     Route::delete('/cart/remove/{id}', [CartController::class, 'removeItem'])->name('cart.remove');
 
-    // Checkout routes - FIXED
+    // Checkout routes
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout/create-payment', [CheckoutController::class, 'createPayment'])->name('checkout.create-payment');
     Route::post('/checkout/handle-payment', [CheckoutController::class, 'handlePaymentSuccess'])->name('checkout.handle-payment');
     Route::get('/checkout/success/{orderNumber}', [CheckoutController::class, 'success'])->name('checkout.success');
+
+    // 🔥 NEW: Retry payment for unpaid orders
+    Route::get('/checkout/retry-payment/{orderNumber}', [CheckoutController::class, 'retryPayment'])->name('checkout.retry-payment');
 });
 
 // =====================
@@ -165,7 +162,6 @@ Route::middleware('auth')->prefix('tracking')->name('tracking.')->group(function
 });
 
 Route::get('/products/on-sale', [ProductController::class, 'discounted'])->name('products.discounted');
-
 
 Route::prefix('api/discount')->name('discount.')->group(function () {
     Route::get('/check-status', [DiscountController::class, 'checkDiscountStatus'])->name('check-status');

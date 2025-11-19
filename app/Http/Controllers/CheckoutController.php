@@ -35,8 +35,7 @@ class CheckoutController extends Controller
                 ->where('user_id', Auth::id())
                 ->get();
 
-            // 🔥 LOG: untuk debugging
-            \Log::info('Checkout with specific items:', [
+            Log::info('Checkout with specific items:', [
                 'item_ids' => $itemIds,
                 'found_items' => $selectedItems->count()
             ]);
@@ -46,7 +45,7 @@ class CheckoutController extends Controller
                 ->where('user_id', Auth::id())
                 ->get();
 
-            \Log::info('Checkout with all cart items:', [
+            Log::info('Checkout with all cart items:', [
                 'total_items' => $selectedItems->count()
             ]);
         }
@@ -114,6 +113,91 @@ class CheckoutController extends Controller
             'totalWeight',
             'totalWeightKg'
         ));
+    }
+
+    /**
+     * 🔥 NEW: Retry payment for existing unpaid order
+     */
+    public function retryPayment($orderNumber)
+    {
+        try {
+            // Get the order
+            $order = Order::with(['orderItems.product.images', 'userAddress'])
+                ->where('order_number', $orderNumber)
+                ->where('user_id', Auth::id())
+                ->where('payment_status', 'pending')
+                ->firstOrFail();
+
+            // Prepare order data for Midtrans
+            $orderData = [
+                'order_number' => $order->order_number,
+                'user_id' => $order->user_id,
+                'total' => $order->grand_total,
+                'subtotal' => $order->subtotal ?? $order->total_amount,
+                'tax' => $order->tax ?? 0,
+                'shipping_cost' => $order->shipping_cost,
+                'total_weight' => $order->total_weight,
+                'courier_code' => $order->courier_code,
+                'courier_service' => $order->courier_service,
+                'items' => $order->orderItems,
+                'selected_address_id' => $order->address_id,
+                'customer' => [
+                    'name' => $order->shipping_name,
+                    'email' => $order->shipping_email,
+                    'phone' => $order->shipping_phone,
+                ],
+                'shipping' => [
+                    'name' => $order->shipping_name,
+                    'email' => $order->shipping_email,
+                    'phone' => $order->shipping_phone,
+                    'address' => $order->shipping_address,
+                    'city' => $order->shipping_city,
+                    'province' => $order->shipping_province,
+                    'postal_code' => $order->shipping_postal_code,
+                    'district_id' => $order->shipping_district_id,
+                ],
+                'billing' => [
+                    'name' => $order->billing_name,
+                    'email' => $order->billing_email,
+                    'phone' => $order->billing_phone,
+                    'address' => $order->billing_address,
+                    'city' => $order->billing_city,
+                    'province' => $order->billing_province,
+                    'postal_code' => $order->billing_postal_code,
+                ],
+                'notes' => $order->notes,
+            ];
+
+            Log::info('Retry Payment Order Data:', $orderData);
+
+            // Create new snap token
+            $snapToken = $this->midtransService->createSnapTokenFromData($orderData);
+
+            if (!$snapToken) {
+                throw new \Exception('Failed to create payment token');
+            }
+
+            // Update order with new snap token
+            $order->update(['snap_token' => $snapToken]);
+
+            return response()->json([
+                'success' => true,
+                'snap_token' => $snapToken,
+                'order_number' => $order->order_number,
+                'order_id' => $order->id
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Retry Payment Error:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 400);
+        }
     }
 
     public function createPayment(Request $request)
@@ -313,7 +397,7 @@ class CheckoutController extends Controller
                     'order_id' => $order->id,
                     'product_id' => $item->product_id,
                     'product_name' => $item->product->name,
-                    'product_price' => $finalPrice, // 🔥 USE DISCOUNTED PRICE
+                    'product_price' => $finalPrice,
                     'kuantitas' => $item->kuantitas,
                     'size' => $item->size,
                     'subtotal' => $finalPrice * $item->kuantitas,
