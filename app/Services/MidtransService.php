@@ -31,7 +31,8 @@ class MidtransService
         // Prepare item details
         $itemDetails = [];
         foreach ($orderData['items'] as $item) {
-            $price = $item->product->harga_jual ?? $item->product->harga;
+            // 🔥 USE FINAL PRICE (with discount applied)
+            $price = $item->product->final_price;
             $itemDetails[] = [
                 'id' => $item->product_id,
                 'price' => (int) $price,
