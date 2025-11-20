@@ -18,6 +18,7 @@ use App\Http\Controllers\PaymentConfirmationController;
 use App\Http\Controllers\RajaOngkirController;
 use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\DiscountController;
+use App\Http\Controllers\AIChatController;
 
 // ====================
 // Halaman Umum (Public)
@@ -167,4 +168,10 @@ Route::prefix('api/discount')->name('discount.')->group(function () {
     Route::get('/check-status', [DiscountController::class, 'checkDiscountStatus'])->name('check-status');
     Route::post('/batch-check', [DiscountController::class, 'batchCheckDiscountStatus'])->name('batch-check');
     Route::get('/active', [DiscountController::class, 'getActiveDiscounts'])->name('active');
+});
+
+Route::prefix('ai-chat')->name('ai-chat.')->group(function () {
+    Route::post('/send', [AIChatController::class, 'chat'])->name('send');
+    Route::get('/product-suggestions', [AIChatController::class, 'getProductSuggestions'])->name('suggestions');
+    Route::get('/test', [AIChatController::class, 'testConnection'])->name('test');
 });
