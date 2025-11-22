@@ -1698,31 +1698,21 @@ use App\Models\Product;
         <div class="container">
             <h3 class="section-title">Inspirational Outfits</h3>
             <div class="outfit-grid">
-                <!-- Outfit 1 -->
-                <div class="outfit-card outfit-left">
+                @forelse($inspirationalOutfits as $outfit)
+                <div class="outfit-card outfit-{{ $outfit->position }}">
                     <div class="outfit-content">
                         <div class="outfit-image">
-                            <img src=" image/inspirasi1.jpg" alt="Build For The Grind Outfit">
+                            <img src="{{ asset('storage/' . $outfit->image_path) }}" alt="{{ $outfit->title }}">
                         </div>
                         <div class="outfit-text">
-                            <h4 class="outfit-title">"Dare To Win" For The Dedicated Individuals</h4>
-                            <p class="outfit-date">June 5, 2025</p>
+                            <h4 class="outfit-title">{{ $outfit->title }}</h4>
+                            <p class="outfit-date">{{ \Carbon\Carbon::parse($outfit->date)->format('F j, Y') }}</p>
                         </div>
                     </div>
                 </div>
-
-                <!-- Outfit 2 -->
-                <div class="outfit-card outfit-right">
-                    <div class="outfit-content">
-                        <div class="outfit-text">
-                            <h4 class="outfit-title">Made For Those Who Are Silent But Resilient</h4>
-                            <p class="outfit-date">July 10, 2025</p>
-                        </div>
-                        <div class="outfit-image">
-                            <img src=" image/inspirasi2.jpg" alt="Silent But Resilient Outfit">
-                        </div>
-                    </div>
-                </div>
+                @empty
+                <p style="grid-column: 1 / -1; text-align: center; color: #666;">No inspirational outfits available.</p>
+                @endforelse
             </div>
         </div>
     </div>
@@ -1807,9 +1797,7 @@ use App\Models\Product;
 
 
             <!-- See All Button -->
-            <div class="see-all-container">
-                <a href="#" class="see-all-btn">See All →</a>
-            </div>
+            <!--   -->
         </div>
     </div>
 
@@ -1818,33 +1806,15 @@ use App\Models\Product;
         <div class="container">
             <h3 class="section-title">Featured</h3>
             <div class="featured-grid">
-                <!-- Featured Item 1 -->
-                <div class="featured-card featured-universe">
+                @forelse($featuredItems as $item)
+                <div class="featured-card" style="background-color: {{ $item->background_color ?? 'transparent' }};">
                     <div class="featured-content">
-                        <img src=" image/banner2.jpg">
+                        <img src="{{ asset('storage/' . $item->image_path) }}" alt="{{ $item->title ?? 'Featured Item' }}">
                     </div>
                 </div>
-
-                <!-- Featured Item 2 -->
-                <div class="featured-card featured-minimalist">
-                    <div class="featured-content">
-                        <img src=" image/banner-sepatu.jpg">
-                    </div>
-                </div>
-
-                <!-- Featured Item 3 -->
-                <div class="featured-card featured-marvel">
-                    <div class="featured-content">
-                        <img src=" image/banner-sepatu2.jpg">
-                    </div>
-                </div>
-
-                <!-- Featured Item 4 -->
-                <div class="featured-card featured-future">
-                    <div class="featured-content">
-                        <img src=" image/banner-hoodie.jpg">
-                    </div>
-                </div>
+                @empty
+                <p style="grid-column: 1 / -1; text-align: center; color: #666;">No featured items available.</p>
+                @endforelse
             </div>
         </div>
     </div>

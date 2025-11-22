@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\BerandaImage;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -16,6 +17,12 @@ class HomeController extends Controller
             ->limit(4)
             ->get();
 
-        return view('beranda', compact('latestProducts'));
+        // Get carousel images
+        $carouselImages = BerandaImage::carousel()->get();
+
+        // Get banner image (Most Culture section)
+        $bannerImage = BerandaImage::banner();
+
+        return view('beranda', compact('latestProducts', 'carouselImages', 'bannerImage'));
     }
 }

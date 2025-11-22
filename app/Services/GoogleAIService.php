@@ -87,7 +87,7 @@ class GoogleAIService
      */
     public function buildSystemInstruction(array $context): string
     {
-        $instruction = "Kamu adalah customer service virtual bernama 'MANE Assistant' untuk MANEVIZ, sebuah toko online fashion premium.\n\n";
+        $instruction = "Kamu adalah customer service virtual bernama 'MANEVIZ Assistant' untuk MANEVIZ, sebuah toko online fashion premium.\n\n";
 
         $instruction .= "INFORMASI PENTING:\n";
         $instruction .= "- Nama toko: MANEVIZ\n";

@@ -43,7 +43,7 @@
         line-height: 1.1;
         margin-bottom: 20px;
         letter-spacing: -2px;
-        margin-left: -30px;
+        margin-left: 18px;
     }
 
     .hero-content .highlight {
@@ -67,7 +67,7 @@
         width: 100%;
         overflow: hidden;
         margin-top: 63px;
-        max-height: 400px;
+        max-height: 480px;
     }
 
     .carousel-container {
@@ -84,7 +84,7 @@
 
     .carousel-slide img {
         width: 100%;
-        height: 400px;
+        height: 480px;
         display: block;
         border-radius: 10px;
         object-fit: cover;
@@ -878,18 +878,25 @@
     <!-- Carousel Wrapper -->
     <div class="carousel-wrapper">
         <div class="carousel-container" id="carouselContainer">
-            <!-- Slide 1 -->
+            @forelse($carouselImages as $image)
+            <!-- Slide {{ $loop->iteration }} -->
             <div class="carousel-slide">
-                <img src="image/styleback.png" alt="Style Back Image 1">
+                <img src="{{ asset('storage/' . $image->image_path) }}"
+                     alt="{{ $image->title ?? 'Carousel Image ' . $loop->iteration }}"
+                     onerror="this.onerror=null;this.src='{{ asset('image/styleback.png') }}';">
             </div>
-            <!-- Slide 2 - Add more images as needed -->
+            @empty
+            <!-- Fallback jika tidak ada gambar di database -->
             <div class="carousel-slide">
-                <img src="image/styleback.png" alt="Style Back Image 2">
+                <img src="{{ asset('image/styleback.png') }}" alt="Style Back Image 1">
             </div>
-            <!-- Slide 3 -->
             <div class="carousel-slide">
-                <img src="image/styleback.png" alt="Style Back Image 3">
+                <img src="{{ asset('image/bigsale.jpg') }}" alt="Style Back Image 2">
             </div>
+            <div class="carousel-slide">
+                <img src="{{ asset('image/casualfit.jpg') }}" alt="Style Back Image 3">
+            </div>
+            @endforelse
         </div>
 
         <!-- Navigation Buttons -->
@@ -1026,7 +1033,17 @@
     <div class="mostculture">
         <h2>Most Culture</h2>
     </div>
-    <img src="image/banner.png" class="banner2" alt="Banner Image">
+
+    <!-- Banner Image - UPDATE INI -->
+    @if($bannerImage)
+    <img src="{{ asset('storage/' . $bannerImage->image_path) }}"
+         class="banner2"
+         alt="{{ $bannerImage->title ?? 'Most Culture Banner' }}"
+         onerror="this.onerror=null;this.src='{{ asset('image/banner.png') }}';">
+    @else
+    <!-- Fallback jika tidak ada banner di database -->
+    <img src="{{ asset('image/banner.png') }}" class="banner2" alt="Banner Image">
+    @endif
 </section>
 
 <!-- Timeless Choice -->

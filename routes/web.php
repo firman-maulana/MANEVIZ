@@ -19,21 +19,21 @@ use App\Http\Controllers\RajaOngkirController;
 use App\Http\Controllers\TrackingController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\AIChatController;
+use App\Http\Controllers\HowToOrderController;
 
 // ====================
 // Halaman Umum (Public)
 // ====================
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/allProduct', [ProductController::class, 'index'])->name('products.index');
-Route::view('/about', 'about')->name('about');
+Route::get('/about', [App\Http\Controllers\AboutController::class, 'index'])->name('about');
 
 // Contact routes
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
-Route::view('/refundPolicy', 'refundPolicy')->name('refund.policy');
-Route::view('/howToOrder', 'howToOrder')->name('how.to.order');
-
+Route::get('/refundPolicy', [App\Http\Controllers\RefundPolicyController::class, 'index'])->name('refund.policy');
+Route::get('/howToOrder', [HowToOrderController::class, 'index'])->name('how.to.order');
 // Payment Confirmation routes
 Route::get('/paymentConfirmation', [PaymentConfirmationController::class, 'index'])->name('payment.confirmation');
 Route::post('/paymentConfirmation', [PaymentConfirmationController::class, 'store'])->name('payment.confirmation.store');
@@ -118,6 +118,13 @@ Route::middleware('auth')->group(function () {
 
     // 🔥 NEW: Retry payment for unpaid orders
     Route::get('/checkout/retry-payment/{orderNumber}', [CheckoutController::class, 'retryPayment'])->name('checkout.retry-payment');
+
+    Route::prefix('ai-chat')->name('ai-chat.')->group(function () {
+    Route::post('/send', [AIChatController::class, 'chat'])->name('send');
+    Route::get('/product-suggestions', [AIChatController::class, 'getProductSuggestions'])->name('suggestions');
+    Route::get('/test', [AIChatController::class, 'testConnection'])->name('test');
+});
+
 });
 
 // =====================
@@ -170,8 +177,3 @@ Route::prefix('api/discount')->name('discount.')->group(function () {
     Route::get('/active', [DiscountController::class, 'getActiveDiscounts'])->name('active');
 });
 
-Route::prefix('ai-chat')->name('ai-chat.')->group(function () {
-    Route::post('/send', [AIChatController::class, 'chat'])->name('send');
-    Route::get('/product-suggestions', [AIChatController::class, 'getProductSuggestions'])->name('suggestions');
-    Route::get('/test', [AIChatController::class, 'testConnection'])->name('test');
-});

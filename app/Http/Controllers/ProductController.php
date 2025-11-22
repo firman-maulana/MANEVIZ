@@ -5,114 +5,55 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Review;
+use App\Models\InspirationalOutfit;
+use App\Models\FeaturedItem;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    /**
+     * Display the allProduk page with products, best sellers, inspirational outfits, and featured items
+     */
     public function index(Request $request)
     {
-        $query = Product::with(['category', 'images']);
-
-        // Filter kategori
-        if ($request->filled('category')) {
-            $query->where('category_id', $request->category);
-        }
-
-        // Filter badge_type
-        if ($request->filled('badge')) {
-            $query->where('badge_type', $request->badge);
-        }
-
-        // Pencarian nama / deskripsi
-        if ($request->filled('search')) {
-            $query->where(function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('deskripsi', 'like', '%' . $request->search . '%');
-            });
-        }
-
-        // Sorting
-        switch ($request->get('sort', 'newest')) {
-            case 'price_low':
-                // Sort by final price (considering discount)
-                $query->orderByRaw('
-                    CASE
-                        WHEN discount_percentage > 0
-                        AND (discount_start_date IS NULL OR discount_start_date <= NOW())
-                        AND (discount_end_date IS NULL OR discount_end_date >= NOW())
-                        THEN (COALESCE(harga_jual, harga) - (COALESCE(harga_jual, harga) * discount_percentage / 100))
-                        ELSE COALESCE(harga_jual, harga)
-                    END ASC
-                ');
-                break;
-            case 'price_high':
-                $query->orderByRaw('
-                    CASE
-                        WHEN discount_percentage > 0
-                        AND (discount_start_date IS NULL OR discount_start_date <= NOW())
-                        AND (discount_end_date IS NULL OR discount_end_date >= NOW())
-                        THEN (COALESCE(harga_jual, harga) - (COALESCE(harga_jual, harga) * discount_percentage / 100))
-                        ELSE COALESCE(harga_jual, harga)
-                    END DESC
-                ');
-                break;
-            case 'name':
-                $query->orderBy('name', 'asc');
-                break;
-            case 'popular':
-                $query->orderBy('total_penjualan', 'desc');
-                break;
-            case 'discount':
-                // Sort by highest discount first
-                $query->orderBy('discount_percentage', 'desc');
-                break;
-            default:
-                $query->orderBy('created_at', 'desc');
-                break;
-        }
-
-        $products = $query->paginate(12);
-        $categories = Category::all();
-
-        // Get best seller products (top 4 by sales)
-        $bestSellerProducts = Product::with(['category', 'images'])
-            ->where('total_penjualan', '>', 0)
-            ->orderBy('total_penjualan', 'desc')
-            ->limit(4)
+        // Get all active products for Our Collections section
+        $products = Product::with(['category', 'images', 'primaryImage'])
+            ->orderBy('created_at', 'desc')
             ->get();
 
-        // If there are less than 4 products with sales, fill with featured or newest products
-        if ($bestSellerProducts->count() < 4) {
-            $remainingCount = 4 - $bestSellerProducts->count();
-            $bestSellerIds = $bestSellerProducts->pluck('id')->toArray();
+        // Get best seller products (top 8 by sales)
+        $bestSellerProducts = Product::with(['category', 'images', 'primaryImage'])
+            ->where('total_penjualan', '>', 0)
+            ->orderBy('total_penjualan', 'desc')
+            ->take(8)
+            ->get();
 
-            $additionalProducts = Product::with(['category', 'images'])
-                ->whereNotIn('id', $bestSellerIds)
-                ->where('is_featured', true)
-                ->orderBy('created_at', 'desc')
-                ->limit($remainingCount)
-                ->get();
+        // Get active inspirational outfits
+        $inspirationalOutfits = InspirationalOutfit::where('is_active', true)
+            ->orderBy('order')
+            ->get();
 
-            // If still not enough, get the newest products (non-featured)
-            if ($additionalProducts->count() < $remainingCount) {
-                $stillNeeded = $remainingCount - $additionalProducts->count();
-                $usedIds = array_merge($bestSellerIds, $additionalProducts->pluck('id')->toArray());
+        // Get active featured items (max 4 for grid layout)
+        $featuredItems = FeaturedItem::where('is_active', true)
+            ->orderBy('order')
+            ->take(4)
+            ->get();
 
-                $newestProducts = Product::with(['category', 'images'])
-                    ->whereNotIn('id', $usedIds)
-                    ->orderBy('created_at', 'desc')
-                    ->limit($stillNeeded)
-                    ->get();
+        // Get all categories for filter (if needed)
+        $categories = Category::all();
 
-                $additionalProducts = $additionalProducts->concat($newestProducts);
-            }
-
-            $bestSellerProducts = $bestSellerProducts->concat($additionalProducts);
-        }
-
-        return view('allProduk', compact('products', 'categories', 'bestSellerProducts'));
+        return view('allProduk', compact(
+            'products',
+            'bestSellerProducts',
+            'inspirationalOutfits',
+            'featuredItems',
+            'categories'
+        ));
     }
 
+    /**
+     * Display a single product detail page
+     */
     public function show($slug)
     {
         // Get product with images and category
@@ -173,6 +114,9 @@ class ProductController extends Controller
         return view('detailproduk', compact('product', 'relatedProducts', 'reviews', 'reviewStats'));
     }
 
+    /**
+     * Display featured products
+     */
     public function featured()
     {
         $featuredProducts = Product::where('is_featured', true)
@@ -183,6 +127,9 @@ class ProductController extends Controller
         return view('products.featured', compact('featuredProducts'));
     }
 
+    /**
+     * Display timeless choice products
+     */
     public function timelessChoice()
     {
         $timelessProducts = Product::with(['category', 'images'])
@@ -195,12 +142,15 @@ class ProductController extends Controller
         return view('products.timeless', compact('timelessProducts'));
     }
 
+    /**
+     * Display latest products
+     */
     public function latest()
     {
         $latestProducts = Product::with(['category', 'images'])
             ->where(function ($q) {
                 $q->where('badge_type', 'just-in')
-                  ->orWhere('created_at', '>=', now()->subDays(30));
+                    ->orWhere('created_at', '>=', now()->subDays(30));
             })
             ->orderBy('created_at', 'desc')
             ->paginate(8);
@@ -208,6 +158,9 @@ class ProductController extends Controller
         return view('products.latest', compact('latestProducts'));
     }
 
+    /**
+     * Search products
+     */
     public function search(Request $request)
     {
         $query = $request->get('q');
@@ -219,7 +172,7 @@ class ProductController extends Controller
         $products = Product::with(['category', 'images'])
             ->where(function ($q) use ($query) {
                 $q->where('name', 'like', '%' . $query . '%')
-                  ->orWhere('deskripsi', 'like', '%' . $query . '%');
+                    ->orWhere('deskripsi', 'like', '%' . $query . '%');
             })
             ->orderBy('total_penjualan', 'desc')
             ->paginate(12);
@@ -227,24 +180,108 @@ class ProductController extends Controller
         return view('products.search', compact('products', 'query'));
     }
 
-    // API
+    /**
+     * Display products with active discounts
+     */
+    public function discounted(Request $request)
+    {
+        $products = Product::with(['category', 'images'])
+            ->where(function ($query) {
+                $query->where('is_on_sale', true)
+                    ->orWhere(function ($q) {
+                        $q->where('discount_percentage', '>', 0)
+                            ->where(function ($dateQuery) {
+                                $dateQuery->whereNull('discount_start_date')
+                                    ->orWhere('discount_start_date', '<=', now());
+                            })
+                            ->where(function ($dateQuery) {
+                                $dateQuery->whereNull('discount_end_date')
+                                    ->orWhere('discount_end_date', '>=', now());
+                            });
+                    });
+            })
+            ->orderBy('discount_percentage', 'desc')
+            ->paginate(12);
+
+        return view('products.discounted', compact('products'));
+    }
+
+    /**
+     * API: Get products list (JSON response)
+     */
     public function api_index(Request $request)
     {
         $query = Product::with(['category', 'images']);
 
+        // Filter by category
         if ($request->filled('category')) {
             $query->where('category_id', $request->category);
         }
 
+        // Filter by featured
         if ($request->filled('featured')) {
             $query->where('is_featured', true);
         }
 
+        // Filter by badge type
+        if ($request->filled('badge')) {
+            $query->where('badge_type', $request->badge);
+        }
+
+        // Search by name or description
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('deskripsi', 'like', '%' . $searchTerm . '%');
+            });
+        }
+
+        // Sorting
+        switch ($request->get('sort', 'newest')) {
+            case 'price_low':
+                $query->orderByRaw('
+                    CASE
+                        WHEN discount_percentage > 0
+                        AND (discount_start_date IS NULL OR discount_start_date <= NOW())
+                        AND (discount_end_date IS NULL OR discount_end_date >= NOW())
+                        THEN (COALESCE(harga_jual, harga) - (COALESCE(harga_jual, harga) * discount_percentage / 100))
+                        ELSE COALESCE(harga_jual, harga)
+                    END ASC
+                ');
+                break;
+            case 'price_high':
+                $query->orderByRaw('
+                    CASE
+                        WHEN discount_percentage > 0
+                        AND (discount_start_date IS NULL OR discount_start_date <= NOW())
+                        AND (discount_end_date IS NULL OR discount_end_date >= NOW())
+                        THEN (COALESCE(harga_jual, harga) - (COALESCE(harga_jual, harga) * discount_percentage / 100))
+                        ELSE COALESCE(harga_jual, harga)
+                    END DESC
+                ');
+                break;
+            case 'name':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'popular':
+                $query->orderBy('total_penjualan', 'desc');
+                break;
+            case 'discount':
+                $query->orderBy('discount_percentage', 'desc');
+                break;
+            default:
+                $query->orderBy('created_at', 'desc');
+                break;
+        }
+
+        // Get products with limit or pagination
         $products = $request->has('limit')
             ? $query->limit($request->limit)->get()
             : $query->paginate(12);
 
         return response()->json([
+            'success' => true,
             'products' => $products->map(function ($product) {
                 $primaryImage = $product->images()->where('is_primary', true)->first();
 
@@ -268,21 +305,9 @@ class ProductController extends Controller
             'pagination' => $products instanceof \Illuminate\Pagination\AbstractPaginator ? [
                 'current_page' => $products->currentPage(),
                 'last_page' => $products->lastPage(),
+                'per_page' => $products->perPage(),
                 'total' => $products->total(),
             ] : null
         ]);
-    }
-
-    /**
-     * 🔥 NEW: Get products with active discounts
-     */
-    public function discounted(Request $request)
-    {
-        $products = Product::with(['category', 'images'])
-            ->withActiveDiscount()
-            ->orderBy('discount_percentage', 'desc')
-            ->paginate(12);
-
-        return view('products.discounted', compact('products'));
     }
 }

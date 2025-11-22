@@ -331,12 +331,12 @@ use App\Models\Product;
     }
 
     .add-to-cart-btn {
-        background: #212529;
+        background: #03960fff;
         color: white;
     }
 
     .add-to-cart-btn:hover:not(:disabled) {
-        background: #343a40;
+        background: #04b813ff;
         transform: translateY(-2px);
     }
 
@@ -1777,9 +1777,9 @@ use App\Models\Product;
     const loginUrl = "{{ route('login') }}";
     const cartAddUrl = "{{ route('cart.add') }}";
     const checkoutUrl = "{{ route('checkout.index') }}";
-    
+
     // Get CSRF token
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
                       '{{ csrf_token() }}';
 
     // ============================================
@@ -1790,7 +1790,7 @@ use App\Models\Product;
         console.log('✓ Product ID:', productId);
         console.log('✓ Authenticated:', isAuthenticated);
         console.log('✓ CSRF Token:', csrfToken ? 'Found' : 'Missing');
-        
+
         // Test if buttons exist
         const addToCartBtn = document.querySelector('.add-to-cart-btn');
         const buyNowBtn = document.querySelector('.buy-now-btn');
@@ -1852,7 +1852,7 @@ use App\Models\Product;
         const originalHTML = button.innerHTML;
         button.disabled = true;
         button.innerHTML = `
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" 
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                  style="width: 20px; height: 20px; animation: spin 1s linear infinite;">
                 <circle cx="12" cy="12" r="10"></circle>
             </svg>
@@ -1891,10 +1891,10 @@ use App\Models\Product;
         })
         .then(result => {
             console.log('✅ Success:', result);
-            
+
             if (result.success) {
                 showNotification('success', result.message || 'Produk ditambahkan ke keranjang');
-                
+
                 // Update cart count
                 if (result.cart_count !== undefined) {
                     updateCartCount(result.cart_count);
@@ -1943,7 +1943,7 @@ use App\Models\Product;
         const originalHTML = button.innerHTML;
         button.disabled = true;
         button.innerHTML = `
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" 
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                  style="width: 20px; height: 20px; animation: spin 1s linear infinite;">
                 <circle cx="12" cy="12" r="10"></circle>
             </svg>
@@ -1982,10 +1982,10 @@ use App\Models\Product;
         })
         .then(result => {
             console.log('✅ Success:', result);
-            
+
             if (result.success && result.cart_item && result.cart_item.id) {
                 showNotification('success', 'Mengarahkan ke checkout...');
-                
+
                 // 🔥 FIX: Redirect to checkout with ONLY this cart item ID
                 setTimeout(() => {
                     const checkoutUrlWithItem = checkoutUrl + '?items=' + result.cart_item.id;
@@ -2032,17 +2032,17 @@ use App\Models\Product;
             display: flex;
             align-items: center;
             gap: 10px;
-            ${type === 'success' ? 
-                'background: linear-gradient(135deg, #28a745 0%, #20c997 100%);' : 
+            ${type === 'success' ?
+                'background: linear-gradient(135deg, #28a745 0%, #20c997 100%);' :
                 'background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);'
             }
         `;
 
         // Add icon
-        const icon = type === 'success' ? 
+        const icon = type === 'success' ?
             '<svg viewBox="0 0 24 24" fill="currentColor" style="width: 20px; height: 20px; flex-shrink: 0;"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>' :
             '<svg viewBox="0 0 24 24" fill="currentColor" style="width: 20px; height: 20px; flex-shrink: 0;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>';
-        
+
         notification.innerHTML = icon + '<span>' + message + '</span>';
         document.body.appendChild(notification);
 
@@ -2061,7 +2061,7 @@ use App\Models\Product;
     // ============================================
     function updateCartCount(count) {
         console.log('🔄 Updating cart count to:', count);
-        
+
         const selectors = [
             '.cart-count',
             '#cart-count',
@@ -2075,7 +2075,7 @@ use App\Models\Product;
                 element.textContent = count;
                 element.style.transition = 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
                 element.style.transform = 'scale(1.4)';
-                
+
                 setTimeout(() => {
                     element.style.transform = 'scale(1)';
                 }, 300);
@@ -2131,7 +2131,7 @@ use App\Models\Product;
         const container = document.getElementById('thumbnailContainer');
         const thumbnails = document.querySelectorAll('.thumbnail');
         const totalSlides = Math.ceil(thumbnails.length / thumbnailsPerView);
-        
+
         if (!container || thumbnails.length <= thumbnailsPerView) return;
 
         const slideWidth = 100 / thumbnailsPerView;

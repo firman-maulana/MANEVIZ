@@ -459,29 +459,60 @@
         <h3>About Us</h3>
     </div>
 
+    @if($about)
     <div class="content-wrapper">
         <div class="logo-section">
             <div class="logo-container">
-                <img src="image/about.jpg" alt="MANEVIZ Logo" class="logo-image">
+                @if($about->image)
+                    <img src="{{ asset('storage/' . $about->image) }}" alt="MANEVIZ Logo" class="logo-image">
+                @else
+                    <img src="{{ asset('image/about.jpg') }}" alt="MANEVIZ Logo" class="logo-image">
+                @endif
             </div>
         </div>
 
         <div class="text-section">
             <div class="text-content">
-                <p><span class="highlight">MANEVIZ</span> Was Born In The Heart Of Malang, A City Known For Its Creative Spirit And Youthful Energy. Founded By A Vocational High School Student With A Fierce Desire To Build Something Meaningful, <span class="highlight">MANEVIZ</span> Began As More Than Just A Fashion Project—It Was A Personal Mission. In A Time When Meets An Still Figuring Things Out, This Young Founder Chose To Take A Leap Into The World Of Fashion, Driven By A Simple Yet Powerful Belief: That Great Style And Authentic Expression Can Happen When Vision Meets Courage—Proof That Age Is No Barrier To Building A Legacy.</p>
+                @if($about->paragraph_1)
+                    <p>{!! nl2br(e($about->paragraph_1)) !!}</p>
+                @endif
 
-                <p>Deeply Inspired By The Wild Worlds Of Anime, <span class="highlight">MANEVIZ</span> Embodies Character Transformation Seen In Its Stories Into Every Design. We See Anime Not Just As Entertainment, But As An Art Form That Mirrors Real Life The Battles We Fight Within, The Identities We Try To Define, The Dreams We Chase. Our Clothing Becomes A Medium For That Same Transformation—Rich In Symbolism, Bold Graphic Language, And Emotional Resonance. Each Piece Is Crafted To Echo The Spirit Of Heroes Who Rise From Chaos, Who Embrace Their Flaws, And Who Refuse To Be Ordinary.</p>
+                @if($about->paragraph_2)
+                    <p>{!! nl2br(e($about->paragraph_2)) !!}</p>
+                @endif
             </div>
         </div>
     </div>
 
     <div class="additional-content">
-        <p>But <span class="highlight">MANEVIZ</span> Is Not Just About Design—It's About Expression. It's About Giving Gen-Z A Platform To Wear Their Stories, Their Emotions, Their Beliefs. Every Shirt Is More Than Fabric; It's A Statement. Every Hoodie Is More Than Warmth; It's An Armor Against A World That Often Feels Like Fashion And Feeling, Who Find Power In Standing Out Instead Of Fitting In. With Drops That Feel Raw And Real, <span class="highlight">MANEVIZ</span> Isn't Interested In Trends—We're Here To Shape Culture, To Speak To Those Who Refuse To Whisper.</p>
+        @if($about->paragraph_3)
+            <p>{!! nl2br(e($about->paragraph_3)) !!}</p>
+        @endif
 
-        <p>As A Movement Born From A Bedroom In Malang And Driven By The Pulse Of Youth Culture, <span class="highlight">MANEVIZ</span> Stands For All Who Believe In Starting Small But Dreaming Wide. We Are Here For The Creators, The Artists, The Makers, And The Believers. In Every Thread, There Is Intention. In Every Collection's A Narrative. And Behind It All, A Belief That Style Can Be Rebellion—And Clothing Can Carry The Soul.</p>
+        @if($about->paragraph_4)
+            <p>{!! nl2br(e($about->paragraph_4)) !!}</p>
+        @endif
 
-        <p><span class="highlight">MANEVIZ</span> — Born In Malang. Forged By Vision. Styled Through Chaos. Inspired By Anime. Created For Gen Z.</p>
+        @if($about->paragraph_5)
+            <p>{!! nl2br(e($about->paragraph_5)) !!}</p>
+        @endif
     </div>
+    @else
+    <!-- Fallback jika belum ada data -->
+    <div class="content-wrapper">
+        <div class="logo-section">
+            <div class="logo-container">
+                <img src="{{ asset('image/about.jpg') }}" alt="MANEVIZ Logo" class="logo-image">
+            </div>
+        </div>
+
+        <div class="text-section">
+            <div class="text-content">
+                <p><span class="highlight">MANEVIZ</span> Was Born In The Heart Of Malang, A City Known For Its Creative Spirit And Youthful Energy.</p>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
 
 @endsection

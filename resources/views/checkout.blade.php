@@ -188,7 +188,7 @@
 
     .add-address-btn {
         display: inline-block;
-        background-color: #333;
+        background-color: #2d98fcff;
         color: white;
         text-decoration: none;
         padding: 10px 20px;
@@ -201,7 +201,7 @@
     }
 
     .add-address-btn:hover {
-        background-color: #555;
+        background-color: #69a5f3ff;
         text-decoration: none;
         color: white;
     }
