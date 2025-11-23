@@ -316,68 +316,114 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: white;
             padding-top: 120px;
             padding-bottom: 60px;
         }
 
         .error-content {
-            text-align: center;
-            color: white;
-            max-width: 600px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            max-width: 1200px;
+            width: 100%;
             padding: 2rem;
+            align-items: center;
+        }
+
+        .error-left {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .error-title {
+            font-size: 8rem;
+            font-weight: 900;
+            margin: 0;
+            line-height: 1;
+            color: #000;
+            letter-spacing: -5px;
+        }
+
+        .error-subtitle {
+            font-size: 2.5rem;
+            margin: 0;
+            font-weight: 700;
+            color: #000;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        .error-description {
+            font-size: 1.1rem;
+            margin: 0;
+            color: #000;
+            line-height: 1.8;
+            max-width: 500px;
+        }
+
+        .error-suggestions {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .suggestion-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+            color: #333;
+        }
+
+        .suggestion-item i {
+            color: #000;
+            font-size: 1.1rem;
+        }
+
+        .home-button {
+            display: inline-block;
+            padding: 15px 40px;
+            background-color: #000;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            width: fit-content;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .home-button:hover {
+            background-color: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .error-right {
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .image-container {
             width: 100%;
-            max-width: 400px;
-            height: 300px;
-            margin: 0 auto 2rem;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
+            max-width: 800px;
+            height: auto;
             display: flex;
-            justify-content: center;
+            justify-content: right;
             align-items: center;
-            backdrop-filter: blur(10px);
         }
 
         .image-container img {
             max-width: 100%;
-            max-height: 100%;
+            height: auto;
             object-fit: contain;
-        }
-
-        .error-title {
-            font-size: 3rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-        }
-
-        .error-subtitle {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .error-description {
-            font-size: 1rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-        }
-
-        .back-button {
-            display: inline-block;
-            padding: 12px 30px;
-            background-color: white;
-            color: #667eea;
-            text-decoration: none;
-            border-radius: 25px;
-            font-weight: 600;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .back-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
 
         /* Footer Styles */
@@ -562,6 +608,18 @@
                 height: 80px;
             }
 
+            .error-content {
+                gap: 60px;
+            }
+
+            .error-title {
+                font-size: 6rem;
+            }
+
+            .error-subtitle {
+                font-size: 2rem;
+            }
+
             .footer-content {
                 padding: 20px 15px;
             }
@@ -616,12 +674,38 @@
                 padding-top: 100px;
             }
 
+            .error-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                text-align: center;
+            }
+
+            .error-left {
+                align-items: center;
+            }
+
             .error-title {
-                font-size: 2.5rem;
+                font-size: 5rem;
             }
 
             .error-subtitle {
-                font-size: 1.3rem;
+                font-size: 1.8rem;
+            }
+
+            .error-description {
+                font-size: 1rem;
+            }
+
+            .error-suggestions {
+                gap: 0.6rem;
+            }
+
+            .suggestion-item {
+                font-size: 0.9rem;
+            }
+
+            .home-button {
+                margin: 0 auto;
             }
 
             .footer-main {
@@ -712,15 +796,32 @@
             }
 
             .error-title {
-                font-size: 2rem;
+                font-size: 4rem;
             }
 
             .error-subtitle {
-                font-size: 1.2rem;
+                font-size: 1.5rem;
             }
 
-            .image-container {
-                height: 250px;
+            .error-description {
+                font-size: 0.95rem;
+            }
+
+            .error-suggestions {
+                gap: 0.5rem;
+            }
+
+            .suggestion-item {
+                font-size: 0.85rem;
+            }
+
+            .suggestion-item i {
+                font-size: 1rem;
+            }
+
+            .home-button {
+                padding: 12px 30px;
+                font-size: 0.9rem;
             }
 
             .footer-content {
@@ -771,6 +872,14 @@
             .mobile-profile-icon {
                 padding: 6px;
                 font-size: 1.1rem;
+            }
+
+            .error-title {
+                font-size: 3.5rem;
+            }
+
+            .error-subtitle {
+                font-size: 1.3rem;
             }
 
             .footer-content {
@@ -879,17 +988,36 @@
     <!-- Error Page Content -->
     <div class="error-container">
         <div class="error-content">
-            <div class="image-container">
-                <img src="{{ asset('images/404-not-found.png') }}" alt="404 Not Found">
+            <div class="error-left">
+                <h1 class="error-title">404</h1>
+                <h2 class="error-subtitle">NOT FOUND</h2>
+                <p class="error-description">
+                    Oops! The page you're looking for doesn't exist. It might have been moved, deleted, or the URL might be incorrect.
+                </p>
+
+                <!-- <div class="error-suggestions">
+                    <div class="suggestion-item">
+                        <i class="bi bi-house-door"></i>
+                        <span>Return to homepage</span>
+                    </div>
+                    <div class="suggestion-item">
+                        <i class="bi bi-bag"></i>
+                        <span>Browse our products</span>
+                    </div>
+                    <div class="suggestion-item">
+                        <i class="bi bi-telephone"></i>
+                        <span>Contact our support team</span>
+                    </div>
+                </div> -->
+
+                <a href="{{ url('/') }}" class="home-button">Go Home</a>
             </div>
 
-            <h1 class="error-title">404</h1>
-            <h2 class="error-subtitle">Halaman Tidak Ditemukan</h2>
-            <p class="error-description">Maaf, halaman yang Anda cari tidak tersedia atau telah dipindahkan.</p>
-
-            <a href="{{ url('/') }}" class="back-button">
-                Kembali ke Beranda
-            </a>
+            <div class="error-right">
+                <div class="image-container">
+                    <img src="{{ asset('image/eror404.png') }}" alt="404 Not Found">
+                </div>
+            </div>
         </div>
     </div>
 

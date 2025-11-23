@@ -25,7 +25,7 @@ class ProductController extends Controller
         $bestSellerProducts = Product::with(['category', 'images', 'primaryImage'])
             ->where('total_penjualan', '>', 0)
             ->orderBy('total_penjualan', 'desc')
-            ->take(8)
+            ->take(4)
             ->get();
 
         // Get active inspirational outfits
