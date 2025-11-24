@@ -16,6 +16,7 @@ class AIChatController extends Controller
         $this->aiService = $aiService;
     }
 
+    // Di AIChatController.php, method chat()
     public function chat(Request $request)
     {
         $request->validate([
@@ -24,11 +25,8 @@ class AIChatController extends Controller
 
         try {
             $userMessage = $request->message;
-
-            // Cari produk terkait dari database
             $productContext = $this->getProductContext($userMessage);
 
-            // Kirim ke Gemini (AI)
             $response = $this->aiService->generateContent(
                 systemInstruction: $this->aiService->buildSystemInstruction([
                     'products' => $productContext
@@ -36,9 +34,16 @@ class AIChatController extends Controller
                 prompt: $userMessage
             );
 
-            // Jika AI kadang return array → ubah jadi string
             if (is_array($response)) {
                 $response = json_encode($response, JSON_PRETTY_PRINT);
+            }
+
+            // ✅ Cek jika response adalah error
+            if (str_starts_with($response, 'Error')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Maaf, layanan sedang sibuk. Silakan coba lagi.',
+                ], 503);
             }
 
             return response()->json([
@@ -46,7 +51,6 @@ class AIChatController extends Controller
                 'message' => $response,
                 'timestamp' => now()->toIso8601String()
             ]);
-
         } catch (\Exception $e) {
             Log::error('AI Chat Error: ' . $e->getMessage());
 
@@ -69,7 +73,7 @@ class AIChatController extends Controller
         } else {
             $products = Product::with(['category', 'primaryImage'])
                 ->where('status', 'active')
-                ->where(function($query) use ($keywords) {
+                ->where(function ($query) use ($keywords) {
                     foreach ($keywords as $keyword) {
                         $query->orWhere('name', 'LIKE', "%{$keyword}%")
                             ->orWhere('deskripsi', 'LIKE', "%{$keyword}%")
@@ -80,7 +84,7 @@ class AIChatController extends Controller
                 ->get();
         }
 
-        return $products->map(function($product) {
+        return $products->map(function ($product) {
             return [
                 'name' => $product->name,
                 'price' => $product->final_price,
@@ -98,10 +102,35 @@ class AIChatController extends Controller
     private function extractKeywords($message)
     {
         $commonWords = [
-            'saya','mau','cari','ada','yang','beli','butuh','perlu',
-            'ingin','minta','dong','nih','kak','min','bang','gan',
-            'produk','barang','item','jual','harga','berapa','untuk',
-            'apa','siapa','dimana','kapan','kenapa','bagaimana'
+            'saya',
+            'mau',
+            'cari',
+            'ada',
+            'yang',
+            'beli',
+            'butuh',
+            'perlu',
+            'ingin',
+            'minta',
+            'dong',
+            'nih',
+            'kak',
+            'min',
+            'bang',
+            'gan',
+            'produk',
+            'barang',
+            'item',
+            'jual',
+            'harga',
+            'berapa',
+            'untuk',
+            'apa',
+            'siapa',
+            'dimana',
+            'kapan',
+            'kenapa',
+            'bagaimana'
         ];
 
         $message = strtolower($message);
@@ -119,13 +148,13 @@ class AIChatController extends Controller
 
         $products = Product::with(['category', 'primaryImage'])
             ->where('status', 'active')
-            ->where(function($q) use ($query) {
+            ->where(function ($q) use ($query) {
                 $q->where('name', 'LIKE', "%{$query}%")
-                  ->orWhere('deskripsi_singkat', 'LIKE', "%{$query}%");
+                    ->orWhere('deskripsi_singkat', 'LIKE', "%{$query}%");
             })
             ->limit(3)
             ->get()
-            ->map(function($product) {
+            ->map(function ($product) {
                 return [
                     'id' => $product->id,
                     'name' => $product->name,

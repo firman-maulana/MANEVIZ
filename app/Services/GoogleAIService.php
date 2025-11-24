@@ -26,6 +26,14 @@ class GoogleAIService
     public function generateContent($systemInstruction, $prompt)
     {
         try {
+            // ✅ Log request details
+            Log::info("Gemini API Request", [
+                "url" => $this->apiUrl,
+                "model" => $this->model,
+                "api_key_length" => strlen($this->apiKey),
+                "prompt_length" => strlen($prompt)
+            ]);
+
             $payload = [
                 "contents" => [
                     [
@@ -33,7 +41,7 @@ class GoogleAIService
                         "parts" => [
                             [
                                 "text" =>
-                                    $systemInstruction . // Rules + product data
+                                    $systemInstruction .
                                     "\n\n" .
                                     "User: " . $prompt
                             ]
@@ -52,18 +60,51 @@ class GoogleAIService
                 ])
                 ->post($this->apiUrl . "?key={$this->apiKey}", $payload);
 
-            if (!$response->successful()) {
-                Log::error("Gemini API Error", [
+            // ✅ Log response details
+            Log::info("Gemini API Response", [
+                "status" => $response->status(),
+                "content_type" => $response->header('Content-Type'),
+                "body_preview" => substr($response->body(), 0, 200)
+            ]);
+
+            // ✅ Cek content type
+            $contentType = $response->header('Content-Type') ?? '';
+
+            if (!str_contains($contentType, 'application/json')) {
+                Log::error("Gemini API returned non-JSON response", [
                     "status" => $response->status(),
-                    "body" => $response->body(),
+                    "content_type" => $contentType,
+                    "full_body" => $response->body()
                 ]);
 
-                return "Error API: " . $response->body();
+                // Kembalikan error yang lebih informatif
+                if ($response->status() == 403) {
+                    return "Error: API Key tidak valid atau tidak memiliki akses. Silakan cek API key Anda.";
+                } elseif ($response->status() == 429) {
+                    return "Error: Terlalu banyak request. Silakan tunggu beberapa saat.";
+                } elseif ($response->status() == 404) {
+                    return "Error: Model Gemini 2.5 Flash tidak ditemukan. Mungkin belum tersedia untuk akun Anda.";
+                }
+
+                return "Error: Server mengembalikan response tidak valid (Status: {$response->status()})";
+            }
+
+            if (!$response->successful()) {
+                $errorData = @json_decode($response->body(), true);
+                $errorMsg = $errorData['error']['message'] ?? $response->body();
+
+                Log::error("Gemini API Error", [
+                    "status" => $response->status(),
+                    "error" => $errorMsg,
+                ]);
+
+                return "Error API ({$response->status()}): {$errorMsg}";
             }
 
             $data = $response->json();
 
             if (empty($data['candidates'][0]['content']['parts'])) {
+                Log::warning("Empty Gemini response", ["response" => $data]);
                 return "Tidak ada respon dari AI.";
             }
 
@@ -74,13 +115,22 @@ class GoogleAIService
             }
 
             return "AI tidak mengembalikan teks yang bisa dibaca.";
+
+        } catch (\Illuminate\Http\Client\RequestException $e) {
+            Log::error("Gemini HTTP Request Failed", [
+                "error" => $e->getMessage(),
+                "response" => $e->response ? $e->response->body() : null
+            ]);
+            return "Terjadi error koneksi ke server AI. Silakan coba lagi.";
+
         } catch (\Exception $e) {
-            Log::error("Gemini Request Failed", ["error" => $e->getMessage()]);
+            Log::error("Gemini Request Failed", [
+                "error" => $e->getMessage(),
+                "trace" => $e->getTraceAsString()
+            ]);
             return "Terjadi error: " . $e->getMessage();
         }
     }
-
-
 
     /**
      * Membangun system instruction lengkap
@@ -95,9 +145,7 @@ class GoogleAIService
         $instruction .= "- Bahasa: Gunakan bahasa Indonesia yang ramah dan casual\n";
         $instruction .= "- Tone: Friendly, helpful, dan knowledgeable\n\n";
 
-        // =======================
         // PRODUK dari database
-        // =======================
         if (!empty($context['products'])) {
             $instruction .= "PRODUK TERKAIT DARI DATABASE:\n\n";
 
@@ -121,10 +169,7 @@ class GoogleAIService
             $instruction .= "Tidak ada produk relevan. Kamu boleh rekomendasikan berdasarkan kategori.\n\n";
         }
 
-
-        // =======================
-        // RULES (biarkan panjang seperti aslinya)
-        // =======================
+        // RULES
         $instruction .= "TUGAS KAMU:\n";
         $instruction .= "1. Rekomendasikan produk yang cocok\n";
         $instruction .= "2. Jelaskan kenapa produk tersebut cocok\n";

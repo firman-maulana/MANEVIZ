@@ -577,6 +577,7 @@
 }
 </style>
 
+
 <script>
 // AI Chat functionality
 let chatHistory = [];
@@ -593,7 +594,6 @@ function openChatModal() {
         badge.style.display = 'none';
     }
 
-    // Focus on input
     setTimeout(() => {
         document.getElementById('chatInput').focus();
     }, 300);
@@ -630,25 +630,37 @@ async function sendMessage() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json' // ✅ PENTING: Tambahkan ini
             },
             body: JSON.stringify({ message: message })
         });
 
-        const data = await response.json();
-
-        // Hide typing indicator
         hideTypingIndicator();
+
+        // ✅ FIX: Cek content-type sebelum parse JSON
+        const contentType = response.headers.get('content-type');
+
+        if (!contentType || !contentType.includes('application/json')) {
+            console.error('Server returned non-JSON response:', contentType);
+            const text = await response.text();
+            console.error('Response body:', text.substring(0, 500));
+
+            addMessage('Maaf, terjadi kesalahan server. Silakan coba lagi.', 'bot');
+            return;
+        }
+
+        const data = await response.json();
 
         if (data.success) {
             addMessage(data.message, 'bot');
         } else {
-            addMessage('Maaf, terjadi kesalahan. Silakan coba lagi.', 'bot');
+            addMessage(data.message || 'Maaf, terjadi kesalahan. Silakan coba lagi.', 'bot');
         }
     } catch (error) {
         hideTypingIndicator();
-        addMessage('Maaf, terjadi kesalahan koneksi. Silakan coba lagi.', 'bot');
         console.error('Chat error:', error);
+        addMessage('Maaf, terjadi kesalahan koneksi. Silakan coba lagi.', 'bot');
     }
 }
 
@@ -691,7 +703,6 @@ function addMessage(text, sender) {
     messagesContainer.appendChild(messageDiv);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
-    // Store in history
     chatHistory.push({ text, sender, time });
 }
 

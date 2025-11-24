@@ -118,13 +118,6 @@ Route::middleware('auth')->group(function () {
 
     // 🔥 NEW: Retry payment for unpaid orders
     Route::get('/checkout/retry-payment/{orderNumber}', [CheckoutController::class, 'retryPayment'])->name('checkout.retry-payment');
-
-    Route::prefix('ai-chat')->name('ai-chat.')->group(function () {
-    Route::post('/send', [AIChatController::class, 'chat'])->name('send');
-    Route::get('/product-suggestions', [AIChatController::class, 'getProductSuggestions'])->name('suggestions');
-    Route::get('/test', [AIChatController::class, 'testConnection'])->name('test');
-});
-
 });
 
 // =====================
@@ -177,3 +170,9 @@ Route::prefix('api/discount')->name('discount.')->group(function () {
     Route::get('/active', [DiscountController::class, 'getActiveDiscounts'])->name('active');
 });
 
+
+Route::prefix('ai-chat')->name('ai-chat.')->group(function () {
+    Route::post('/send', [AIChatController::class, 'chat'])->name('send');
+    Route::get('/product-suggestions', [AIChatController::class, 'getProductSuggestions'])->name('suggestions');
+    Route::get('/test', [AIChatController::class, 'testConnection'])->name('test');
+});
