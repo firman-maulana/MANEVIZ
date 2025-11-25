@@ -116,7 +116,11 @@ class ProductResource extends Resource
                 Forms\Components\TextInput::make('berat')
                     ->numeric(),
 
-                Forms\Components\KeyValue::make('dimensi'),
+                Forms\Components\KeyValue::make('dimensi')
+                    ->keyLabel('Variabel')      // ← Ganti "Key" jadi "Nama Field"
+                    ->valueLabel('Ukuran')       // ← Ganti "Value" jadi "Isi Data"
+                    ->addButtonLabel('Tambah Dimensi') // ← Ganti label tombol "Add row"
+                    ->reorderable(),
 
                 Forms\Components\Select::make('ukuran')
                     ->options([
@@ -167,7 +171,11 @@ class ProductResource extends Resource
                     ->collapsed()
                     ->description('Data ini di-update otomatis oleh sistem berdasarkan aktivitas user'),
 
-                Forms\Components\KeyValue::make('meta_data'),
+                Forms\Components\KeyValue::make('meta_data')
+                    ->keyLabel('Nama Field')      // ← Ganti "Key" jadi "Nama Field"
+                    ->valueLabel('Isi Data')       // ← Ganti "Value" jadi "Isi Data"
+                    ->addButtonLabel('Tambah Metadata') // ← Ganti label tombol "Add row"
+                    ->reorderable(),
 
                 // 📸 Upload multiple images via product_images table
                 Forms\Components\Repeater::make('images')

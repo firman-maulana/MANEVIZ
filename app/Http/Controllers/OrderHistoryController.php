@@ -22,10 +22,10 @@ class OrderHistoryController extends Controller
     {
         $query = Order::with(['orderItems.product.images', 'orderItems.review'])
             ->where('user_id', Auth::id())
-            ->whereIn('status', ['delivered', 'cancelled']) // Include both delivered and cancelled orders
-            ->orderBy('updated_at', 'desc'); // Order by updated_at for cancelled orders
+            ->whereIn('status', ['delivered', 'cancelled'])
+            ->orderBy('updated_at', 'desc');
 
-        // Filter by date range (use delivered_date for delivered orders, updated_at for cancelled)
+        // Filter by date range
         if ($request->has('date_from') && $request->date_from) {
             $query->where(function($q) use ($request) {
                 $q->where(function($subQ) use ($request) {
@@ -50,12 +50,12 @@ class OrderHistoryController extends Controller
             });
         }
 
-        // Filter by status (delivered or cancelled)
+        // Filter by status
         if ($request->has('order_status') && $request->order_status) {
             $query->where('status', $request->order_status);
         }
 
-        // Filter by rating (only for delivered orders with reviews)
+        // Filter by rating
         if ($request->has('rating') && $request->rating) {
             $query->where('status', 'delivered')
                   ->whereHas('orderItems.review', function($q) use ($request) {
@@ -63,7 +63,7 @@ class OrderHistoryController extends Controller
                   });
         }
 
-        // Filter by reviewed/unreviewed (only for delivered orders)
+        // Filter by reviewed/unreviewed
         if ($request->has('review_status') && $request->review_status) {
             $query->where('status', 'delivered');
             if ($request->review_status === 'reviewed') {
@@ -84,7 +84,7 @@ class OrderHistoryController extends Controller
         $order = Order::with(['orderItems.product.images', 'orderItems.review'])
             ->where('order_number', $orderNumber)
             ->where('user_id', Auth::id())
-            ->whereIn('status', ['delivered', 'cancelled']) // Allow both delivered and cancelled orders
+            ->whereIn('status', ['delivered', 'cancelled'])
             ->firstOrFail();
 
         return view('order-history.show', compact('order'));
@@ -96,7 +96,7 @@ class OrderHistoryController extends Controller
         $orderItem = \App\Models\OrderItem::with(['order', 'product.images'])
             ->whereHas('order', function($query) {
                 $query->where('user_id', Auth::id())
-                      ->where('status', 'delivered'); // Only delivered orders can be reviewed
+                      ->where('status', 'delivered');
             })
             ->where('id', $orderItemId)
             ->firstOrFail();
@@ -124,17 +124,14 @@ class OrderHistoryController extends Controller
         $orderItem = \App\Models\OrderItem::with('order')
             ->whereHas('order', function($query) {
                 $query->where('user_id', Auth::id())
-                      ->where('status', 'delivered'); // Only delivered orders can be reviewed
+                      ->where('status', 'delivered');
             })
             ->where('id', $orderItemId)
             ->firstOrFail();
 
-        // Check if already reviewed
-        $existingReview = Review::where('order_item_id', $orderItemId)->first();
-        if ($existingReview) {
-            return redirect()->route('order-history.index')
-                           ->with('error', 'You have already reviewed this product');
-        }
+        // PERBAIKAN: Hapus pengecekan review yang sudah ada sebelum menyimpan
+        // Karena ini sudah dicek di showReviewForm, tidak perlu dicek lagi di sini
+        // Ini mencegah race condition dan duplikasi pengecekan
 
         // Handle image uploads
         $imagePaths = [];
@@ -146,20 +143,33 @@ class OrderHistoryController extends Controller
         }
 
         // Create review
-        Review::create([
-            'user_id' => Auth::id(),
-            'product_id' => $orderItem->product_id,
-            'order_id' => $orderItem->order_id,
-            'order_item_id' => $orderItemId,
-            'rating' => $request->rating,
-            'review' => $request->review,
-            'images' => $imagePaths ?: null,
-            'is_recommended' => $request->boolean('is_recommended', true),
-            'is_verified' => true
-        ]);
+        try {
+            Review::create([
+                'user_id' => Auth::id(),
+                'product_id' => $orderItem->product_id,
+                'order_id' => $orderItem->order_id,
+                'order_item_id' => $orderItemId,
+                'rating' => $request->rating,
+                'review' => $request->review,
+                'images' => $imagePaths ?: null,
+                'is_recommended' => $request->boolean('is_recommended', true),
+                'is_verified' => true
+            ]);
 
-        return redirect()->route('order-history.index')
-                       ->with('success', 'Review submitted successfully!');
+            return redirect()->route('order-history.index')
+                           ->with('success', 'Review submitted successfully!');
+        } catch (\Exception $e) {
+            // Jika terjadi error (misalnya duplicate entry), redirect dengan pesan error
+            // Hapus gambar yang sudah diupload jika ada error
+            if (!empty($imagePaths)) {
+                foreach ($imagePaths as $path) {
+                    Storage::disk('public')->delete($path);
+                }
+            }
+            
+            return redirect()->route('order-history.index')
+                           ->with('error', 'Failed to submit review. Please try again.');
+        }
     }
 
     // Edit review

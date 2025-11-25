@@ -43,7 +43,7 @@
         line-height: 1.1;
         margin-bottom: 20px;
         letter-spacing: -2px;
-        margin-left: 18px;
+        margin-left: -22px;
     }
 
     .hero-content .highlight {
