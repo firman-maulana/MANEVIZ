@@ -9,6 +9,7 @@ use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\ViewEntry;
 
 class ViewOrder extends ViewRecord
 {
@@ -78,6 +79,34 @@ class ViewOrder extends ViewRecord
                     ])
                     ->columns(2),
 
+                Section::make('Shipping & Tracking')
+                    ->schema([
+                        TextEntry::make('courier_code')
+                            ->label('Courier')
+                            ->formatStateUsing(fn ($record) => $record->courier_label),
+                        TextEntry::make('courier_service')
+                            ->label('Service Type'),
+                        TextEntry::make('waybill_number')
+                            ->label('Waybill/Resi Number')
+                            ->copyable()
+                            ->placeholder('Not available yet')
+                            ->columnSpanFull(),
+                        TextEntry::make('last_tracking_update')
+                            ->label('Last Tracking Update')
+                            ->dateTime()
+                            ->placeholder('Not synced yet')
+                            ->visible(fn ($record) => !empty($record->waybill_number)),
+
+                        ViewEntry::make('tracking_timeline')
+                            ->label('Tracking History')
+                            ->view('filament.infolists.tracking-timeline')
+                            ->visible(fn ($record) => !empty($record->tracking_history))
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(2)
+                    ->visible(fn ($record) => !empty($record->waybill_number))
+                    ->collapsible(),
+
                 Section::make('Customer Information')
                     ->schema([
                         TextEntry::make('user.name')
@@ -100,7 +129,8 @@ class ViewOrder extends ViewRecord
                         TextEntry::make('shipping_postal_code')
                             ->label('Postal Code'),
                     ])
-                    ->columns(3),
+                    ->columns(3)
+                    ->collapsible(),
 
                 Section::make('Payment Information')
                     ->schema([
@@ -130,7 +160,8 @@ class ViewOrder extends ViewRecord
                             ->money('IDR')
                             ->weight('bold'),
                     ])
-                    ->columns(2),
+                    ->columns(2)
+                    ->collapsible(),
 
                 Section::make('Order Items')
                     ->schema([

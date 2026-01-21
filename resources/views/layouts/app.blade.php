@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css">
     <title>MANEVIZ</title>
@@ -434,7 +435,7 @@
 
             .logo img {
                 height: 70px;
-                padding-left: 53px;
+                padding-left: 83px;
             }
 
             .mobile-menu-toggle {
@@ -447,6 +448,8 @@
                 font-size: 1.2rem;
                 order: 3;
                 flex: 0;
+                padding-left: 65px;
+
             }
 
             .nav-right {
@@ -883,6 +886,7 @@
 
     <main id="konten">
         @yield('content')
+        @include('partials.ai-chat-modal')
     </main>
 
     <!-- Footer -->

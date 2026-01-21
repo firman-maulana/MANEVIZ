@@ -104,24 +104,11 @@
         <div class="section">
             <h2 class="section-title">CARA PEMESANAN</h2>
             <div class="content">
+                @foreach($steps as $step)
                 <div class="step">
-                    <p>Pilih barang yang ingin Anda beli di halaman <span class="highlight">SHOP</span>, kemudian klik item yang ingin dibeli ke halaman <span class="highlight">PRODUCT</span>.</p>
+                    <p>{!! $step->content_id !!}</p>
                 </div>
-                <div class="step">
-                    <p>Isi jumlah produk pada kolom <span class="highlight">QUANTITY</span>, lalu klik <span class="highlight">ADD TO CART</span>. Ketika <span class="highlight">CART</span> sudah terisi, Anda dapat memperbarui keranjang (menghapus item yang tidak diinginkan) atau mengubah jumlah kuantitas di halaman <span class="highlight">SHOPPING CART</span>.</p>
-                </div>
-                <div class="step">
-                    <p>Isi informasi formulir pada halaman <span class="highlight">ORDER DETAIL</span>. Jika Anda ingin memberikan instruksi khusus pada pesanan Anda, silakan tulis di kolom <span class="highlight">NOTE</span> yang disediakan di bagian bawah halaman <span class="highlight">ORDER DETAIL</span>.</p>
-                </div>
-                <div class="step">
-                    <p>Setelah selesai, Anda akan mendapatkan <span class="highlight">E-MAIL</span> berisi <span class="highlight">INVOICE</span> dan <span class="highlight">PAYMENT CONFIRMATION CODE</span>.</p>
-                </div>
-                <div class="step">
-                    <p>Silakan lanjutkan ke pembayaran melalui bank yang disediakan (<span class="highlight">BCA</span>). Sertakan <span class="highlight">PAYMENT CONFIRMATION CODE</span> saat melakukan pembayaran baik melalui <span class="highlight">ATM</span> atau <span class="highlight">INTERNET BANKING</span>.</p>
-                </div>
-                <div class="step">
-                    <p>Setelah pembayaran selesai, silakan konfirmasi dengan menyertakan <span class="highlight">PAYMENT CONFIRMATION CODE</span>. Kami akan memvalidasi status pembayaran dan mengirimkan barang yang dipesan.</p>
-                </div>
+                @endforeach
             </div>
         </div>
     </div>
@@ -131,24 +118,11 @@
         <div class="section">
             <h2 class="section-title">HOW TO ORDER</h2>
             <div class="content">
+                @foreach($steps as $step)
                 <div class="step">
-                    <p>Choose the item that you would like to purchase at the <span class="highlight">SHOP</span> page, and then click the item to proceed to the <span class="highlight">PRODUCT</span> page.</p>
+                    <p>{!! $step->content_en !!}</p>
                 </div>
-                <div class="step">
-                    <p>Fill in the number of products on the <span class="highlight">QUANTITY</span> column, and then click <span class="highlight">ADD TO CART</span>. When the <span class="highlight">CART</span> is filled, you can update the cart (deleting unwanted items) or change the number of quantity on the <span class="highlight">SHOPPING CART</span> page.</p>
-                </div>
-                <div class="step">
-                    <p>Fill the information form on the <span class="highlight">ORDER DETAIL</span> page. If you want to make a certain instruction on your order, please note on the <span class="highlight">NOTE</span> column provided on the bottom of the <span class="highlight">ORDER DETAIL</span> page.</p>
-                </div>
-                <div class="step">
-                    <p>Once completed, you will get an <span class="highlight">E-MAIL</span> with <span class="highlight">INVOICE</span> and <span class="highlight">PAYMENT CONFIRMATION CODE</span>.</p>
-                </div>
-                <div class="step">
-                    <p>Please proceed to payment via the provided bank (<span class="highlight">BCA</span>). Include the <span class="highlight">PAYMENT CONFIRMATION CODE</span> when making the payment either through <span class="highlight">ATM</span> or <span class="highlight">INTERNET BANKING</span>.</p>
-                </div>
-                <div class="step">
-                    <p>After the payment is done, please confirm it by including the <span class="highlight">PAYMENT CONFIRMATION CODE</span>. We will validate the payment status and ship the ordered items.</p>
-                </div>
+                @endforeach
             </div>
         </div>
     </div>

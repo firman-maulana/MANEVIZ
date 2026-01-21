@@ -43,7 +43,7 @@
         line-height: 1.1;
         margin-bottom: 20px;
         letter-spacing: -2px;
-        margin-left: -30px;
+        margin-left: -22px;
     }
 
     .hero-content .highlight {
@@ -51,20 +51,130 @@
         font-weight: 900;
     }
 
-    /* style back */
+    /* style back - Carousel Container */
     .styleback {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
         padding-left: 20px;
         padding-right: 20px;
+        position: relative;
     }
 
-    .foto img {
-        max-width: 100%;
-        height: auto;
+    /* Carousel Wrapper */
+    .carousel-wrapper {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
         margin-top: 63px;
+        max-height: 480px;
+    }
+
+    .carousel-container {
+        display: flex;
+        transition: transform 0.5s ease-in-out;
+        width: 100%;
+    }
+
+    .carousel-slide {
+        min-width: 100%;
+        flex-shrink: 0;
         padding: 0 20px;
+    }
+
+    .carousel-slide img {
+        width: 100%;
+        height: 480px;
+        display: block;
+        border-radius: 10px;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    /* Carousel Navigation Buttons */
+    .carousel-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 10;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        opacity: 0.8;
+    }
+
+    .carousel-nav:hover {
+        background: rgba(0, 0, 0, 0.8);
+        border-color: rgba(255, 255, 255, 0.4);
+        opacity: 1;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .carousel-nav:active {
+        transform: translateY(-50%) scale(0.95);
+    }
+
+    .carousel-nav.prev {
+        left: 20px;
+    }
+
+    .carousel-nav.next {
+        right: 20px;
+    }
+
+    .carousel-nav svg {
+        width: 20px;
+        height: 20px;
+        color: #ffffff;
+        stroke-width: 2.5;
+    }
+
+    .carousel-nav.prev:hover svg {
+        transform: translateX(-2px);
+    }
+
+    .carousel-nav.next:hover svg {
+        transform: translateX(2px);
+    }
+
+    /* Carousel Indicators (Dots) */
+    .carousel-indicators {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 24px;
+        padding: 0 20px;
+    }
+
+    .carousel-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.2);
+        border: none;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 0;
+    }
+
+    .carousel-dot:hover {
+        background: rgba(0, 0, 0, 0.4);
+        transform: scale(1.2);
+    }
+
+    .carousel-dot.active {
+        background: #000;
+        width: 32px;
+        border-radius: 4px;
     }
 
     .fashion {
@@ -98,7 +208,7 @@
         margin-top: 13px;
     }
 
-    .mostculture h2{
+    .mostculture h2 {
         color: black;
         text-align: left;
         padding-left: 20px;
@@ -387,8 +497,39 @@
             padding-right: 15px;
         }
 
-        .foto img {
+        .carousel-wrapper {
             margin-top: 40px;
+            max-height: 250px;
+        }
+
+        .carousel-slide img {
+            height: 250px;
+        }
+
+        .carousel-slide {
+            padding: 0 15px;
+        }
+
+        .carousel-nav {
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .carousel-nav svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .carousel-nav.prev {
+            left: 10px;
+        }
+
+        .carousel-nav.next {
+            right: 10px;
+        }
+
+        .carousel-indicators {
             padding: 0 15px;
         }
 
@@ -527,8 +668,198 @@
             padding: 2px 5px;
             font-size: 8px;
         }
+
+        .carousel-nav {
+            width: 36px;
+            height: 36px;
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .carousel-nav svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .carousel-nav.prev {
+            left: 8px;
+        }
+
+        .carousel-nav.next {
+            right: 8px;
+        }
+
+        .carousel-wrapper {
+            max-height: 200px;
+        }
+
+        .carousel-slide img {
+            height: 200px;
+        }
     }
 
+
+    /* ============================================
+   BERANDA.BLADE.PHP - DISCOUNT STYLES
+   ============================================ */
+
+    /* Discount Badge with Pulse Animation */
+    @keyframes pulse {
+
+        0%,
+        100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.05);
+        }
+    }
+
+    .sale-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background-color: #dc3545;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 10px;
+        font-weight: 600;
+        z-index: 2;
+        text-transform: uppercase;
+    }
+
+    /* Enhanced gradient badge for active discounts */
+    .sale-badge[style*="gradient"] {
+        animation: pulse 2s infinite;
+        box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+    }
+
+    /* Product Pricing with Discount */
+    .product-pricing {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .product-price-original {
+        color: #999;
+        font-size: 8px;
+        font-weight: 400;
+        text-decoration: line-through;
+    }
+
+    .product-price {
+        color: #666 !important;
+        font-weight: 400 !important;
+        font-size: 12px;
+    }
+
+    /* Discounted price styling */
+    .product-price[style*="dc3545"] {
+        color: #dc3545 !important;
+        font-weight: 600 !important;
+    }
+
+    /* Savings Display */
+    .product-savings {
+        color: #28a745;
+        font-size: 10px;
+        font-weight: 500;
+        margin: 2px 0 0 0;
+    }
+
+    /* Mobile Responsive - Beranda */
+    @media (max-width: 768px) {
+        .sale-badge {
+            top: 8px;
+            left: 8px;
+            padding: 3px 6px;
+            font-size: 9px;
+        }
+
+        .product-price-original {
+            font-size: 9px;
+        }
+
+        .product-savings {
+            font-size: 9px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .sale-badge {
+            top: 6px;
+            left: 6px;
+            padding: 2px 5px;
+            font-size: 8px;
+        }
+
+        .product-price-original {
+            font-size: 8px;
+        }
+
+        .product-savings {
+            font-size: 8px;
+        }
+    }
+
+
+    /* Compact Timer Styles for Product Cards */
+    .product-card .discount-timer-container {
+        margin-top: 6px;
+        padding: 6px 8px;
+        background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
+        border: 1px solid #ffc107;
+        border-radius: 6px;
+    }
+
+    .product-card .discount-timer-display {
+        gap: 6px;
+    }
+
+    .product-card .timer-icon {
+        width: 14px;
+        height: 14px;
+    }
+
+    .product-card .timer-label {
+        font-size: 8px;
+        margin-bottom: 3px;
+    }
+
+    .product-card .timer-countdown {
+        gap: 2px;
+    }
+
+    .product-card .time-block {
+        padding: 2px 4px;
+        min-width: 24px;
+    }
+
+    .product-card .time-value {
+        font-size: 11px;
+    }
+
+    .product-card .time-unit {
+        font-size: 6px;
+        margin-top: 1px;
+    }
+
+    .product-card .time-separator {
+        font-size: 11px;
+    }
+
+    /* Hide timer on very small cards */
+    @media (max-width: 480px) {
+        .product-card .timer-label {
+            display: none;
+        }
+
+        .product-card .time-unit {
+            font-size: 5px;
+        }
+    }
 </style>
 
 <!-- Hero Section -->
@@ -542,11 +873,50 @@
     </div>
 </section>
 
-<!-- styleback -->
+<!-- styleback with Carousel -->
 <section class="styleback">
-    <div class="foto">
-        <img src="image/styleback.png" alt="Style Back Image">
+    <!-- Carousel Wrapper -->
+    <div class="carousel-wrapper">
+        <div class="carousel-container" id="carouselContainer">
+            @forelse($carouselImages as $image)
+            <!-- Slide {{ $loop->iteration }} -->
+            <div class="carousel-slide">
+                <img src="{{ asset('storage/' . $image->image_path) }}"
+                     alt="{{ $image->title ?? 'Carousel Image ' . $loop->iteration }}"
+                     onerror="this.onerror=null;this.src='{{ asset('image/styleback.png') }}';">
+            </div>
+            @empty
+            <!-- Fallback jika tidak ada gambar di database -->
+            <div class="carousel-slide">
+                <img src="{{ asset('image/styleback.png') }}" alt="Style Back Image 1">
+            </div>
+            <div class="carousel-slide">
+                <img src="{{ asset('image/bigsale.jpg') }}" alt="Style Back Image 2">
+            </div>
+            <div class="carousel-slide">
+                <img src="{{ asset('image/casualfit.jpg') }}" alt="Style Back Image 3">
+            </div>
+            @endforelse
+        </div>
+
+        <!-- Navigation Buttons -->
+        <button class="carousel-nav prev" id="prevBtn" aria-label="Previous slide">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 18l-6-6 6-6" />
+            </svg>
+        </button>
+        <button class="carousel-nav next" id="nextBtn" aria-label="Next slide">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 18l6-6-6-6" />
+            </svg>
+        </button>
     </div>
+
+    <!-- Carousel Indicators (Dots) -->
+    <div class="carousel-indicators" id="carouselIndicators">
+        <!-- Dots will be generated by JavaScript -->
+    </div>
+
     <div class="fashion">
         <h4>Fashion</h4>
     </div>
@@ -560,79 +930,102 @@
     <div class="container">
         <div class="product-grid-horizontal">
             @if($latestProducts->count() > 0)
-                @foreach($latestProducts as $product)
-                    <a href="{{ route('products.show', $product->slug) }}" class="product-card">
-                        <div class="product-image">
-                            @if($product->primaryImage)
-                                <img src="{{ asset('storage/' . $product->primaryImage->image_path) }}"
-                                    alt="{{ $product->primaryImage->alt_text ?: $product->name }}">
-                            @elseif($product->images->isNotEmpty())
-                                <img src="{{ asset('storage/' . $product->images->first()->image_path) }}"
-                                    alt="{{ $product->name }}">
-                            @else
-                                <img src="{{ asset('images/no-image.png') }}"
-                                    onerror="this.onerror=null;this.src='https://via.placeholder.com/300x300?text=No+Image';"
-                                    alt="No Image">
-                            @endif
+            @foreach($latestProducts as $product)
+            <a href="{{ route('products.show', $product->slug) }}" class="product-card">
+                <div class="product-image">
+                    @if($product->primaryImage)
+                    <img src="{{ asset('storage/' . $product->primaryImage->image_path) }}"
+                        alt="{{ $product->primaryImage->alt_text ?: $product->name }}">
+                    @elseif($product->images->isNotEmpty())
+                    <img src="{{ asset('storage/' . $product->images->first()->image_path) }}"
+                        alt="{{ $product->name }}">
+                    @else
+                    <img src="{{ asset('images/no-image.png') }}"
+                        onerror="this.onerror=null;this.src='https://via.placeholder.com/300x300?text=No+Image';"
+                        alt="No Image">
+                    @endif
 
-                            <!-- Sale Badge (if product is on sale) -->
-                            @if($product->is_on_sale)
-                                <div class="sale-badge">Sale</div>
-                            @endif
+                    <!-- 🔥 NEW: Discount Badge (replaces or combines with sale badge) -->
+                    @if($product->hasActiveDiscount())
+                    <div class="sale-badge" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); animation: pulse 2s infinite;">
+                        {{ $product->getDiscountLabel() }}
+                    </div>
+                    @elseif($product->is_on_sale)
+                    <div class="sale-badge">Sale</div>
+                    @endif
 
-                            <!-- Just In Badge for latest products -->
-                            <div class="bestseller-badge">Just In</div>
-                        </div>
-                        <div class="product-info">
-                            <div class="product-content">
-                                <div class="product-details">
-                                    <h4 class="product-name">{{ $product->name }}</h4>
-                                    <div class="product-pricing">
-                                        @if($product->is_on_sale)
-                                            <span class="product-price-original">IDR {{ number_format($product->harga, 0, ',', '.') }}</span>
-                                            <span class="product-price" style="color: #666 !important; font-weight: 400 !important;">IDR {{ number_format($product->harga_jual, 0, ',', '.') }}</span>
-                                        @else
-                                            <span class="product-price" style="color: #666 !important; font-weight: 400 !important;">IDR {{ number_format($product->final_price, 0, ',', '.') }}</span>
-                                        @endif
-                                    </div>
-
-                                    <!-- Sales count (if available) -->
-                                    @if($product->total_penjualan > 0)
-                                        <p class="product-sales">{{ $product->total_penjualan }} sold</p>
-                                    @endif
-
-                                    <!-- Rating (if available) -->
-                                    @if($product->rating_rata > 0)
-                                        <div class="product-rating">
-                                            <span class="rating-stars">
-                                                @for($i = 1; $i <= 5; $i++)
-                                                    @if($i <= floor($product->rating_rata))
-                                                        ★
-                                                    @elseif($i - 0.5 <= $product->rating_rata)
-                                                        ☆
-                                                    @else
-                                                        ☆
-                                                    @endif
-                                                @endfor
-                                            </span>
-                                            <span class="rating-value">({{ number_format($product->rating_rata, 1) }})</span>
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="product-arrow">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M5 12h14m-7-7 7 7-7 7" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                @endforeach
-            @else
-                <div class="no-products">
-                    <h3>No Latest Products</h3>
-                    <p>There are no products available at the moment. Check back later!</p>
+                    <!-- Just In Badge for latest products -->
+                    <div class="bestseller-badge">Just In</div>
                 </div>
+                <div class="product-info">
+                    <div class="product-content">
+                        <div class="product-details">
+                            <h4 class="product-name">{{ $product->name }}</h4>
+                            <div class="product-pricing">
+                                @if($product->hasActiveDiscount() || $product->is_on_sale)
+                                <!-- Show original price struck through -->
+                                <span class="product-price-original">
+                                    IDR {{ number_format($product->getOriginalPrice(), 0, ',', '.') }}
+                                </span>
+                                <!-- Show discounted price in red -->
+                                <span class="product-price" style="color: #dc3545 !important; font-weight: 600 !important;">
+                                    IDR {{ number_format($product->final_price, 0, ',', '.') }}
+                                </span>
+                                @if($product->hasActiveDiscount())
+                                <span class="product-savings" style="color: #28a745; font-size: 9px; font-weight: 500;">
+                                    Save IDR {{ number_format($product->getDiscountAmount(), 0, ',', '.') }}
+                                </span>
+                                @endif
+                                @else
+                                <span class="product-price" style="color: #666 !important; font-weight: 400 !important;">
+                                    IDR {{ number_format($product->final_price, 0, ',', '.') }}
+                                </span>
+                                @endif
+                            </div>
+
+                            @if($product->hasActiveDiscount() && $product->discount_end_date)
+                            <div style="margin-top: 6px; font-size: 10px;">
+                                <x-discount-timer :product="$product" />
+                            </div>
+                            @endif
+
+                            <!-- Sales count (if available) -->
+                            @if($product->total_penjualan > 0)
+                            <p class="product-sales">{{ $product->total_penjualan }} sold</p>
+                            @endif
+
+                            <!-- Rating (if available) -->
+                            @if($product->rating_rata > 0)
+                            <div class="product-rating">
+                                <span class="rating-stars">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        @if($i <=floor($product->rating_rata))
+                                        ★
+                                        @elseif($i - 0.5 <= $product->rating_rata)
+                                            ☆
+                                            @else
+                                            ☆
+                                            @endif
+                                            @endfor
+                                </span>
+                                <span class="rating-value">({{ number_format($product->rating_rata, 1) }})</span>
+                            </div>
+                            @endif
+                        </div>
+                        <div class="product-arrow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14m-7-7 7 7-7 7" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            @endforeach
+            @else
+            <div class="no-products">
+                <h3>No Latest Products</h3>
+                <p>There are no products available at the moment. Check back later!</p>
+            </div>
             @endif
         </div>
     </div>
@@ -640,7 +1033,17 @@
     <div class="mostculture">
         <h2>Most Culture</h2>
     </div>
-    <img src="image/banner.png" class="banner2" alt="Banner Image">
+
+    <!-- Banner Image - UPDATE INI -->
+    @if($bannerImage)
+    <img src="{{ asset('storage/' . $bannerImage->image_path) }}"
+         class="banner2"
+         alt="{{ $bannerImage->title ?? 'Most Culture Banner' }}"
+         onerror="this.onerror=null;this.src='{{ asset('image/banner.png') }}';">
+    @else
+    <!-- Fallback jika tidak ada banner di database -->
+    <img src="{{ asset('image/banner.png') }}" class="banner2" alt="Banner Image">
+    @endif
 </section>
 
 <!-- Timeless Choice -->
@@ -649,6 +1052,119 @@
 </section>
 
 <script>
+    // Carousel functionality
+    (function() {
+        const carouselContainer = document.getElementById('carouselContainer');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const indicatorsContainer = document.getElementById('carouselIndicators');
+
+        const slides = carouselContainer.querySelectorAll('.carousel-slide');
+        const totalSlides = slides.length;
+        let currentSlide = 0;
+        let autoPlayInterval;
+
+        // Create indicators (dots)
+        function createIndicators() {
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.createElement('button');
+                dot.classList.add('carousel-dot');
+                dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+                if (i === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => goToSlide(i));
+                indicatorsContainer.appendChild(dot);
+            }
+        }
+
+        // Update slide position
+        function updateSlidePosition() {
+            const offset = -currentSlide * 100;
+            carouselContainer.style.transform = `translateX(${offset}%)`;
+
+            // Update indicators
+            const dots = indicatorsContainer.querySelectorAll('.carousel-dot');
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
+        }
+
+        // Go to specific slide
+        function goToSlide(slideIndex) {
+            currentSlide = slideIndex;
+            updateSlidePosition();
+            resetAutoPlay();
+        }
+
+        // Next slide
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateSlidePosition();
+        }
+
+        // Previous slide
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateSlidePosition();
+        }
+
+        // Auto play
+        function startAutoPlay() {
+            autoPlayInterval = setInterval(nextSlide, 5000); // Change slide every 5 seconds
+        }
+
+        function stopAutoPlay() {
+            clearInterval(autoPlayInterval);
+        }
+
+        function resetAutoPlay() {
+            stopAutoPlay();
+            startAutoPlay();
+        }
+
+        // Event listeners
+        prevBtn.addEventListener('click', () => {
+            prevSlide();
+            resetAutoPlay();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            nextSlide();
+            resetAutoPlay();
+        });
+
+        // Touch/swipe support
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        carouselContainer.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+            stopAutoPlay();
+        });
+
+        carouselContainer.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+            startAutoPlay();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            if (touchStartX - touchEndX > swipeThreshold) {
+                nextSlide();
+            } else if (touchEndX - touchStartX > swipeThreshold) {
+                prevSlide();
+            }
+        }
+
+        // Pause autoplay on hover (desktop)
+        carouselContainer.addEventListener('mouseenter', stopAutoPlay);
+        carouselContainer.addEventListener('mouseleave', startAutoPlay);
+
+        // Initialize
+        createIndicators();
+        startAutoPlay();
+    })();
+
     // Navbar scroll effect
     window.addEventListener('scroll', function() {
         const navbar = document.getElementById('navbar');
@@ -679,7 +1195,5 @@
             console.log('Product clicked:', this.querySelector('h4').textContent);
         });
     });
-
-
 </script>
 @endsection

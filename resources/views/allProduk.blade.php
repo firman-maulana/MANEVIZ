@@ -1297,6 +1297,277 @@ use App\Models\Product;
         font-size: 16px;
         margin: 0;
     }
+
+
+    /* ============================================
+   ALLPRODUK.BLADE.PHP - DISCOUNT STYLES
+   ============================================ */
+
+    /* Discount Badge Styles */
+    .sale-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background-color: #dc3545;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 10px;
+        font-weight: 600;
+        z-index: 2;
+        text-transform: uppercase;
+    }
+
+    /* Gradient badge for active discounts */
+    .sale-badge[style*="gradient"] {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+        box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+    }
+
+    .bestseller-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #ffc107;
+        color: #000;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 10px;
+        font-weight: 600;
+        z-index: 2;
+        text-transform: uppercase;
+    }
+
+    /* Product Pricing Section */
+    .product-pricing {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .product-price-original {
+        color: #999;
+        font-size: 10px;
+        font-weight: 400;
+        text-decoration: line-through;
+        margin: 0;
+    }
+
+    .product-price {
+        color: #666;
+        font-size: 12px;
+        font-weight: 500;
+        margin: 0;
+    }
+
+    /* Discounted Price Highlight */
+    .product-price[style*="dc3545"] {
+        color: #dc3545 !important;
+        font-weight: 600 !important;
+    }
+
+    /* Savings Info */
+    .product-savings,
+    span[style*="28a745"] {
+        display: block;
+        color: #28a745;
+        font-size: 9px;
+        font-weight: 500;
+        margin-top: 2px;
+    }
+
+    /* Product Sales Count */
+    .product-sales {
+        color: #28a745;
+        font-size: 10px;
+        font-weight: 500;
+        margin: 2px 0 0 0;
+    }
+
+    /* Rating Stars */
+    .product-rating {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 3px;
+    }
+
+    .rating-stars {
+        color: #ffc107;
+        font-size: 12px;
+        line-height: 1;
+    }
+
+    .rating-value {
+        color: #666;
+        font-size: 10px;
+        font-weight: 400;
+    }
+
+    /* Tablet Responsive */
+    @media (max-width: 992px) {
+
+        .sale-badge,
+        .bestseller-badge {
+            padding: 3px 7px;
+            font-size: 9px;
+        }
+
+        .product-price-original {
+            font-size: 9px;
+        }
+
+        .product-price {
+            font-size: 11px;
+        }
+
+        .product-savings {
+            font-size: 8px;
+        }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+
+        .sale-badge,
+        .bestseller-badge {
+            top: 8px;
+            padding: 3px 6px;
+            font-size: 9px;
+        }
+
+        .sale-badge {
+            left: 8px;
+        }
+
+        .bestseller-badge {
+            right: 8px;
+        }
+
+        .product-price-original {
+            font-size: 9px;
+        }
+
+        .product-price {
+            font-size: 10px;
+        }
+
+        .product-savings {
+            font-size: 9px;
+        }
+
+        .product-sales {
+            font-size: 9px;
+        }
+
+        .rating-stars {
+            font-size: 10px;
+        }
+
+        .rating-value {
+            font-size: 9px;
+        }
+    }
+
+    /* Small Mobile Responsive */
+    @media (max-width: 576px) {
+
+        .sale-badge,
+        .bestseller-badge {
+            top: 6px;
+            padding: 2px 5px;
+            font-size: 8px;
+        }
+
+        .sale-badge {
+            left: 6px;
+        }
+
+        .bestseller-badge {
+            right: 6px;
+        }
+
+        .product-price-original {
+            font-size: 8px;
+        }
+
+        .product-price {
+            font-size: 9px;
+        }
+
+        .product-savings {
+            font-size: 8px;
+        }
+
+        .product-sales {
+            font-size: 8px;
+        }
+
+        .rating-stars {
+            font-size: 10px;
+        }
+
+        .rating-value {
+            font-size: 8px;
+        }
+    }
+
+
+    /* Compact Timer Styles for Product Cards */
+    .product-card .discount-timer-container {
+        margin-top: 6px;
+        padding: 6px 8px;
+        background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
+        border: 1px solid #ffc107;
+        border-radius: 6px;
+    }
+
+    .product-card .discount-timer-display {
+        gap: 6px;
+    }
+
+    .product-card .timer-icon {
+        width: 14px;
+        height: 14px;
+    }
+
+    .product-card .timer-label {
+        font-size: 8px;
+        margin-bottom: 3px;
+    }
+
+    .product-card .timer-countdown {
+        gap: 2px;
+    }
+
+    .product-card .time-block {
+        padding: 2px 4px;
+        min-width: 24px;
+    }
+
+    .product-card .time-value {
+        font-size: 11px;
+    }
+
+    .product-card .time-unit {
+        font-size: 6px;
+        margin-top: 1px;
+    }
+
+    .product-card .time-separator {
+        font-size: 11px;
+    }
+
+    /* Hide timer on very small cards */
+    @media (max-width: 480px) {
+        .product-card .timer-label {
+            display: none;
+        }
+
+        .product-card .time-unit {
+            font-size: 5px;
+        }
+    }
 </style>
 
 <div class="allproduk-container">
@@ -1335,11 +1606,13 @@ use App\Models\Product;
                             alt="No Image">
                         @endif
 
-                        <!-- Sale Badge (if product is on sale) -->
-                        @if ($product->is_on_sale)
-                        <div class="sale-badge">
-                            Sale
+                        <!-- 🔥 UPDATED: Discount Badge -->
+                        @if($product->hasActiveDiscount())
+                        <div class="sale-badge" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);">
+                            {{ $product->getDiscountLabel() }}
                         </div>
+                        @elseif($product->is_on_sale)
+                        <div class="sale-badge">Sale</div>
                         @endif
 
                         <!-- Best Seller Badge -->
@@ -1354,16 +1627,30 @@ use App\Models\Product;
                             <div class="product-details">
                                 <h4 class="product-name">{{ $product->name }}</h4>
                                 <div class="product-pricing">
-                                    @if ($product->is_on_sale)
-                                    <span class="product-price-original">IDR
-                                        {{ number_format($product->harga, 0, ',', '.') }}</span>
-                                    <span class="product-price">IDR
-                                        {{ number_format($product->harga_jual, 0, ',', '.') }}</span>
+                                    @if($product->hasActiveDiscount() || $product->is_on_sale)
+                                    <span class="product-price-original">
+                                        IDR {{ number_format($product->getOriginalPrice(), 0, ',', '.') }}
+                                    </span>
+                                    <span class="product-price" style="color: #dc3545 !important; font-weight: 600 !important;">
+                                        IDR {{ number_format($product->final_price, 0, ',', '.') }}
+                                    </span>
+                                    @if($product->hasActiveDiscount())
+                                    <span style="display: block; color: #28a745; font-size: 9px; font-weight: 500; margin-top: 2px;">
+                                        Save IDR {{ number_format($product->getDiscountAmount(), 0, ',', '.') }}
+                                    </span>
+                                    @endif
                                     @else
-                                    <span class="product-price">IDR
-                                        {{ number_format($product->final_price, 0, ',', '.') }}</span>
+                                    <span class="product-price">
+                                        IDR {{ number_format($product->final_price, 0, ',', '.') }}
+                                    </span>
                                     @endif
                                 </div>
+
+                                @if($product->hasActiveDiscount() && $product->discount_end_date)
+                                <div style="margin-top: 6px;">
+                                    <x-discount-timer :product="$product" />
+                                </div>
+                                @endif
 
                                 <!-- Sales count -->
                                 @if ($product->total_penjualan > 0)
@@ -1375,7 +1662,7 @@ use App\Models\Product;
                                 <div class="product-rating">
                                     <span class="rating-stars">
                                         @for ($i = 1; $i <= 5; $i++)
-                                        @if ($i <= floor($product->rating_rata))
+                                            @if ($i <=floor($product->rating_rata))
                                             ★
                                             @elseif ($i - 0.5 <= $product->rating_rata)
                                                 ☆
@@ -1384,8 +1671,7 @@ use App\Models\Product;
                                                 @endif
                                                 @endfor
                                     </span>
-                                    <span
-                                        class="rating-value">({{ number_format($product->rating_rata, 1) }})</span>
+                                    <span class="rating-value">({{ number_format($product->rating_rata, 1) }})</span>
                                 </div>
                                 @endif
                             </div>
@@ -1412,31 +1698,21 @@ use App\Models\Product;
         <div class="container">
             <h3 class="section-title">Inspirational Outfits</h3>
             <div class="outfit-grid">
-                <!-- Outfit 1 -->
-                <div class="outfit-card outfit-left">
+                @forelse($inspirationalOutfits as $outfit)
+                <div class="outfit-card outfit-{{ $outfit->position }}">
                     <div class="outfit-content">
                         <div class="outfit-image">
-                            <img src=" image/inspirasi1.jpg" alt="Build For The Grind Outfit">
+                            <img src="{{ asset('storage/' . $outfit->image_path) }}" alt="{{ $outfit->title }}">
                         </div>
                         <div class="outfit-text">
-                            <h4 class="outfit-title">"Dare To Win" For The Dedicated Individuals</h4>
-                            <p class="outfit-date">June 5, 2025</p>
+                            <h4 class="outfit-title">{{ $outfit->title }}</h4>
+                            <p class="outfit-date">{{ \Carbon\Carbon::parse($outfit->date)->format('F j, Y') }}</p>
                         </div>
                     </div>
                 </div>
-
-                <!-- Outfit 2 -->
-                <div class="outfit-card outfit-right">
-                    <div class="outfit-content">
-                        <div class="outfit-text">
-                            <h4 class="outfit-title">Made For Those Who Are Silent But Resilient</h4>
-                            <p class="outfit-date">July 10, 2025</p>
-                        </div>
-                        <div class="outfit-image">
-                            <img src=" image/inspirasi2.jpg" alt="Silent But Resilient Outfit">
-                        </div>
-                    </div>
-                </div>
+                @empty
+                <p style="grid-column: 1 / -1; text-align: center; color: #666;">No inspirational outfits available.</p>
+                @endforelse
             </div>
         </div>
     </div>
@@ -1448,7 +1724,7 @@ use App\Models\Product;
 
             <!-- Filter Buttons -->
             <div class="filter-container">
-            <button class="filter-btn active" data-filter="all" data-category-id="">All</button>
+                <button class="filter-btn active" data-filter="all" data-category-id="">All</button>
                 <button class="filter-btn" data-filter="all" data-category-id="">T-Shirt</button>
                 <button class="filter-btn" data-filter="hoodie" data-category-id="1">Hoodie</button>
                 <button class="filter-btn" data-filter="shoes" data-category-id="2">Shoes</button>
@@ -1473,14 +1749,40 @@ use App\Models\Product;
                             onerror="this.onerror=null;this.src='https://via.placeholder.com/300x300?text=No+Image';"
                             alt="No Image">
                         @endif
+
+                        <!-- 🔥 Discount/Sale Badge -->
+                        @if($product->hasActiveDiscount())
+                        <div class="sale-badge" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);">
+                            {{ $product->getDiscountLabel() }}
+                        </div>
+                        @elseif($product->is_on_sale)
+                        <div class="sale-badge">Sale</div>
+                        @endif
                     </div>
                     <div class="product-info">
                         <div class="product-content">
                             <div class="product-details">
                                 <h4 class="product-name">{{ $product->name }}</h4>
-                                <p class="product-price">IDR
-                                    {{ number_format($product->harga_jual ?? $product->harga, 0, ',', '.') }}
-                                </p>
+                                <div class="product-pricing">
+                                    @if($product->hasActiveDiscount() || $product->is_on_sale)
+                                    <span class="product-price-original">
+                                        IDR {{ number_format($product->getOriginalPrice(), 0, ',', '.') }}
+                                    </span>
+                                    <span class="product-price" style="color: #dc3545 !important; font-weight: 600 !important;">
+                                        IDR {{ number_format($product->final_price, 0, ',', '.') }}
+                                    </span>
+                                    @else
+                                    <span class="product-price">
+                                        IDR {{ number_format($product->final_price, 0, ',', '.') }}
+                                    </span>
+                                    @endif
+                                </div>
+
+                                @if($product->hasActiveDiscount() && $product->discount_end_date)
+                                <div style="margin-top: 6px;">
+                                    <x-discount-timer :product="$product" />
+                                </div>
+                                @endif
                             </div>
                             <div class="product-arrow">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1495,9 +1797,7 @@ use App\Models\Product;
 
 
             <!-- See All Button -->
-            <div class="see-all-container">
-                <a href="#" class="see-all-btn">See All →</a>
-            </div>
+            <!--   -->
         </div>
     </div>
 
@@ -1506,33 +1806,15 @@ use App\Models\Product;
         <div class="container">
             <h3 class="section-title">Featured</h3>
             <div class="featured-grid">
-                <!-- Featured Item 1 -->
-                <div class="featured-card featured-universe">
+                @forelse($featuredItems as $item)
+                <div class="featured-card" style="background-color: {{ $item->background_color ?? 'transparent' }};">
                     <div class="featured-content">
-                        <img src=" image/banner2.jpg">
+                        <img src="{{ asset('storage/' . $item->image_path) }}" alt="{{ $item->title ?? 'Featured Item' }}">
                     </div>
                 </div>
-
-                <!-- Featured Item 2 -->
-                <div class="featured-card featured-minimalist">
-                    <div class="featured-content">
-                        <img src=" image/banner-sepatu.jpg">
-                    </div>
-                </div>
-
-                <!-- Featured Item 3 -->
-                <div class="featured-card featured-marvel">
-                    <div class="featured-content">
-                        <img src=" image/banner-sepatu2.jpg">
-                    </div>
-                </div>
-
-                <!-- Featured Item 4 -->
-                <div class="featured-card featured-future">
-                    <div class="featured-content">
-                        <img src=" image/banner-hoodie.jpg">
-                    </div>
-                </div>
+                @empty
+                <p style="grid-column: 1 / -1; text-align: center; color: #666;">No featured items available.</p>
+                @endforelse
             </div>
         </div>
     </div>

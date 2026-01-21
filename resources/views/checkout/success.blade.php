@@ -79,6 +79,7 @@
     .detail-value {
         color: #333;
         font-weight: 600;
+        text-align: right;
     }
 
     .order-items {
@@ -99,6 +100,10 @@
         gap: 15px;
         padding: 15px 0;
         border-bottom: 1px solid #f0f0f0;
+    }
+
+    .order-item:last-child {
+        border-bottom: none;
     }
 
     .item-image {
@@ -194,6 +199,10 @@
             flex-direction: column;
             gap: 5px;
         }
+
+        .detail-value {
+            text-align: left;
+        }
     }
 </style>
 
@@ -204,23 +213,28 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
             </svg>
         </div>
-        
+
         <h1 class="success-title">Order Placed Successfully!</h1>
         <p class="success-message">Thank you for your purchase. Your order has been received and is being processed.</p>
-        
+
         <div class="order-details">
             <div class="order-number">Order #{{ $order->order_number }}</div>
-            
+
             <div class="detail-row">
                 <span class="detail-label">Order Date:</span>
                 <span class="detail-value">{{ $order->created_at->format('d M Y, H:i') }}</span>
             </div>
-            
+
             <div class="detail-row">
                 <span class="detail-label">Payment Method:</span>
                 <span class="detail-value">{{ ucwords(str_replace('_', ' ', $order->payment_method)) }}</span>
             </div>
-            
+
+            <div class="detail-row">
+                <span class="detail-label">Payment Status:</span>
+                <span class="detail-value">{{ $order->getPaymentStatusLabelAttribute() }}</span>
+            </div>
+
             <div class="detail-row">
                 <span class="detail-label">Shipping Address:</span>
                 <span class="detail-value">
@@ -229,16 +243,16 @@
                     {{ $order->shipping_city }}, {{ $order->shipping_province }} {{ $order->shipping_postal_code }}
                 </span>
             </div>
-            
+
             <div class="detail-row">
                 <span class="detail-label">Total Amount:</span>
-                <span class="detail-value">{{ $order->formatted_total }}</span>
+                <span class="detail-value">IDR {{ number_format($order->grand_total, 0, ',', '.') }}</span>
             </div>
 
             <div class="order-items">
                 <div class="items-title">Ordered Items</div>
-                
-                @foreach($order->items as $item)
+
+                @foreach($order->orderItems as $item)
                     <div class="order-item">
                         <div class="item-image">
                             @if($item->product && $item->product->images && $item->product->images->isNotEmpty())
@@ -250,20 +264,19 @@
                         <div class="item-info">
                             <div class="item-name">{{ $item->product_name }}</div>
                             <div class="item-details">
-                                Qty: {{ $item->quantity }}
-                                @if($item->color) | Color: {{ $item->color }} @endif
+                                Qty: {{ $item->kuantitas }}
                                 @if($item->size) | Size: {{ $item->size }} @endif
                             </div>
                         </div>
-                        <div class="item-price">{{ $item->formatted_total }}</div>
+                        <div class="item-price">IDR {{ number_format($item->subtotal, 0, ',', '.') }}</div>
                     </div>
                 @endforeach
             </div>
         </div>
-        
+
         <div class="action-buttons">
             <a href="{{ route('products.index') }}" class="btn btn-secondary">Continue Shopping</a>
-            <a href="{{ route('orders.show', $order->id) }}" class="btn btn-primary">View Order Details</a>
+            <a href="{{ route('orders.show', ['orderNumber' => $order->order_number]) }}" class="btn btn-primary">View Order Details</a>
         </div>
     </div>
 </div>

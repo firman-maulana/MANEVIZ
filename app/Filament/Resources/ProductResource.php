@@ -45,6 +45,63 @@ class ProductResource extends Resource
                     ->numeric()
                     ->required(),
 
+                // 🔥 Tambahkan Section ini di ProductResource form() setelah harga_jual
+
+                Forms\Components\Section::make('Discount Settings')
+                    ->schema([
+                        Forms\Components\TextInput::make('discount_percentage')
+                            ->label('Discount Percentage (%)')
+                            ->numeric()
+                            ->minValue(0)
+                            ->maxValue(100)
+                            ->default(0)
+                            ->suffix('%')
+                            ->helperText('Enter discount percentage (0-100). Leave 0 for no discount.')
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                $basePrice = $get('harga_jual') ?: $get('harga');
+                                if ($basePrice && $state > 0) {
+                                    $discountAmount = ($basePrice * $state) / 100;
+                                    $finalPrice = $basePrice - $discountAmount;
+
+                                    // Show preview (optional, using placeholder)
+                                    $set('discount_preview', 'Final Price: IDR ' . number_format($finalPrice, 0, ',', '.'));
+                                }
+                            }),
+
+                        Forms\Components\Placeholder::make('discount_preview')
+                            ->label('Price After Discount')
+                            ->content(function (callable $get) {
+                                $basePrice = $get('harga_jual') ?: $get('harga');
+                                $discountPercentage = $get('discount_percentage') ?: 0;
+
+                                if ($basePrice && $discountPercentage > 0) {
+                                    $discountAmount = ($basePrice * $discountPercentage) / 100;
+                                    $finalPrice = $basePrice - $discountAmount;
+
+                                    return 'IDR ' . number_format($finalPrice, 0, ',', '.') .
+                                        ' (Save IDR ' . number_format($discountAmount, 0, ',', '.') . ')';
+                                }
+
+                                return 'No discount applied';
+                            }),
+
+                        Forms\Components\DateTimePicker::make('discount_start_date')
+                            ->label('Discount Start Date (Optional)')
+                            ->helperText('Leave empty for immediate discount')
+                            ->native(false),
+
+                        Forms\Components\DateTimePicker::make('discount_end_date')
+                            ->label('Discount End Date (Optional)')
+                            ->helperText('Leave empty for unlimited discount')
+                            ->timezone(config('app.timezone'))
+                            ->native(false)
+                            ->after('discount_start_date'),
+                    ])
+                    ->columns(2)
+                    ->collapsed()
+                    ->description('Set discount percentage and optional date range for the discount period'),
+
                 Forms\Components\TextInput::make('harga_jual')
                     ->numeric(),
 
@@ -59,7 +116,11 @@ class ProductResource extends Resource
                 Forms\Components\TextInput::make('berat')
                     ->numeric(),
 
-                Forms\Components\KeyValue::make('dimensi'),
+                Forms\Components\KeyValue::make('dimensi')
+                    ->keyLabel('Variabel')      // ← Ganti "Key" jadi "Nama Field"
+                    ->valueLabel('Ukuran')       // ← Ganti "Value" jadi "Isi Data"
+                    ->addButtonLabel('Tambah Dimensi') // ← Ganti label tombol "Add row"
+                    ->reorderable(),
 
                 Forms\Components\Select::make('ukuran')
                     ->options([
@@ -79,19 +140,42 @@ class ProductResource extends Resource
 
                 Forms\Components\Toggle::make('is_featured'),
 
-                Forms\Components\TextInput::make('rating_rata')
-                    ->numeric()
-                    ->default(0.00),
+                // 🔒 READONLY FIELDS - Auto-calculated, tidak bisa diinput manual
+                Forms\Components\Section::make('Statistik Produk (Auto-generated)')
+                    ->schema([
+                        Forms\Components\TextInput::make('rating_rata')
+                            ->label('Rating Rata-rata')
+                            ->numeric()
+                            ->default(0.00)
+                            ->disabled()
+                            ->dehydrated(true)
+                            ->helperText('Rating ini di-update otomatis dari review pelanggan'),
 
-                Forms\Components\TextInput::make('total_reviews')
-                    ->numeric()
-                    ->default(0),
+                        Forms\Components\TextInput::make('total_reviews')
+                            ->label('Total Review')
+                            ->numeric()
+                            ->default(0)
+                            ->disabled()
+                            ->dehydrated(true)
+                            ->helperText('Jumlah review dari pelanggan'),
 
-                Forms\Components\TextInput::make('total_penjualan')
-                    ->numeric()
-                    ->default(0),
+                        Forms\Components\TextInput::make('total_penjualan')
+                            ->label('Total Penjualan')
+                            ->numeric()
+                            ->default(0)
+                            ->disabled()
+                            ->dehydrated(true)
+                            ->helperText('Total produk yang terjual'),
+                    ])
+                    ->columns(3)
+                    ->collapsed()
+                    ->description('Data ini di-update otomatis oleh sistem berdasarkan aktivitas user'),
 
-                Forms\Components\KeyValue::make('meta_data'),
+                Forms\Components\KeyValue::make('meta_data')
+                    ->keyLabel('Nama Field')      // ← Ganti "Key" jadi "Nama Field"
+                    ->valueLabel('Isi Data')       // ← Ganti "Value" jadi "Isi Data"
+                    ->addButtonLabel('Tambah Metadata') // ← Ganti label tombol "Add row"
+                    ->reorderable(),
 
                 // 📸 Upload multiple images via product_images table
                 Forms\Components\Repeater::make('images')
@@ -198,6 +282,48 @@ class ProductResource extends Resource
 
                 Tables\Columns\TextColumn::make('harga')
                     ->money('idr'),
+
+                // 🔥 Tambahkan kolom ini di ProductResource table() setelah kolom harga
+
+                Tables\Columns\TextColumn::make('discount_percentage')
+                    ->label('Discount')
+                    ->formatStateUsing(function ($state, $record) {
+                        if (!$state || $state <= 0) {
+                            return '-';
+                        }
+
+                        $badge = '<span style="background: #dc3545; color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 11px;">'
+                            . number_format($state, 0) . '% OFF</span>';
+
+                        if ($record->hasActiveDiscount()) {
+                            return new \Illuminate\Support\HtmlString($badge);
+                        }
+
+                        return new \Illuminate\Support\HtmlString(
+                            '<span style="background: #6c757d; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px;">Scheduled</span>'
+                        );
+                    })
+                    ->html()
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('final_price')
+                    ->label('Final Price')
+                    ->formatStateUsing(function ($record) {
+                        $finalPrice = $record->final_price;
+                        $originalPrice = $record->getOriginalPrice();
+
+                        if ($record->hasActiveDiscount()) {
+                            return new \Illuminate\Support\HtmlString(
+                                '<div style="display: flex; flex-direction: column; gap: 4px;">' .
+                                    '<span style="font-weight: 600; color: #dc3545;">IDR ' . number_format($finalPrice, 0, ',', '.') . '</span>' .
+                                    '<span style="font-size: 11px; color: #999; text-decoration: line-through;">IDR ' . number_format($originalPrice, 0, ',', '.') . '</span>' .
+                                    '</div>'
+                            );
+                        }
+
+                        return 'IDR ' . number_format($finalPrice, 0, ',', '.');
+                    })
+                    ->html(),
 
                 Tables\Columns\TextColumn::make('stock_kuantitas'),
 

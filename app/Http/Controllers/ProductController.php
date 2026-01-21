@@ -4,151 +4,122 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Review;
+use App\Models\InspirationalOutfit;
+use App\Models\FeaturedItem;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    /**
+     * Display the allProduk page with products, best sellers, inspirational outfits, and featured items
+     */
     public function index(Request $request)
     {
-        $query = Product::active()->with(['category', 'images']);
-
-        // Filter kategori
-        if ($request->filled('category')) {
-            $query->where('category_id', $request->category);
-        }
-
-        // Filter badge_type
-        if ($request->filled('badge')) {
-            $query->where('badge_type', $request->badge);
-        }
-
-        // Pencarian nama / deskripsi
-        if ($request->filled('search')) {
-            $query->where(function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('deskripsi', 'like', '%' . $request->search . '%');
-            });
-        }
-
-        // Sorting
-        switch ($request->get('sort', 'newest')) {
-            case 'price_low':
-                $query->orderBy('harga', 'asc');
-                break;
-            case 'price_high':
-                $query->orderBy('harga', 'desc');
-                break;
-            case 'name':
-                $query->orderBy('name', 'asc');
-                break;
-            case 'popular':
-                $query->orderBy('total_penjualan', 'desc');
-                break;
-            default:
-                $query->orderBy('created_at', 'desc');
-                break;
-        }
-
-        $products = $query->paginate(12);
-        $categories = Category::all();
-
-        // 🔥 FIXED: Get best seller products (top 4 by sales)
-        $bestSellerProducts = Product::active()
-            ->with(['category', 'images'])
-            ->where('total_penjualan', '>', 0) // Only products with sales
-            ->orderBy('total_penjualan', 'desc')
-            ->limit(4)
+        // Get all active products for Our Collections section
+        $products = Product::with(['category', 'images', 'primaryImage'])
+            ->orderBy('created_at', 'desc')
             ->get();
 
-        // If there are less than 4 products with sales, fill with featured or newest products
-        if ($bestSellerProducts->count() < 4) {
-            $remainingCount = 4 - $bestSellerProducts->count();
-            $bestSellerIds = $bestSellerProducts->pluck('id')->toArray();
-            
-            // 🔥 FIXED: Correct query structure
-            $additionalProducts = Product::active()
-                ->with(['category', 'images'])
-                ->whereNotIn('id', $bestSellerIds)
-                ->where('is_featured', true) // First try to get featured products
-                ->orderBy('created_at', 'desc')
-                ->limit($remainingCount)
-                ->get();
-                
-            // If still not enough, get the newest products (non-featured)
-            if ($additionalProducts->count() < $remainingCount) {
-                $stillNeeded = $remainingCount - $additionalProducts->count();
-                $usedIds = array_merge($bestSellerIds, $additionalProducts->pluck('id')->toArray());
-                
-                $newestProducts = Product::active()
-                    ->with(['category', 'images'])
-                    ->whereNotIn('id', $usedIds)
-                    ->orderBy('created_at', 'desc')
-                    ->limit($stillNeeded)
-                    ->get();
-                    
-                $additionalProducts = $additionalProducts->concat($newestProducts);
-            }
-                
-            $bestSellerProducts = $bestSellerProducts->concat($additionalProducts);
-        }
+        // Get best seller products (top 8 by sales)
+        $bestSellerProducts = Product::with(['category', 'images', 'primaryImage'])
+            ->where('total_penjualan', '>', 0)
+            ->orderBy('total_penjualan', 'desc')
+            ->take(4)
+            ->get();
 
-        return view('allProduk', compact('products', 'categories', 'bestSellerProducts'));
+        // Get active inspirational outfits
+        $inspirationalOutfits = InspirationalOutfit::where('is_active', true)
+            ->orderBy('order')
+            ->get();
+
+        // Get active featured items (max 4 for grid layout)
+        $featuredItems = FeaturedItem::where('is_active', true)
+            ->orderBy('order')
+            ->take(4)
+            ->get();
+
+        // Get all categories for filter (if needed)
+        $categories = Category::all();
+
+        return view('allProduk', compact(
+            'products',
+            'bestSellerProducts',
+            'inspirationalOutfits',
+            'featuredItems',
+            'categories'
+        ));
     }
 
-    // 🔥 FIXED METHOD - Dynamic star rating calculation
+    /**
+     * Display a single product detail page
+     */
     public function show($slug)
     {
-        // Get product with images and reviews
-        $product = Product::active()
-            ->with(['category', 'images', 'reviews.user'])
+        // Get product with images and category
+        $product = Product::with(['images', 'category'])
             ->where('slug', $slug)
             ->firstOrFail();
 
-        // Get reviews with pagination
-        $reviews = $product->reviews()
-            ->verified()
-            ->with(['user', 'orderItem.order'])
-            ->orderBy('created_at', 'desc')
+        // Get related products from same category
+        $relatedProducts = Product::with('images')
+            ->where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->take(4)
+            ->get();
+
+        // Get reviews with proper relationships and pagination
+        $reviews = Review::with(['user', 'orderItem'])
+            ->where('product_id', $product->id)
+            ->where('is_verified', true)
+            ->latest()
             ->paginate(10);
 
-        // 🔥 FIXED: Calculate review statistics properly
-        $totalReviews = $product->reviews()->count();
-        $averageRating = $totalReviews > 0 ? $product->reviews()->avg('rating') : 0;
-        
+        // Calculate review statistics accurately
+        $totalReviews = Review::where('product_id', $product->id)
+            ->where('is_verified', true)
+            ->count();
+
+        $averageRating = Review::where('product_id', $product->id)
+            ->where('is_verified', true)
+            ->avg('rating') ?? 0;
+
         // Calculate rating distribution (1-5 stars)
         $ratingDistribution = [];
         for ($i = 1; $i <= 5; $i++) {
-            $ratingDistribution[$i] = $product->reviews()->where('rating', $i)->count();
+            $ratingDistribution[$i] = Review::where('product_id', $product->id)
+                ->where('is_verified', true)
+                ->where('rating', $i)
+                ->count();
         }
 
         // Calculate recommendation percentage
-        $recommendationPercentage = $totalReviews > 0 
-            ? ($product->reviews()->where('is_recommended', true)->count() / $totalReviews) * 100 
+        $recommendedCount = Review::where('product_id', $product->id)
+            ->where('is_verified', true)
+            ->where('is_recommended', true)
+            ->count();
+
+        $recommendationPercentage = $totalReviews > 0
+            ? round(($recommendedCount / $totalReviews) * 100, 1)
             : 0;
 
+        // Review statistics array
         $reviewStats = [
-            'average_rating' => round($averageRating, 1), // Round to 1 decimal
             'total_reviews' => $totalReviews,
+            'average_rating' => number_format($averageRating, 1),
             'rating_distribution' => $ratingDistribution,
-            'recommendation_percentage' => round($recommendationPercentage, 1)
+            'recommendation_percentage' => $recommendationPercentage
         ];
-
-        // Related products
-        $relatedProducts = Product::active()
-            ->where('category_id', $product->category_id)
-            ->where('id', '!=', $product->id)
-            ->with(['images'])
-            ->inRandomOrder()
-            ->limit(4)
-            ->get();
 
         return view('detailproduk', compact('product', 'relatedProducts', 'reviews', 'reviewStats'));
     }
 
+    /**
+     * Display featured products
+     */
     public function featured()
     {
-        $featuredProducts = Product::active()
-            ->featured()
+        $featuredProducts = Product::where('is_featured', true)
             ->with(['category', 'images'])
             ->orderBy('created_at', 'desc')
             ->paginate(8);
@@ -156,10 +127,12 @@ class ProductController extends Controller
         return view('products.featured', compact('featuredProducts'));
     }
 
+    /**
+     * Display timeless choice products
+     */
     public function timelessChoice()
     {
-        $timelessProducts = Product::active()
-            ->with(['category', 'images'])
+        $timelessProducts = Product::with(['category', 'images'])
             ->where('badge_type', '!=', 'just-in')
             ->where('created_at', '<', now()->subMonths(3))
             ->orderBy('rating_rata', 'desc')
@@ -169,13 +142,15 @@ class ProductController extends Controller
         return view('products.timeless', compact('timelessProducts'));
     }
 
+    /**
+     * Display latest products
+     */
     public function latest()
     {
-        $latestProducts = Product::active()
-            ->with(['category', 'images'])
+        $latestProducts = Product::with(['category', 'images'])
             ->where(function ($q) {
                 $q->where('badge_type', 'just-in')
-                  ->orWhere('created_at', '>=', now()->subDays(30));
+                    ->orWhere('created_at', '>=', now()->subDays(30));
             })
             ->orderBy('created_at', 'desc')
             ->paginate(8);
@@ -183,6 +158,9 @@ class ProductController extends Controller
         return view('products.latest', compact('latestProducts'));
     }
 
+    /**
+     * Search products
+     */
     public function search(Request $request)
     {
         $query = $request->get('q');
@@ -191,11 +169,10 @@ class ProductController extends Controller
             return redirect()->route('products.index');
         }
 
-        $products = Product::active()
-            ->with(['category', 'images'])
+        $products = Product::with(['category', 'images'])
             ->where(function ($q) use ($query) {
                 $q->where('name', 'like', '%' . $query . '%')
-                  ->orWhere('deskripsi', 'like', '%' . $query . '%');
+                    ->orWhere('deskripsi', 'like', '%' . $query . '%');
             })
             ->orderBy('total_penjualan', 'desc')
             ->paginate(12);
@@ -203,24 +180,108 @@ class ProductController extends Controller
         return view('products.search', compact('products', 'query'));
     }
 
-    // 🔹 API
+    /**
+     * Display products with active discounts
+     */
+    public function discounted(Request $request)
+    {
+        $products = Product::with(['category', 'images'])
+            ->where(function ($query) {
+                $query->where('is_on_sale', true)
+                    ->orWhere(function ($q) {
+                        $q->where('discount_percentage', '>', 0)
+                            ->where(function ($dateQuery) {
+                                $dateQuery->whereNull('discount_start_date')
+                                    ->orWhere('discount_start_date', '<=', now());
+                            })
+                            ->where(function ($dateQuery) {
+                                $dateQuery->whereNull('discount_end_date')
+                                    ->orWhere('discount_end_date', '>=', now());
+                            });
+                    });
+            })
+            ->orderBy('discount_percentage', 'desc')
+            ->paginate(12);
+
+        return view('products.discounted', compact('products'));
+    }
+
+    /**
+     * API: Get products list (JSON response)
+     */
     public function api_index(Request $request)
     {
-        $query = Product::active()->with(['category', 'images']);
+        $query = Product::with(['category', 'images']);
 
+        // Filter by category
         if ($request->filled('category')) {
             $query->where('category_id', $request->category);
         }
 
+        // Filter by featured
         if ($request->filled('featured')) {
-            $query->featured();
+            $query->where('is_featured', true);
         }
 
+        // Filter by badge type
+        if ($request->filled('badge')) {
+            $query->where('badge_type', $request->badge);
+        }
+
+        // Search by name or description
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('deskripsi', 'like', '%' . $searchTerm . '%');
+            });
+        }
+
+        // Sorting
+        switch ($request->get('sort', 'newest')) {
+            case 'price_low':
+                $query->orderByRaw('
+                    CASE
+                        WHEN discount_percentage > 0
+                        AND (discount_start_date IS NULL OR discount_start_date <= NOW())
+                        AND (discount_end_date IS NULL OR discount_end_date >= NOW())
+                        THEN (COALESCE(harga_jual, harga) - (COALESCE(harga_jual, harga) * discount_percentage / 100))
+                        ELSE COALESCE(harga_jual, harga)
+                    END ASC
+                ');
+                break;
+            case 'price_high':
+                $query->orderByRaw('
+                    CASE
+                        WHEN discount_percentage > 0
+                        AND (discount_start_date IS NULL OR discount_start_date <= NOW())
+                        AND (discount_end_date IS NULL OR discount_end_date >= NOW())
+                        THEN (COALESCE(harga_jual, harga) - (COALESCE(harga_jual, harga) * discount_percentage / 100))
+                        ELSE COALESCE(harga_jual, harga)
+                    END DESC
+                ');
+                break;
+            case 'name':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'popular':
+                $query->orderBy('total_penjualan', 'desc');
+                break;
+            case 'discount':
+                $query->orderBy('discount_percentage', 'desc');
+                break;
+            default:
+                $query->orderBy('created_at', 'desc');
+                break;
+        }
+
+        // Get products with limit or pagination
         $products = $request->has('limit')
             ? $query->limit($request->limit)->get()
             : $query->paginate(12);
 
         return response()->json([
+            'success' => true,
             'products' => $products->map(function ($product) {
                 $primaryImage = $product->images()->where('is_primary', true)->first();
 
@@ -229,11 +290,13 @@ class ProductController extends Controller
                     'name' => $product->name,
                     'slug' => $product->slug,
                     'category' => $product->category?->name,
-                    'price' => $product->formatted_price ?? number_format($product->harga, 0, ',', '.'),
-                    'final_price' => number_format($product->final_price ?? $product->harga_jual, 0, ',', '.'),
+                    'price' => $product->formatted_original_price,
+                    'final_price' => $product->formatted_final_price,
+                    'discount_percentage' => $product->discount_percentage,
+                    'has_discount' => $product->hasActiveDiscount(),
                     'image' => $primaryImage ? asset('storage/' . $primaryImage->image_path) : null,
                     'badge' => $product->badge_type ?? null,
-                    'is_on_sale' => $product->harga_jual < $product->harga,
+                    'is_on_sale' => $product->is_on_sale,
                     'stock_status' => $product->stock_kuantitas > 0 ? 'In Stock' : 'Out of Stock',
                     'rating' => $product->rating_rata,
                     'url' => route('products.show', $product->slug),
@@ -242,6 +305,7 @@ class ProductController extends Controller
             'pagination' => $products instanceof \Illuminate\Pagination\AbstractPaginator ? [
                 'current_page' => $products->currentPage(),
                 'last_page' => $products->lastPage(),
+                'per_page' => $products->perPage(),
                 'total' => $products->total(),
             ] : null
         ]);

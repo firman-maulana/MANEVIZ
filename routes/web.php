@@ -14,38 +14,34 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\PaymentConfirmationController; 
-use App\Http\Controllers\RajaOngkirController;// ADDED: Payment Confirmation Controller
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
+use App\Http\Controllers\PaymentConfirmationController;
+use App\Http\Controllers\RajaOngkirController;
+use App\Http\Controllers\TrackingController;
+use App\Http\Controllers\DiscountController;
+use App\Http\Controllers\AIChatController;
+use App\Http\Controllers\HowToOrderController;
 
 // ====================
 // Halaman Umum (Public)
 // ====================
-// UPDATED: Changed from static view to dynamic controller
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/allProduct', [ProductController::class, 'index'])->name('products.index');
-Route::view('/about', 'about')->name('about');
+Route::get('/about', [App\Http\Controllers\AboutController::class, 'index'])->name('about');
 
-// UPDATED: Contact routes - changed from static view to dynamic controller with CRUD
+// Contact routes
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
-Route::view('/refundPolicy', 'refundPolicy')->name('refund.policy');
-Route::view('/howToOrder', 'howToOrder')->name('how.to.order');
-
-// UPDATED: Payment Confirmation routes - changed from static view to dynamic controller with CRUD
+Route::get('/refundPolicy', [App\Http\Controllers\RefundPolicyController::class, 'index'])->name('refund.policy');
+Route::get('/howToOrder', [HowToOrderController::class, 'index'])->name('how.to.order');
+// Payment Confirmation routes
 Route::get('/paymentConfirmation', [PaymentConfirmationController::class, 'index'])->name('payment.confirmation');
 Route::post('/paymentConfirmation', [PaymentConfirmationController::class, 'store'])->name('payment.confirmation.store');
 
-// API route for checking payment confirmation status (optional)
+// API route for checking payment confirmation status
 Route::get('/api/payment-confirmation/status', [PaymentConfirmationController::class, 'checkStatus'])->name('payment.confirmation.status');
 
-// Detail Produk (ambil dari database lewat ProductController)
+// Detail Produk
 Route::get('/produk/{slug}', [ProductController::class, 'show'])->name('products.show');
 
 // =====================
@@ -72,7 +68,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profil', [ProfileController::class, 'index'])->name('profil');
     Route::put('/profil/update', [ProfileController::class, 'updateProfile'])->name('profil.update');
     Route::put('/profil/update-password', [ProfileController::class, 'updatePassword'])->name('profil.update-password');
-    
+
     // Address Routes
     Route::prefix('address')->name('address.')->group(function () {
         Route::get('/', [AddressController::class, 'index'])->name('index');
@@ -84,24 +80,22 @@ Route::middleware('auth')->group(function () {
         Route::patch('/{address}/set-default', [AddressController::class, 'setDefault'])->name('set-default');
         Route::get('/ajax/list', [AddressController::class, 'getAddresses'])->name('ajax.list');
     });
-    
+
     Route::view('/wishlist', 'wishlist')->name('wishlist');
     Route::view('/settings', 'settings')->name('settings');
-    
-    // Orders Routes (Current/Active Orders) - UPDATED for proper cancel functionality
+
+    // Orders Routes (Current/Active Orders)
     Route::get('/orders', [OrdersController::class, 'index'])->name('orders.index');
     Route::get('/orders/{orderNumber}', [OrdersController::class, 'show'])->name('orders.show');
     Route::get('/orders/{orderNumber}/status', [OrdersController::class, 'getStatus'])->name('orders.status');
-    
-    // UPDATED: Change cancel route to use form submission instead of AJAX
     Route::post('/orders/{order}/cancel', [OrdersController::class, 'cancel'])->name('orders.cancel');
     Route::patch('/orders/{order}/status', [OrdersController::class, 'updateStatus'])->name('orders.update-status');
-    
+
     // Order History Routes (Delivered Orders with Reviews)
     Route::prefix('order-history')->name('order-history.')->group(function () {
         Route::get('/', [OrderHistoryController::class, 'index'])->name('index');
         Route::get('/orders/{orderNumber}', [OrderHistoryController::class, 'show'])->name('show');
-        
+
         // Review Routes (only for delivered orders)
         Route::get('/review/{orderItem}', [OrderHistoryController::class, 'showReviewForm'])->name('review-form');
         Route::post('/review/{orderItem}', [OrderHistoryController::class, 'submitReview'])->name('submit-review');
@@ -109,21 +103,21 @@ Route::middleware('auth')->group(function () {
         Route::put('/review/{review}', [OrderHistoryController::class, 'updateReview'])->name('update-review');
         Route::delete('/review/{review}', [OrderHistoryController::class, 'deleteReview'])->name('delete-review');
     });
-    
-    // Legacy orders route for backward compatibility
-    Route::view('/orders_old', 'orders')->name('orders.old');
-    
+
     // Cart Routes
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
     Route::put('/cart/update/{id}', [CartController::class, 'updateQuantity'])->name('cart.update');
     Route::delete('/cart/remove/{id}', [CartController::class, 'removeItem'])->name('cart.remove');
-    
+
     // Checkout routes
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout/create-payment', [CheckoutController::class, 'createPayment'])->name('checkout.create-payment');
     Route::post('/checkout/handle-payment', [CheckoutController::class, 'handlePaymentSuccess'])->name('checkout.handle-payment');
-    Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
+    Route::get('/checkout/success/{orderNumber}', [CheckoutController::class, 'success'])->name('checkout.success');
+
+    // 🔥 NEW: Retry payment for unpaid orders
+    Route::get('/checkout/retry-payment/{orderNumber}', [CheckoutController::class, 'retryPayment'])->name('checkout.retry-payment');
 });
 
 // =====================
@@ -146,11 +140,39 @@ Route::get('/api/search', [SearchController::class, 'search'])->name('search.api
 Route::get('/api/search/suggestions', [SearchController::class, 'suggestions'])->name('search.suggestions');
 Route::get('/api/products/filter', [SearchController::class, 'filterByCategory'])->name('products.filter');
 
+// =====================
 // RajaOngkir API Routes
+// =====================
 Route::prefix('api/rajaongkir')->name('rajaongkir.')->group(function () {
-    Route::get('/provinces', [RajaOngkirController::class, 'getProvinces'])->name('provinces');
+    // Step 1: Get provinces
+    Route::get('/provinces', [RajaOngkirController::class, 'index'])->name('provinces');
+
+    // Step 2: Get cities by province ID
     Route::get('/cities/{provinceId}', [RajaOngkirController::class, 'getCities'])->name('cities');
+
+    // Step 3: Get districts by city ID
     Route::get('/districts/{cityId}', [RajaOngkirController::class, 'getDistricts'])->name('districts');
-    Route::post('/calculate-cost', [RajaOngkirController::class, 'calculateShippingCost'])->name('calculate-cost');
-    Route::get('/couriers', [RajaOngkirController::class, 'getAvailableCouriers'])->name('couriers');
+
+    // Step 4: Calculate shipping cost
+    Route::post('/check-ongkir', [RajaOngkirController::class, 'checkOngkir'])->name('check-ongkir');
+});
+
+Route::middleware('auth')->prefix('tracking')->name('tracking.')->group(function () {
+    Route::get('/{orderNumber}', [TrackingController::class, 'getTracking'])->name('get');
+    Route::get('/{orderNumber}/cached', [TrackingController::class, 'getCachedTracking'])->name('cached');
+});
+
+Route::get('/products/on-sale', [ProductController::class, 'discounted'])->name('products.discounted');
+
+Route::prefix('api/discount')->name('discount.')->group(function () {
+    Route::get('/check-status', [DiscountController::class, 'checkDiscountStatus'])->name('check-status');
+    Route::post('/batch-check', [DiscountController::class, 'batchCheckDiscountStatus'])->name('batch-check');
+    Route::get('/active', [DiscountController::class, 'getActiveDiscounts'])->name('active');
+});
+
+
+Route::prefix('ai-chat')->name('ai-chat.')->group(function () {
+    Route::post('/send', [AIChatController::class, 'chat'])->name('send');
+    Route::get('/product-suggestions', [AIChatController::class, 'getProductSuggestions'])->name('suggestions');
+    Route::get('/test', [AIChatController::class, 'testConnection'])->name('test');
 });

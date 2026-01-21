@@ -93,7 +93,6 @@
         border-color: #e5e7eb;
     }
 
-    /* Border untuk alamat utama */
     .address-card.is-default {
         border: 2px solid black;
         box-shadow: 0 4px 12px rgba(22, 163, 74, 0.1);
@@ -104,7 +103,6 @@
         border-color: black;
     }
 
-    /* Border untuk alamat tunggal (hanya ada 1 alamat) */
     .address-card.single-address {
         border: 2px solid #2563eb;
         box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
@@ -115,7 +113,6 @@
         border-color: #2563eb;
     }
 
-    /* Jika alamat adalah default DAN satu-satunya alamat */
     .address-card.is-default.single-address {
         border: 2px solid black;
         box-shadow: 0 4px 12px rgba(22, 163, 74, 0.1);
@@ -300,25 +297,159 @@
         line-height: 1.5;
     }
 
-    .back-to-profile {
-        margin-top: 40px;
-        text-align: center;
+    /* Modal Styles */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        z-index: 9999;
+        animation: fadeIn 0.2s ease;
     }
 
-    .back-link {
-        color: #6b7280;
-        text-decoration: none;
-        display: inline-flex;
+    .modal-overlay.active {
+        display: flex;
         align-items: center;
-        gap: 6px;
-        font-size: 14px;
-        font-weight: 500;
-        transition: color 0.2s ease;
+        justify-content: center;
+        padding: 20px;
     }
 
-    .back-link:hover {
+    .modal-content {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        max-width: 400px;
+        width: 100%;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        animation: slideUp 0.3s ease;
+    }
+
+    .modal-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+
+    .modal-icon {
+        width: 48px;
+        height: 48px;
+        background: #fef2f2;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .modal-icon svg {
+        width: 24px;
+        height: 24px;
+        color: #dc2626;
+    }
+
+    .modal-text {
+        flex: 1;
+    }
+
+    .modal-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 8px;
+    }
+
+    .modal-description {
+        font-size: 14px;
+        color: #6b7280;
+        line-height: 1.5;
+    }
+
+    .modal-address-info {
+        background: #f9fafb;
+        padding: 12px;
+        border-radius: 8px;
+        margin: 16px 0;
+        border-left: 3px solid #dc2626;
+    }
+
+    .modal-address-label {
+        font-size: 11px;
+        font-weight: 600;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+    }
+
+    .modal-address-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .modal-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+    }
+
+    .modal-btn {
+        flex: 1;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .modal-btn-cancel {
+        background: #f3f4f6;
         color: #374151;
-        text-decoration: none;
+    }
+
+    .modal-btn-cancel:hover {
+        background: #e5e7eb;
+    }
+
+    .modal-btn-delete {
+        background: #dc2626;
+        color: white;
+    }
+
+    .modal-btn-delete:hover {
+        background: #b91c1c;
+    }
+
+    .modal-btn-delete:disabled {
+        background: #fca5a5;
+        cursor: not-allowed;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     /* Responsive Design */
@@ -356,6 +487,14 @@
             width: 100%;
             justify-content: center;
         }
+
+        .modal-content {
+            max-width: 100%;
+        }
+
+        .modal-actions {
+            flex-direction: column-reverse;
+        }
     }
 
     @media (max-width: 480px) {
@@ -373,7 +512,6 @@
         }
     }
 
-    /* Form styling for consistency */
     form {
         display: inline-block;
         width: 100%;
@@ -383,14 +521,8 @@
         width: 100%;
     }
 
-    /* Icon styling */
     svg {
         flex-shrink: 0;
-    }
-
-    /* Smooth transitions */
-    * {
-        transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
     }
 </style>
 
@@ -477,14 +609,14 @@
                     </a>
 
                     @if(!$address->is_default || $addresses->count() > 1)
-                    <form method="POST" action="{{ route('address.destroy', $address) }}"
-                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus alamat ini?')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="action-btn action-danger">
-                            Hapus
-                        </button>
-                    </form>
+                    <button type="button"
+                            class="action-btn action-danger delete-address-btn"
+                            data-address-id="{{ $address->id }}"
+                            data-address-label="{{ $address->label }}"
+                            data-address-name="{{ $address->recipient_name }}"
+                            data-delete-url="{{ route('address.destroy', $address) }}">
+                        Hapus
+                    </button>
                     @endif
                 </div>
             </div>
@@ -510,17 +642,102 @@
         </a>
     </div>
     @endif
-
-    <!-- Uncomment if you want the back to profile link -->
-    <!--
-    <div class="back-to-profile">
-        <a href="{{ route('profil') }}" class="back-link">
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-            </svg>
-            Kembali ke Profil
-        </a>
-    </div>
-    -->
 </div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" id="deleteModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+            </div>
+            <div class="modal-text">
+                <h3 class="modal-title">Hapus Alamat?</h3>
+                <p class="modal-description">Tindakan ini tidak dapat dibatalkan. Alamat yang dihapus tidak dapat dikembalikan.</p>
+            </div>
+        </div>
+
+        <div class="modal-address-info">
+            <div class="modal-address-label" id="modalAddressLabel"></div>
+            <div class="modal-address-name" id="modalAddressName"></div>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" class="modal-btn modal-btn-cancel" id="cancelDeleteBtn">
+                Batal
+            </button>
+            <button type="button" class="modal-btn modal-btn-delete" id="confirmDeleteBtn">
+                Ya, Hapus Alamat
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden form for deletion -->
+<form id="deleteForm" method="POST" style="display: none;">
+    @csrf
+    @method('DELETE')
+</form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('deleteModal');
+    const deleteForm = document.getElementById('deleteForm');
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+    const cancelBtn = document.getElementById('cancelDeleteBtn');
+    const modalAddressLabel = document.getElementById('modalAddressLabel');
+    const modalAddressName = document.getElementById('modalAddressName');
+
+    // Handle delete button clicks
+    document.querySelectorAll('.delete-address-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const addressLabel = this.dataset.addressLabel || 'Alamat';
+            const addressName = this.dataset.addressName;
+            const deleteUrl = this.dataset.deleteUrl;
+
+            // Update modal content
+            modalAddressLabel.textContent = addressLabel;
+            modalAddressName.textContent = addressName;
+
+            // Set form action
+            deleteForm.action = deleteUrl;
+
+            // Show modal
+            modal.classList.add('active');
+        });
+    });
+
+    // Handle confirm delete
+    confirmBtn.addEventListener('click', function() {
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = 'Menghapus...';
+        deleteForm.submit();
+    });
+
+    // Handle cancel
+    function closeModal() {
+        modal.classList.remove('active');
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = 'Ya, Hapus Alamat';
+    }
+
+    cancelBtn.addEventListener('click', closeModal);
+
+    // Close modal when clicking overlay
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+});
+</script>
 @endsection

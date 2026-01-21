@@ -236,6 +236,13 @@
         border-color: #1d4ed8;
     }
 
+    .loading-indicator {
+        font-size: 12px;
+        color: #6b7280;
+        font-style: italic;
+        margin-top: 4px;
+    }
+
     @media (max-width: 768px) {
         .container {
             padding: 16px 16px 60px;
@@ -363,6 +370,7 @@
                         <option value="">Pilih Provinsi</option>
                     </select>
                     <input type="hidden" name="province" id="provinceName" value="{{ old('province', $address->province) }}">
+                    <div class="loading-indicator" id="provinceLoading" style="display:none;">Memuat provinsi...</div>
                     @error('province')
                     <div class="error-message">{{ $message }}</div>
                     @enderror
@@ -376,6 +384,7 @@
                         <option value="">Pilih Kota/Kabupaten</option>
                     </select>
                     <input type="hidden" name="city" id="cityName" value="{{ old('city', $address->city) }}">
+                    <div class="loading-indicator" id="cityLoading" style="display:none;">Memuat kota...</div>
                     @error('city')
                     <div class="error-message">{{ $message }}</div>
                     @enderror
@@ -390,6 +399,7 @@
                     <select name="district_select" id="districtSelect" class="form-select" required disabled>
                         <option value="">Pilih Kecamatan</option>
                     </select>
+                    <div class="loading-indicator" id="districtLoading" style="display:none;">Memuat kecamatan...</div>
                     @error('district_id')
                     <div class="error-message">{{ $message }}</div>
                     @enderror
@@ -453,135 +463,252 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Data existing dari address
     const existingProvince = "{{ $address->province }}";
     const existingCity = "{{ $address->city }}";
     const existingDistrictId = "{{ $address->district_id }}";
     const existingDistrictName = "{{ $address->district_name }}";
 
+    // Load provinces on page load
     loadProvinces(existingProvince, existingCity, existingDistrictId, existingDistrictName);
+
+    // Setup event listeners
+    setupEventListeners();
 });
 
+// =====================
+// LOAD PROVINCES
+// =====================
 function loadProvinces(selectProvince = null, selectCity = null, selectDistrict = null, districtName = null) {
+    const select = document.getElementById('provinceSelect');
+    const loading = document.getElementById('provinceLoading');
+
+    loading.style.display = 'block';
+    select.disabled = true;
+
     fetch('/api/rajaongkir/provinces')
-        .then(response => response.json())
+        .then(res => {
+            if (!res.ok) throw new Error('Failed to fetch provinces');
+            return res.json();
+        })
         .then(data => {
-            if (data.success) {
-                const select = document.getElementById('provinceSelect');
+            loading.style.display = 'none';
+
+            if (data.success && data.data) {
+                select.innerHTML = '<option value="">Pilih Provinsi</option>';
+
                 data.data.forEach(province => {
-                    const option = new Option(province.province, province.province_id);
-                    option.setAttribute('data-name', province.province);
-                    if (selectProvince && province.province === selectProvince) {
+                    const id = province.province_id || province.id || province.code;
+                    const name = province.province || province.province_name || province.name;
+                    const option = document.createElement('option');
+                    option.value = id;
+                    option.text = name;
+                    option.dataset.name = name;
+
+                    // Select if matches existing data
+                    if (selectProvince && name === selectProvince) {
                         option.selected = true;
                     }
-                    select.add(option);
+
+                    select.appendChild(option);
                 });
-                
+
+                select.disabled = false;
+
+                // If we have existing province, load cities
                 if (selectProvince) {
                     const selectedOption = select.options[select.selectedIndex];
-                    const provinceId = selectedOption.value;
-                    document.getElementById('provinceName').value = selectProvince;
-                    loadCities(provinceId, selectCity, selectDistrict, districtName);
+                    if (selectedOption && selectedOption.value) {
+                        const provinceId = selectedOption.value;
+                        document.getElementById('provinceName').value = selectProvince;
+                        loadCities(provinceId, selectCity, selectDistrict, districtName);
+                    }
                 }
+            } else {
+                console.error('Invalid response format:', data);
+                showError('Gagal memuat data provinsi');
             }
         })
-        .catch(error => console.error('Failed to load provinces:', error));
+        .catch(err => {
+            loading.style.display = 'none';
+            console.error('Failed to load provinces:', err);
+            showError('Gagal memuat data provinsi. Silakan refresh halaman.');
+        });
 }
 
+// =====================
+// LOAD CITIES
+// =====================
 function loadCities(provinceId, selectCity = null, selectDistrict = null, districtName = null) {
-    const citySelect = document.getElementById('citySelect');
-    citySelect.innerHTML = '<option value="">Pilih Kota/Kabupaten</option>';
-    citySelect.disabled = true;
-    
+    const select = document.getElementById('citySelect');
+    const loading = document.getElementById('cityLoading');
+
+    loading.style.display = 'block';
+    select.innerHTML = '<option value="">Pilih Kota/Kabupaten</option>';
+    select.disabled = true;
+
     fetch(`/api/rajaongkir/cities/${provinceId}`)
-        .then(response => response.json())
+        .then(res => {
+            if (!res.ok) throw new Error('Failed to fetch cities');
+            return res.json();
+        })
         .then(data => {
-            if (data.success) {
-                citySelect.disabled = false;
+            loading.style.display = 'none';
+
+            if (data.success && data.data) {
                 data.data.forEach(city => {
-                    const option = new Option(city.city_name, city.city_id);
-                    option.setAttribute('data-name', city.city_name);
-                    if (selectCity && city.city_name === selectCity) {
+                    const id = city.city_id || city.id;
+                    const name = city.city_name || city.name;
+                    const option = document.createElement('option');
+                    option.value = id;
+                    option.text = name;
+                    option.dataset.name = name;
+
+                    // Select if matches existing data
+                    if (selectCity && name === selectCity) {
                         option.selected = true;
                     }
-                    citySelect.add(option);
+
+                    select.appendChild(option);
                 });
-                
+
+                select.disabled = false;
+
+                // If we have existing city, load districts
                 if (selectCity) {
-                    const selectedOption = citySelect.options[citySelect.selectedIndex];
-                    const cityId = selectedOption.value;
-                    document.getElementById('cityName').value = selectCity;
-                    loadDistricts(cityId, selectDistrict, districtName);
+                    const selectedOption = select.options[select.selectedIndex];
+                    if (selectedOption && selectedOption.value) {
+                        const cityId = selectedOption.value;
+                        document.getElementById('cityName').value = selectCity;
+                        loadDistricts(cityId, selectDistrict, districtName);
+                    }
                 }
+            } else {
+                console.error('Invalid response format:', data);
+                showError('Gagal memuat data kota');
             }
         })
-        .catch(error => console.error('Failed to load cities:', error));
+        .catch(err => {
+            loading.style.display = 'none';
+            console.error('Failed to load cities:', err);
+            showError('Gagal memuat data kota');
+        });
 }
 
+// =====================
+// LOAD DISTRICTS
+// =====================
 function loadDistricts(cityId, selectDistrict = null, districtName = null) {
-    const districtSelect = document.getElementById('districtSelect');
-    districtSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
-    districtSelect.disabled = true;
-    
+    const select = document.getElementById('districtSelect');
+    const loading = document.getElementById('districtLoading');
+
+    loading.style.display = 'block';
+    select.innerHTML = '<option value="">Pilih Kecamatan</option>';
+    select.disabled = true;
+
     fetch(`/api/rajaongkir/districts/${cityId}`)
-        .then(response => response.json())
+        .then(res => {
+            if (!res.ok) throw new Error('Failed to fetch districts');
+            return res.json();
+        })
         .then(data => {
-            if (data.success) {
-                districtSelect.disabled = false;
+            loading.style.display = 'none';
+
+            if (data.success && data.data) {
                 data.data.forEach(district => {
-                    const option = new Option(district.subdistrict_name, district.subdistrict_id);
-                    option.setAttribute('data-name', district.subdistrict_name);
-                    if (selectDistrict && district.subdistrict_id == selectDistrict) {
+                    const id = district.subdistrict_id || district.id;
+                    const name = district.subdistrict_name || district.name;
+                    const option = document.createElement('option');
+                    option.value = id;
+                    option.text = name;
+                    option.dataset.name = name;
+
+                    // Select if matches existing data
+                    if (selectDistrict && id == selectDistrict) {
                         option.selected = true;
                     }
-                    districtSelect.add(option);
+
+                    select.appendChild(option);
                 });
-                
+
+                select.disabled = false;
+
+                // Set hidden fields if we have existing district
                 if (selectDistrict) {
                     document.getElementById('districtIdInput').value = selectDistrict;
-                    document.getElementById('districtNameInput').value = districtName;
+                    document.getElementById('districtNameInput').value = districtName || '';
                 }
+            } else {
+                console.error('Invalid response format:', data);
+                showError('Gagal memuat data kecamatan');
             }
         })
-        .catch(error => console.error('Failed to load districts:', error));
+        .catch(err => {
+            loading.style.display = 'none';
+            console.error('Failed to load districts:', err);
+            showError('Gagal memuat data kecamatan');
+        });
 }
 
-document.getElementById('provinceSelect').addEventListener('change', function() {
-    const provinceId = this.value;
-    const provinceName = this.options[this.selectedIndex].getAttribute('data-name');
-    document.getElementById('provinceName').value = provinceName;
-    
-    document.getElementById('citySelect').innerHTML = '<option value="">Pilih Kota/Kabupaten</option>';
-    document.getElementById('citySelect').disabled = !provinceId;
-    document.getElementById('districtSelect').innerHTML = '<option value="">Pilih Kecamatan</option>';
-    document.getElementById('districtSelect').disabled = true;
-    document.getElementById('districtIdInput').value = '';
-    document.getElementById('districtNameInput').value = '';
-    
-    if (provinceId) {
-        loadCities(provinceId);
-    }
-});
+// =====================
+// EVENT LISTENERS
+// =====================
+function setupEventListeners() {
+    const provinceSelect = document.getElementById('provinceSelect');
+    const citySelect = document.getElementById('citySelect');
+    const districtSelect = document.getElementById('districtSelect');
 
-document.getElementById('citySelect').addEventListener('change', function() {
-    const cityId = this.value;
-    const cityName = this.options[this.selectedIndex].getAttribute('data-name');
-    document.getElementById('cityName').value = cityName;
-    
-    document.getElementById('districtSelect').innerHTML = '<option value="">Pilih Kecamatan</option>';
-    document.getElementById('districtSelect').disabled = !cityId;
-    document.getElementById('districtIdInput').value = '';
-    document.getElementById('districtNameInput').value = '';
-    
-    if (cityId) {
-        loadDistricts(cityId);
-    }
-});
+    // Province change
+    provinceSelect.addEventListener('change', function() {
+        const provinceId = this.value;
+        const provinceName = this.options[this.selectedIndex]?.dataset.name || '';
+        document.getElementById('provinceName').value = provinceName;
 
-document.getElementById('districtSelect').addEventListener('change', function() {
-    const districtId = this.value;
-    const districtName = this.options[this.selectedIndex].getAttribute('data-name');
-    document.getElementById('districtIdInput').value = districtId;
-    document.getElementById('districtNameInput').value = districtName;
-});
+        // Reset city and district
+        citySelect.innerHTML = '<option value="">Pilih Kota/Kabupaten</option>';
+        citySelect.disabled = true;
+        districtSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
+        districtSelect.disabled = true;
+        document.getElementById('districtIdInput').value = '';
+        document.getElementById('districtNameInput').value = '';
+
+        if (provinceId) {
+            loadCities(provinceId);
+        }
+    });
+
+    // City change
+    citySelect.addEventListener('change', function() {
+        const cityId = this.value;
+        const cityName = this.options[this.selectedIndex]?.dataset.name || '';
+        document.getElementById('cityName').value = cityName;
+
+        // Reset district
+        districtSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
+        districtSelect.disabled = true;
+        document.getElementById('districtIdInput').value = '';
+        document.getElementById('districtNameInput').value = '';
+
+        if (cityId) {
+            loadDistricts(cityId);
+        }
+    });
+
+    // District change
+    districtSelect.addEventListener('change', function() {
+        const districtId = this.value;
+        const districtName = this.options[this.selectedIndex]?.dataset.name || '';
+        document.getElementById('districtIdInput').value = districtId;
+        document.getElementById('districtNameInput').value = districtName;
+    });
+}
+
+// =====================
+// UTILITY FUNCTIONS
+// =====================
+function showError(message) {
+    // You can implement a better error notification here
+    alert(message);
+}
 </script>
 @endsection

@@ -27,6 +27,7 @@ class CartController extends Controller
     }
 
     // Menambah item ke cart
+    // Menambah item ke cart
     public function addToCart(Request $request)
     {
         $request->validate([
@@ -37,7 +38,7 @@ class CartController extends Controller
         ]);
 
         $product = Product::findOrFail($request->product_id);
-        
+
         // Cek stok produk
         if ($product->stock_kuantitas < ($request->kuantitas ?? 1)) {
             return response()->json([
@@ -56,7 +57,7 @@ class CartController extends Controller
         if ($existingCartItem) {
             // Update kuantitas jika item sudah ada
             $newQuantity = $existingCartItem->kuantitas + ($request->kuantitas ?? 1);
-            
+
             // Cek stok lagi setelah penambahan
             if ($product->stock_kuantitas < $newQuantity) {
                 return response()->json([
@@ -81,18 +82,27 @@ class CartController extends Controller
         // Hitung total item di cart
         $cartCount = Cart::forUser(Auth::id())->sum('kuantitas');
 
+        // 🔥 GET FINAL PRICE WITH DISCOUNT
+        $finalPrice = $product->final_price;
+        $hasDiscount = $product->hasActiveDiscount() || $product->is_on_sale;
+        $originalPrice = $product->getOriginalPrice();
+        $discountAmount = $hasDiscount ? $product->getDiscountAmount() : 0;
+
         return response()->json([
             'success' => true,
             'message' => 'Produk berhasil ditambahkan ke keranjang',
             'cart_count' => $cartCount,
             'cart_item' => [
-                'id' => $cartItem->id,
+                'id' => $cartItem->id, // 🔥 IMPORTANT: Return cart item ID for Buy Now
                 'product_name' => $product->name,
                 'color' => $cartItem->color,
                 'size' => $cartItem->size,
                 'quantity' => $cartItem->kuantitas,
-                'price' => $product->harga_jual ?? $product->harga,
-                'total' => ($product->harga_jual ?? $product->harga) * $cartItem->kuantitas
+                'price' => $finalPrice,
+                'original_price' => $originalPrice,
+                'has_discount' => $hasDiscount,
+                'discount_amount' => $discountAmount,
+                'total' => $finalPrice * $cartItem->kuantitas
             ]
         ]);
     }
@@ -118,10 +128,14 @@ class CartController extends Controller
 
         $cartItem->update(['kuantitas' => $request->kuantitas]);
 
+        // 🔥 USE FINAL PRICE WITH DISCOUNT
+        $finalPrice = $cartItem->product->final_price;
+        $newTotal = $finalPrice * $cartItem->kuantitas;
+
         return response()->json([
             'success' => true,
             'message' => 'Kuantitas berhasil diupdate',
-            'new_total' => ($cartItem->product->harga_jual ?? $cartItem->product->harga) * $cartItem->kuantitas
+            'new_total' => $newTotal
         ]);
     }
 
@@ -158,7 +172,7 @@ class CartController extends Controller
     public function getCartCount()
     {
         $cartCount = Cart::forUser(Auth::id())->sum('kuantitas');
-        
+
         return response()->json([
             'cart_count' => $cartCount
         ]);

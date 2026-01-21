@@ -362,17 +362,17 @@ body {
         grid-template-columns: 1fr;
         gap: 30px;
     }
-    
+
     .divider {
         display: none;
     }
-    
+
     .form-section h3 {
         font-size: 1.5rem;
         margin-top: 15px;
         text-align: center;
     }
-    
+
     .social-section {
         padding-top: 20px;
         border-top: 2px solid #f0f0f0;
@@ -731,7 +731,7 @@ body {
     .container {
         padding: 15px 20px;
     }
-    
+
     .form-section h3 {
         font-size: 1.1rem;
         margin-top: 8px;
@@ -941,6 +941,8 @@ body {
                         <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                     </svg>
                 </a>
+
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d349.0289771266843!2d112.6473746085199!3d-8.079093387813183!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd6273447e05919%3A0xa97a6b2ad4e97d2!2sBarokah!5e0!3m2!1sid!2sid!4v1763383671934!5m2!1sid!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
         </div>
     </div>
@@ -949,29 +951,29 @@ body {
 <script>
     document.getElementById('contact-form').addEventListener('submit', function(e) {
         e.preventDefault();
-        
+
         const submitButton = document.getElementById('submit-button');
         const originalText = submitButton.innerHTML;
-        
+
         // Show loading state
         submitButton.disabled = true;
         submitButton.innerHTML = '<span class="loading-spinner"></span>Sending...';
-        
+
         // Get form data
         const formData = new FormData(this);
-        
+
         // Simple client-side validation
         const name = formData.get('name').trim();
         const phone = formData.get('phone').trim();
         const subject = formData.get('subject');
         const message = formData.get('message').trim();
-        
+
         if (!name || !phone || !subject || !message) {
             showAlert('Please fill in all required fields.', 'error');
             resetSubmitButton();
             return;
         }
-        
+
         // Submit via AJAX
         fetch(this.action, {
             method: 'POST',
@@ -997,7 +999,7 @@ body {
         .finally(() => {
             resetSubmitButton();
         });
-        
+
         function resetSubmitButton() {
             submitButton.disabled = false;
             submitButton.innerHTML = originalText;
@@ -1015,7 +1017,7 @@ body {
                 this.classList.add('input-success');
             }
         });
-        
+
         input.addEventListener('input', function() {
             if (this.hasAttribute('required') && this.value.trim()) {
                 this.classList.remove('input-error');
@@ -1043,16 +1045,16 @@ body {
     function showAlert(message, type) {
         // Remove existing alerts
         document.querySelectorAll('.alert').forEach(alert => alert.remove());
-        
+
         // Create new alert
         const alertDiv = document.createElement('div');
         alertDiv.className = `alert alert-${type}`;
         alertDiv.textContent = message;
-        
+
         // Insert at the top of the container
         const container = document.querySelector('.container');
         container.insertBefore(alertDiv, container.firstChild);
-        
+
         // Auto remove after 5 seconds
         setTimeout(() => {
             alertDiv.remove();

@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css">
     <title>MANEVIZ</title>
     <style>
@@ -71,7 +72,7 @@
             position: relative;
         }
 
-        
+
         .nav-menu .nav-link {
             text-decoration: none;
             /* font-weight: bold; */
@@ -1263,12 +1264,12 @@
         border-radius: 8px;
         margin-top: 8px;
     }
-    
+
     .search-history-item {
         padding: 14px 16px;
         font-size: 0.95rem;
     }
-    
+
     .search-history-header {
         padding: 14px 16px 10px;
         font-size: 0.85rem;
@@ -1280,11 +1281,11 @@
         padding: 16px;
         gap: 14px;
     }
-    
+
     .search-history-header {
         padding: 16px 16px 12px;
     }
-    
+
     .clear-history-btn {
         padding: 10px 12px;
         font-size: 0.85rem;
@@ -1493,6 +1494,7 @@
 
     <main id="konten">
         @yield('content')
+        @include('partials.ai-chat-modal')
     </main>
 
     <!-- Footer -->
@@ -1946,7 +1948,7 @@ class ProductSearch {
 
     initSearchInputs() {
         const searchInputs = document.querySelectorAll('.search-bar');
-        
+
         searchInputs.forEach(input => {
             // Real-time search as user types
             input.addEventListener('input', (e) => {
@@ -2003,7 +2005,7 @@ class ProductSearch {
         // For now, we'll use simple string matching as fallback
         const categoryFromDataAttr = productCard.dataset.category;
         if (categoryFromDataAttr) return categoryFromDataAttr;
-        
+
         // Fallback to name-based detection
         if (productName.includes('hoodie')) return 'hoodie';
         if (productName.includes('shoes') || productName.includes('sepatu')) return 'shoes';
@@ -2012,7 +2014,7 @@ class ProductSearch {
 
     handleSearch(searchTerm) {
         const trimmedTerm = searchTerm.trim().toLowerCase();
-        
+
         if (trimmedTerm === '') {
             this.showAllProducts();
             return;
@@ -2023,7 +2025,7 @@ class ProductSearch {
 
     performSearch(searchTerm) {
         const trimmedTerm = searchTerm.trim();
-        
+
         if (trimmedTerm) {
             this.addToSearchHistory(trimmedTerm);
             this.filterProducts(trimmedTerm.toLowerCase());
@@ -2045,8 +2047,8 @@ class ProductSearch {
         if (!bestSellerGrid || !this.allProducts.bestSeller) return;
 
         bestSellerGrid.innerHTML = '';
-        
-        const filteredProducts = this.allProducts.bestSeller.filter(product => 
+
+        const filteredProducts = this.allProducts.bestSeller.filter(product =>
             product.name.includes(searchTerm)
         );
 
@@ -2070,8 +2072,8 @@ class ProductSearch {
         if (!collectionGrid || !this.allProducts.collection) return;
 
         collectionGrid.innerHTML = '';
-        
-        let filteredProducts = this.allProducts.collection.filter(product => 
+
+        let filteredProducts = this.allProducts.collection.filter(product =>
             product.name.includes(searchTerm)
         );
 
@@ -2115,19 +2117,19 @@ class ProductSearch {
 
     setupFilters() {
         const filterButtons = document.querySelectorAll('.filter-btn');
-        
+
         filterButtons.forEach(button => {
             button.addEventListener('click', (e) => {
                 // Update active button
                 filterButtons.forEach(btn => btn.classList.remove('active'));
                 e.target.classList.add('active');
-                
+
                 // Store current filter
                 this.currentFilter = e.target.getAttribute('data-filter') || 'all';
-                
+
                 // Get current search term
                 const currentSearchTerm = document.querySelector('.search-bar').value.trim().toLowerCase();
-                
+
                 // Apply filter with current search
                 if (currentSearchTerm) {
                     this.filterProducts(currentSearchTerm);
@@ -2143,9 +2145,9 @@ class ProductSearch {
         if (!collectionGrid || !this.allProducts.collection) return;
 
         collectionGrid.innerHTML = '';
-        
+
         let filteredProducts = this.allProducts.collection;
-        
+
         if (filter !== 'all') {
             filteredProducts = this.allProducts.collection.filter(product => {
                 if (filter === 'hoodie') return product.category === 'hoodie';
@@ -2201,7 +2203,7 @@ class ProductSearch {
     showSearchHistory(input) {
         const container = input.closest('.search-container');
         const dropdown = container?.querySelector('.search-history-dropdown');
-        
+
         if (!dropdown || this.searchHistory.length === 0) return;
 
         const historyList = dropdown.querySelector('.search-history-list');
@@ -2214,7 +2216,7 @@ class ProductSearch {
                 <i class="bi bi-clock-history"></i>
                 <span>${term}</span>
             `;
-            
+
             historyItem.addEventListener('click', () => {
                 input.value = term;
                 this.performSearch(term);
@@ -2255,13 +2257,13 @@ class ProductSearch {
     updateNoResultsDisplay() {
         const bestSellerGrid = document.querySelector('.product-grid');
         const collectionGrid = document.querySelector('.products-grid');
-        
+
         // Check if both grids are empty or contain no-products message
-        const bestSellerEmpty = !bestSellerGrid || bestSellerGrid.children.length === 0 || 
+        const bestSellerEmpty = !bestSellerGrid || bestSellerGrid.children.length === 0 ||
                                bestSellerGrid.querySelector('.no-products');
-        const collectionEmpty = !collectionGrid || collectionGrid.children.length === 0 || 
+        const collectionEmpty = !collectionGrid || collectionGrid.children.length === 0 ||
                                collectionGrid.querySelector('.no-products');
-        
+
         if (bestSellerEmpty && collectionEmpty) {
             this.showGlobalNoResults();
         }
@@ -2279,8 +2281,8 @@ class ProductSearch {
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize search functionality only on allProduk page
-    if (window.location.pathname.includes('allProduct') || 
-        document.querySelector('.product-grid') || 
+    if (window.location.pathname.includes('allProduct') ||
+        document.querySelector('.product-grid') ||
         document.querySelector('.products-grid')) {
         new ProductSearch();
     }
